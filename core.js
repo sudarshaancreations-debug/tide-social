@@ -101,6 +101,112 @@
     ];
   }
 
+  // --- REVERSE-ENGINEERED SKILL 1: Hormozi Hooks Engine ---
+  function generateHormoziHooks(topic) {
+    const t = String(topic || '').trim() || 'Content marketing';
+    return [
+      {
+        type: 'Contrarian / Belief Shift',
+        hook: `Stop trying to fix your ${t}. It's not your strategy—it's your friction.`,
+        why: 'Pattern interrupt that challenges common wisdom immediately.'
+      },
+      {
+        type: 'Effort Reduction / Speed',
+        hook: `How we 3x'd our results from ${t} without hiring an agency or spending on ads.`,
+        why: 'High outcome promised while removing the two biggest pain points (cost & complexity).'
+      },
+      {
+        type: 'Specific Proof / Case Study',
+        hook: `We spent 90 days testing ${t}. 3 small tweaks produced 84,210 impressions.`,
+        why: 'Concrete numbers create instant credibility and curiosity.'
+      },
+      {
+        type: 'Urgency / Avoidable Mistake',
+        hook: `The single biggest mistake 90% of brands make with ${t} (and how to fix it in 5 mins).`,
+        why: 'Loss aversion triggers higher save and read rates.'
+      },
+      {
+        type: 'Transformation / Before-After',
+        hook: `From 2 hours a day of wasted effort to a 10-minute weekly ${t} system.`,
+        why: 'Extreme contrast highlights massive value proposition.'
+      }
+    ];
+  }
+
+  // --- REVERSE-ENGINEERED SKILL 2: 1-to-5 Content Repurposer ---
+  function repurposeContent(longText) {
+    const raw = String(longText || '').trim();
+    const snippet = raw.slice(0, 140) || 'Our core methodology for modern distribution';
+
+    return {
+      sourceSnippet: snippet,
+      formats: [
+        {
+          platform: 'Instagram',
+          format: 'Reel Script (9:16)',
+          hook: `The real reason your audience isn't engaging:`,
+          body: `"${snippet}"\n\nSave this for your next team planning session. Breakdown in caption.`,
+          cta: 'Comment "SYSTEM" for our full template.'
+        },
+        {
+          platform: 'LinkedIn',
+          format: 'Carousel Outline (6 Slides)',
+          hook: `Why the standard playbook for distribution is backwards:`,
+          body: `Slide 1: The Problem\nSlide 2: What didn't work\nSlide 3: The breakthrough (${snippet.slice(0, 50)}...)\nSlide 4: 3 tactical moves\nSlide 5: Expected results\nSlide 6: Summary checklist.`,
+          cta: 'Repost if this helped your workflow.'
+        },
+        {
+          platform: 'Threads',
+          format: '3-Part Thread',
+          hook: `1/3: Stop overcomplicating your content operations.`,
+          body: `2/3: Here's the key takeaway:\n${snippet}\n\n3/3: Consistency without clarity is noise. Prioritize retention over volume.`,
+          cta: 'Follow for daily breakdowns.'
+        },
+        {
+          platform: 'TikTok',
+          format: 'Quick Take Video (60s)',
+          hook: `Nobody wants to hear this, but:`,
+          body: `Talking head POV explaining: ${snippet}. Show visual proof on screen at second 0:04.`,
+          cta: 'Full breakdown in bio link.'
+        }
+      ]
+    };
+  }
+
+  // --- REVERSE-ENGINEERED SKILL 3: Viral Video Storyboarder ---
+  function generateVideoStoryboard(topic) {
+    const t = String(topic || '').trim() || 'Content System';
+    return {
+      title: `${t} — 18s Retention Blueprint`,
+      scenes: [
+        {
+          timestamp: '00:00 - 00:03',
+          name: 'The Scroll-Stopper (Hook)',
+          visual: 'Fast motion cut or sudden freeze frame with bold on-screen kicker text.',
+          onScreenText: `YOUR BRAND DOESN'T NEED MORE ${t.toUpperCase()}`,
+          audio: 'Punchy voiceover: "Most creators think they need more volume, but..."',
+          retentionGoal: 'Achieve >75% 3-second hold rate.'
+        },
+        {
+          timestamp: '00:03 - 00:11',
+          name: 'The Tension & Contrast',
+          visual: 'Screen capture showing real analytics chart or practical split-screen comparison.',
+          onScreenText: 'WHAT ACTUALLY WORKS (3.2× RESULTS)',
+          audio: 'Explanation of the shift: "When we switched from posting daily to high-signal anchors..."',
+          retentionGoal: 'Keep viewers engaged through the middle dip.'
+        },
+        {
+          timestamp: '00:11 - 00:18',
+          name: 'The Payoff & Micro-CTA',
+          visual: 'Clear recap checklist graphic and founder sign-off gesture.',
+          onScreenText: 'SAVE THIS WORKFLOW ↴',
+          audio: '"Drop a save and try this for your next post."',
+          retentionGoal: 'Maximize saves & shares to trigger platform algorithm boost.'
+        }
+      ]
+    };
+  }
+
   return {
     supportedPlatforms,
     normalizeHandle,
@@ -108,6 +214,9 @@
     createPost,
     validateMedia,
     rewriteCopy,
-    generateConcepts
+    generateConcepts,
+    generateHormoziHooks,
+    repurposeContent,
+    generateVideoStoryboard
   };
 });

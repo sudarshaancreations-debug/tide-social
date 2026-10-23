@@ -164,6 +164,25 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, state.brand);
     }
 
+    // Skills Endpoints
+    if (pathname === '/api/skills/hooks' && method === 'POST') {
+      const body = await parseBody(req);
+      const hooks = core.generateHormoziHooks(body.topic);
+      return sendJson(res, 200, { topic: body.topic, hooks });
+    }
+
+    if (pathname === '/api/skills/repurpose' && method === 'POST') {
+      const body = await parseBody(req);
+      const repurposed = core.repurposeContent(body.text);
+      return sendJson(res, 200, repurposed);
+    }
+
+    if (pathname === '/api/skills/storyboard' && method === 'POST') {
+      const body = await parseBody(req);
+      const storyboard = core.generateVideoStoryboard(body.topic);
+      return sendJson(res, 200, storyboard);
+    }
+
     sendJson(res, 404, { error: 'Route not found' });
   } catch (err) {
     sendJson(res, 500, { error: err.message });

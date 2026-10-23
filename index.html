@@ -87,7 +87,11 @@
               <div class="approval-card" id="overview-featured-approval">
                 <div class="reel-preview"><span class="reel-kicker">YOUR BRAND DOESN'T<br>NEED MORE CONTENT.</span><span class="play">▶</span><small>00:18</small></div>
                 <div class="approval-copy"><span class="platform ig">IG</span><strong>What your content is really missing</strong><p>AI reel · 18 seconds · 9:16</p></div>
-                <div class="approval-actions"><button class="approve" id="approve-featured-btn" aria-label="Approve reel">✓ Approve</button><button class="change" data-open="change-modal" data-target="featured">Change</button></div>
+                <div class="approval-actions">
+                  <button class="approve" id="approve-featured-btn" aria-label="Approve reel">✓ Approve</button>
+                  <button class="change" data-open="change-modal" data-target="featured">Change</button>
+                  <button class="text-button" id="btn-open-storyboard" type="button" style="padding:0 6px;">Storyboard 🎬</button>
+                </div>
               </div>
               <div class="approval-mini"><span class="mini-visual lemon">5×</span><div><strong>Five hooks that stop the scroll</strong><p>LinkedIn carousel · 6 slides</p></div><button class="approve" id="approve-mini-btn" aria-label="Approve carousel">✓</button></div>
               <button class="wide-link" data-view-link="approvals">Review all drafts <span>→</span></button>
@@ -110,7 +114,17 @@
         </section>
 
         <section class="view" id="view-create" data-title="Create">
-          <div class="section-intro"><div><p class="eyebrow">AI CREATIVE STUDIO</p><h2>Turn one thought into every format.</h2><p>Start with a URL, an idea, or your own footage. Tide adapts it to your voice and each channel.</p></div><button class="button primary" data-open="composer-modal">New post ↗</button></div>
+          <div class="section-intro">
+            <div>
+              <p class="eyebrow">AI CREATIVE STUDIO</p>
+              <h2>Turn one thought into every format.</h2>
+              <p>Start with a URL, an idea, or your own footage. Tide adapts it to your voice and each channel.</p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="button secondary" id="btn-open-repurpose" type="button">1-to-5 Repurposer 🪄</button>
+              <button class="button primary" data-open="composer-modal">New post ↗</button>
+            </div>
+          </div>
           <div class="creator-layout">
             <article class="panel prompt-panel">
               <label for="idea">What should we make?</label>
@@ -283,7 +297,7 @@
 
   <!-- Composer Modal -->
   <div class="modal" id="composer-modal" role="dialog" aria-modal="true" aria-labelledby="composer-title" hidden>
-    <div class="modal-card composer-card"><button class="modal-close" data-close aria-label="Close">×</button><div class="composer-head"><div><p class="eyebrow">COMPOSER</p><h2 id="composer-title">Create a post</h2></div><span id="save-state">Draft saved</span></div><form id="composer-form"><fieldset><legend>Publish to</legend><div class="channel-checks" id="composer-channel-checks"><label><input type="checkbox" value="Instagram" checked><span class="platform ig">IG</span> @acmestudio</label><label><input type="checkbox" value="LinkedIn"><span class="platform li">in</span> ACME Studio</label><label><input type="checkbox" value="TikTok"><span class="platform tk">♪</span> @acme.studio</label></div></fieldset><label class="post-copy">Post copy<textarea name="copy" maxlength="2200" placeholder="Share something worth stopping for…"></textarea><span class="char-count">0 / 2,200</span></label><div class="ai-row"><button type="button" data-rewrite="rewrite">✦ Rewrite</button><button type="button" data-rewrite="shorten">Shorten</button><button type="button" data-rewrite="add_hook">Add hook</button><button type="button" data-rewrite="change_tone">Change tone</button></div>
+    <div class="modal-card composer-card"><button class="modal-close" data-close aria-label="Close">×</button><div class="composer-head"><div><p class="eyebrow">COMPOSER</p><h2 id="composer-title">Create a post</h2></div><span id="save-state">Draft saved</span></div><form id="composer-form"><fieldset><legend>Publish to</legend><div class="channel-checks" id="composer-channel-checks"><label><input type="checkbox" value="Instagram" checked><span class="platform ig">IG</span> @acmestudio</label><label><input type="checkbox" value="LinkedIn"><span class="platform li">in</span> ACME Studio</label><label><input type="checkbox" value="TikTok"><span class="platform tk">♪</span> @acme.studio</label></div></fieldset><label class="post-copy">Post copy<textarea name="copy" maxlength="2200" placeholder="Share something worth stopping for…"></textarea><span class="char-count">0 / 2,200</span></label><div class="ai-row"><button type="button" data-rewrite="rewrite">✦ Rewrite</button><button type="button" data-rewrite="shorten">Shorten</button><button type="button" data-rewrite="add_hook">Add hook</button><button type="button" data-rewrite="change_tone">Change tone</button><button type="button" id="btn-open-hooks" style="margin-left:auto; border-color:var(--coral); color:var(--coral); font-weight:700;">⚡ Hormozi Hooks</button></div>
     
     <input type="file" id="composer-file-input" accept="image/*,video/*" hidden>
     <div class="media-drop" id="composer-media-drop" tabindex="0" role="button" aria-label="Add media">
@@ -294,6 +308,48 @@
     <div id="media-preview-container" class="media-preview-box" hidden></div>
 
     <div class="form-row"><label>Date<input name="date" type="date" value="2026-10-26" required></label><label>Time<input name="time" type="time" value="10:30" required></label></div><div class="composer-actions"><button class="button secondary" type="button" data-close>Save draft</button><button class="button primary" type="submit">Schedule post →</button></div></form></div>
+  </div>
+
+  <!-- Hormozi Hooks Modal (Skill 1) -->
+  <div class="modal" id="hooks-modal" role="dialog" aria-modal="true" aria-labelledby="hooks-title" hidden>
+    <div class="modal-card">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">HORMOZI HOOK ENGINE</p>
+      <h2 id="hooks-title">Scroll-Stopping Hooks</h2>
+      <p style="color:var(--muted); font-size:12px; margin-top:2px;">5 psychological frameworks that stop the scroll in the first 3 seconds.</p>
+      <div style="display:grid; grid-template-columns:1fr auto; gap:8px; margin: 12px 0;">
+        <input type="text" id="hooks-input" placeholder="e.g. B2B lead generation without ads" value="B2B growth and distribution">
+        <button class="button primary" id="btn-generate-hooks" type="button">Generate ⚡</button>
+      </div>
+      <div id="hooks-list" style="display:flex; flex-direction:column; gap:10px; margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <!-- 1-to-5 Content Repurposer Modal (Skill 2) -->
+  <div class="modal" id="repurpose-modal" role="dialog" aria-modal="true" aria-labelledby="repurpose-title" hidden>
+    <div class="modal-card composer-card">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">1-TO-5 CONTENT MULTIPLIER</p>
+      <h2 id="repurpose-title">Repurpose into Every Platform</h2>
+      <p style="color:var(--muted); font-size:12px;">Paste any blog post, newsletter, or video transcript. We split it into 4 native platform posts.</p>
+      <label>Source Content / Transcript
+        <textarea id="repurpose-input" rows="4" placeholder="Paste your article, video transcript, or newsletter excerpt here...">We stopped trying to post 5 times a day. Instead, we spent 2 hours refining one flagship case study, then created 3 Reels, a LinkedIn carousel, and 2 Threads breakdowns. Reach went up 3.2x while total creation time dropped by 60%.</textarea>
+      </label>
+      <button class="button primary full" id="btn-run-repurpose" type="button" style="margin-top:10px;">✦ Multi-Channel Repurpose</button>
+      <div id="repurpose-results" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- Viral Video Storyboard Modal (Skill 3) -->
+  <div class="modal" id="storyboard-modal" role="dialog" aria-modal="true" aria-labelledby="storyboard-title" hidden>
+    <div class="modal-card">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">VIDEO RETENTION BLUEPRINT</p>
+      <h2 id="storyboard-title">18-Second Reel Storyboard</h2>
+      <p style="color:var(--muted); font-size:12px;">Optimized for >70% 3-second hold rate and maximum algorithmic saves.</p>
+      <div id="storyboard-scenes" style="display:flex; flex-direction:column; gap:10px; margin-top:14px;"></div>
+      <button class="button primary full" data-close type="button" style="margin-top:16px;">Close Blueprint</button>
+    </div>
   </div>
 
   <!-- Change Request Modal -->

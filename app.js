@@ -4,7 +4,10 @@ const {
   createPost,
   validateMedia,
   rewriteCopy,
-  generateConcepts
+  generateConcepts,
+  generateHormoziHooks,
+  repurposeContent,
+  generateVideoStoryboard
 } = window.SocialCore;
 
 const seedAccounts = [
@@ -1196,6 +1199,131 @@ document.getElementById('cookie-save')?.addEventListener('click', () => {
   const isAnalytics = document.getElementById('analytics-cookie')?.checked;
   saveCookieConsent(isAnalytics ? 'analytics' : 'necessary');
   closeModal(document.getElementById('cookie-modal'));
+});
+
+// --- REVERSE-ENGINEERED SKILL 1: Hormozi Hooks Engine ---
+function renderHormoziHooks(topic) {
+  const list = document.getElementById('hooks-list');
+  if (!list) return;
+  const hooks = generateHormoziHooks(topic);
+  list.innerHTML = hooks.map((h) => `
+    <div class="panel" style="padding:12px; border-radius:10px; border:1px solid var(--line); display:flex; flex-direction:column; gap:4px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="eyebrow" style="color:var(--coral); font-size:9px;">${h.type}</span>
+        <button type="button" class="btn-insert-hook text-button" data-hook="${encodeURIComponent(h.hook)}" style="color:var(--green); font-size:11px;">Insert ↴</button>
+      </div>
+      <strong style="font-size:13px; line-height:1.35;">${h.hook}</strong>
+      <small style="color:var(--muted); font-size:10px;">${h.why}</small>
+    </div>
+  `).join('');
+}
+
+document.getElementById('btn-open-hooks')?.addEventListener('click', () => {
+  const query = document.getElementById('hooks-input')?.value || composerCopy?.value?.slice(0, 30) || 'organic growth';
+  const inputEl = document.getElementById('hooks-input');
+  if (inputEl) inputEl.value = query;
+  renderHormoziHooks(query);
+  openModal('hooks-modal');
+});
+
+document.getElementById('btn-generate-hooks')?.addEventListener('click', () => {
+  const query = document.getElementById('hooks-input')?.value.trim() || 'organic growth';
+  renderHormoziHooks(query);
+  toast('5 Hormozi hooks generated!');
+});
+
+document.getElementById('hooks-list')?.addEventListener('click', event => {
+  const btn = event.target.closest('.btn-insert-hook');
+  if (!btn) return;
+  const hook = decodeURIComponent(btn.dataset.hook || '');
+  if (composerCopy) {
+    composerCopy.value = `${hook}\n\n${composerCopy.value}`;
+    const charCount = document.querySelector('.char-count');
+    if (charCount) charCount.textContent = `${composerCopy.value.length.toLocaleString()} / 2,200`;
+    write('tide-draft', composerCopy.value);
+  }
+  closeModal(document.getElementById('hooks-modal'));
+  toast('Hook prepended to draft!');
+});
+
+// --- REVERSE-ENGINEERED SKILL 2: 1-to-5 Content Repurposer ---
+function renderRepurpose(text) {
+  const container = document.getElementById('repurpose-results');
+  if (!container) return;
+  const res = repurposeContent(text);
+  container.innerHTML = res.formats.map(f => `
+    <div class="panel" style="padding:14px; border-radius:10px; border:1px solid var(--line);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <div>
+          <span class="platform ${platformClass(f.platform)}" style="margin-right:6px;">${platformMark(f.platform)}</span>
+          <strong style="font-size:12px;">${f.platform} · ${f.format}</strong>
+        </div>
+        <button type="button" class="button secondary btn-use-repurpose" data-copy="${encodeURIComponent(f.hook + '\n\n' + f.body + '\n\n' + f.cta)}" data-platform="${f.platform}" style="padding:4px 8px; font-size:10px;">Use in Composer ↗</button>
+      </div>
+      <p style="font-size:11px; margin:4px 0; color:var(--ink); font-weight:600;">${f.hook}</p>
+      <p style="font-size:11px; color:var(--muted); white-space:pre-line; margin:4px 0;">${f.body}</p>
+      <small style="color:var(--coral); font-weight:700;">${f.cta}</small>
+    </div>
+  `).join('');
+}
+
+document.getElementById('btn-open-repurpose')?.addEventListener('click', () => {
+  openModal('repurpose-modal');
+  renderRepurpose(document.getElementById('repurpose-input')?.value || '');
+});
+
+document.getElementById('btn-run-repurpose')?.addEventListener('click', () => {
+  const text = document.getElementById('repurpose-input')?.value.trim();
+  if (!text) return toast('Please enter some text to repurpose.');
+  renderRepurpose(text);
+  toast('Content transformed into 4 native formats!');
+});
+
+document.getElementById('repurpose-results')?.addEventListener('click', event => {
+  const btn = event.target.closest('.btn-use-repurpose');
+  if (!btn) return;
+  const copy = decodeURIComponent(btn.dataset.copy || '');
+  const platform = btn.dataset.platform;
+
+  if (composerCopy) {
+    composerCopy.value = copy;
+    const charCount = document.querySelector('.char-count');
+    if (charCount) charCount.textContent = `${composerCopy.value.length.toLocaleString()} / 2,200`;
+  }
+  closeModal(document.getElementById('repurpose-modal'));
+  openModal('composer-modal');
+  if (platform) {
+    document.querySelectorAll('#composer-channel-checks input').forEach(input => {
+      input.checked = (input.value === platform);
+    });
+  }
+  toast(`Loaded ${platform} post into Composer.`);
+});
+
+// --- REVERSE-ENGINEERED SKILL 3: Viral Video Storyboarder ---
+function renderStoryboard(topic) {
+  const container = document.getElementById('storyboard-scenes');
+  if (!container) return;
+  const board = generateVideoStoryboard(topic);
+  const title = document.getElementById('storyboard-title');
+  if (title) title.textContent = board.title;
+  container.innerHTML = board.scenes.map((s) => `
+    <div class="panel" style="padding:12px; border-radius:10px; border:1px solid var(--line); display:grid; gap:4px;">
+      <div style="display:flex; justify-content:space-between; font-size:11px;">
+        <span class="count-badge" style="font-size:10px;">${s.timestamp}</span>
+        <strong>${s.name}</strong>
+      </div>
+      <div style="font-size:11px; margin-top:4px;"><strong>Visual:</strong> <span style="color:var(--muted);">${s.visual}</span></div>
+      <div style="font-size:11px;"><strong>On-screen Text:</strong> <code style="background:#f4f3ec; padding:2px 4px; border-radius:4px;">${s.onScreenText}</code></div>
+      <div style="font-size:11px;"><strong>Audio Cue:</strong> <span style="color:var(--muted);">${s.audio}</span></div>
+      <small style="color:var(--green); font-weight:600; margin-top:2px;">Goal: ${s.retentionGoal}</small>
+    </div>
+  `).join('');
+}
+
+document.getElementById('btn-open-storyboard')?.addEventListener('click', () => {
+  renderStoryboard('Brand Content');
+  openModal('storyboard-modal');
 });
 
 // Initial Render

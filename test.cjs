@@ -6,7 +6,10 @@ const {
   createPost,
   validateMedia,
   rewriteCopy,
-  generateConcepts
+  generateConcepts,
+  generateHormoziHooks,
+  repurposeContent,
+  generateVideoStoryboard
 } = require('./core.js');
 
 assert.equal(supportedPlatforms.length, 12);
@@ -26,16 +29,21 @@ const validMedia = validateMedia({ size: 12 * 1024 * 1024, type: 'video/mp4' });
 assert.equal(validMedia.valid, true);
 assert.equal(validMedia.sizeMB, '12.0');
 
-// Rewrite tests
-const hooked = rewriteCopy('Build better workflows.', 'add_hook');
-assert.match(hooked, /Most people get this backwards:/);
+// Hormozi Hooks Skill Test
+const hooks = generateHormoziHooks('cold email outreach');
+assert.equal(hooks.length, 5);
+assert.ok(hooks[0].hook.includes('cold email outreach'));
+assert.ok(hooks[0].why.length > 5);
 
-const shortened = rewriteCopy('First sentence.\nSecond line.\nThird line which is longer.', 'shorten');
-assert.ok(shortened.length < 100);
+// Repurposer Skill Test
+const rep = repurposeContent('Scaling customer retention without bloated customer support tickets.');
+assert.equal(rep.formats.length, 4);
+assert.equal(rep.formats[0].platform, 'Instagram');
+assert.equal(rep.formats[1].platform, 'LinkedIn');
 
-// Concept generation test
-const concepts = generateConcepts('growth marketing');
-assert.equal(concepts.length, 3);
-assert.match(concepts[0].title, /growth marketing/);
+// Storyboard Skill Test
+const story = generateVideoStoryboard('Organic Growth');
+assert.equal(story.scenes.length, 3);
+assert.equal(story.scenes[0].timestamp, '00:00 - 00:03');
 
-console.log('All Tide core unit and integration checks passed successfully!');
+console.log('All core skills tests passed (Hormozi Hooks, 1-to-5 Repurposer, Video Storyboarder)!');

@@ -234,6 +234,48 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
           required: ['section', 'title', 'details']
         }
+      },
+      {
+        name: 'tide_generate_hooks',
+        description: 'Generate 5 Hormozi-style scroll-stopping hooks (Contrarian, Effort-reduction, Case study proof, Avoidable mistake, Transformation) for any topic.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            topic: {
+              type: 'string',
+              description: 'The core topic, offer, or angle to generate hooks for'
+            }
+          },
+          required: ['topic']
+        }
+      },
+      {
+        name: 'tide_repurpose_content',
+        description: 'Repurpose long-form content, transcripts, or notes into 4 native platform posts (Instagram Reel, LinkedIn Carousel, Threads sequence, TikTok POV).',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            text: {
+              type: 'string',
+              description: 'The source article, transcript, or newsletter excerpt to repurpose'
+            }
+          },
+          required: ['text']
+        }
+      },
+      {
+        name: 'tide_generate_storyboard',
+        description: 'Generate a retention-optimized 18-second video storyboard breakdown with timestamps, visual cues, on-screen text, and retention goals.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            topic: {
+              type: 'string',
+              description: 'Topic or concept for the short-form video'
+            }
+          },
+          required: ['topic']
+        }
       }
     ]
   };
@@ -548,6 +590,45 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: 'text',
               text: `Brand Brain section "${section}" updated successfully.`
+            }
+          ]
+        };
+      }
+
+      case 'tide_generate_hooks': {
+        const { topic } = args;
+        const hooks = core.generateHormoziHooks(topic);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({ topic, hooks }, null, 2)
+            }
+          ]
+        };
+      }
+
+      case 'tide_repurpose_content': {
+        const { text } = args;
+        const repurposed = core.repurposeContent(text);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(repurposed, null, 2)
+            }
+          ]
+        };
+      }
+
+      case 'tide_generate_storyboard': {
+        const { topic } = args;
+        const storyboard = core.generateVideoStoryboard(topic);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(storyboard, null, 2)
             }
           ]
         };
