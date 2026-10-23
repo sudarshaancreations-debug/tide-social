@@ -1807,6 +1807,196 @@ document.getElementById('btn-open-storyboard')?.addEventListener('click', () => 
   openModal('storyboard-modal');
 });
 
+
+// --- Profile & Organization Management ---
+const defaultProfile = {
+  name: "Arjun Kapoor",
+  email: "arjun@acmestudio.com",
+  title: "Head of Growth & Content Strategy",
+  timezone: "Asia/Kolkata",
+  lang: "en-US",
+  initials: "AK"
+};
+
+const defaultTeam = [
+  { id: 1, name: "Arjun Kapoor", email: "arjun@acmestudio.com", role: "Owner", initials: "AK" },
+  { id: 2, name: "Priya Patel", email: "priya@acmestudio.com", role: "Approver", initials: "PP" },
+  { id: 3, name: "Liam Vance", email: "liam@acmestudio.com", role: "Creator", initials: "LV" }
+];
+
+let profileData = read("tide-profile", defaultProfile);
+let teamMembers = read("tide-team", defaultTeam);
+
+function renderProfile() {
+  const nameInput = document.getElementById("input-profile-name");
+  const emailInput = document.getElementById("input-profile-email");
+  const titleInput = document.getElementById("input-profile-title");
+  const tzInput = document.getElementById("input-profile-timezone");
+  const langInput = document.getElementById("input-profile-lang");
+  const avatarDisplay = document.getElementById("profile-display-avatar");
+  const sidebarName = document.getElementById("sidebar-profile-name");
+  const sidebarAvatar = document.getElementById("sidebar-avatar-initials");
+  const modalTitle = document.getElementById("profile-title");
+  const statChannels = document.getElementById("profile-stat-channels");
+
+  if (nameInput) nameInput.value = profileData.name;
+  if (emailInput) emailInput.value = profileData.email;
+  if (titleInput) titleInput.value = profileData.title;
+  if (tzInput) tzInput.value = profileData.timezone;
+  if (langInput) langInput.value = profileData.lang;
+  if (avatarDisplay) avatarDisplay.textContent = profileData.initials || "AK";
+  if (sidebarName) sidebarName.textContent = profileData.name;
+  if (sidebarAvatar) sidebarAvatar.textContent = profileData.initials || "AK";
+  if (modalTitle) modalTitle.textContent = profileData.name;
+  if (statChannels) statChannels.textContent = `${accounts.length} Connected / Unlimited`;
+}
+
+function renderTeam() {
+  const listEl = document.getElementById("team-members-list");
+  if (!listEl) return;
+
+  listEl.innerHTML = teamMembers.map(member => `
+    <div class="team-row" data-member-id="${member.id}">
+      <div class="team-row-left">
+        <div class="avatar" style="width:36px; height:36px; font-size:11px;">${member.initials}</div>
+        <div>
+          <strong>${escapeHtml(member.name)}</strong>
+          <small>${escapeHtml(member.email)}</small>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="role-badge ${member.role === "Owner" ? "owner" : ""}">${member.role}</span>
+        ${member.role !== "Owner" ? `<button type="button" class="btn-remove-team" data-remove-id="${member.id}">Remove</button>` : ""}
+      </div>
+    </div>
+  `).join("");
+
+  listEl.querySelectorAll(".btn-remove-team").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = Number(btn.dataset.removeId);
+      teamMembers = teamMembers.filter(m => m.id !== id);
+      write("tide-team", teamMembers);
+      renderTeam();
+      toast("Team member removed from workspace.");
+    });
+  });
+}
+
+// Profile Save Form
+document.getElementById("profile-details-form")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("input-profile-name")?.value.trim();
+  const email = document.getElementById("input-profile-email")?.value.trim();
+  const title = document.getElementById("input-profile-title")?.value.trim();
+  const tz = document.getElementById("input-profile-timezone")?.value;
+  const lang = document.getElementById("input-profile-lang")?.value;
+
+  if (!name || !email) return toast("Name and Email are required.");
+
+  const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "AK";
+
+  profileData = { name, email, title, timezone: tz, lang, initials };
+  write("tide-profile", profileData);
+
+  // Update in team array too if present
+  if (teamMembers[0]) {
+    teamMembers[0].name = name;
+    teamMembers[0].email = email;
+    teamMembers[0].initials = initials;
+    write("tide-team", teamMembers);
+    renderTeam();
+  }
+
+  renderProfile();
+  toast("Profile information saved!");
+});
+
+document.getElementById("btn-save-profile-top")?.addEventListener("click", () => {
+  document.getElementById("profile-details-form")?.requestSubmit();
+});
+
+document.getElementById("btn-change-avatar")?.addEventListener("click", () => {
+  const newName = prompt("Enter initials or name for your avatar:", profileData.initials || "AK");
+  if (newName) {
+    profileData.initials = newName.slice(0, 2).toUpperCase();
+    write("tide-profile", profileData);
+    renderProfile();
+    toast("Avatar updated!");
+  }
+});
+
+// Download Invoice Simulation
+document.getElementById("btn-download-invoice")?.addEventListener("click", () => {
+  const content = `TIDE SOCIAL - RECEIPT & TAX INVOICE
+Invoice #: TIDE-2026-9810
+Billing Period: Oct 01, 2026 - Oct 31, 2026
+Plan: Studio Pro (Unlimited Channels & AI Suite)
+Amount Paid: $99.00 USD
+Payment Method: Visa ending in 4242
+Status: Paid (Confirmed)
+
+Workspace: ACME Studio
+Account Holder: ${profileData.name} (${profileData.email})
+Thank you for using Tide Social!`;
+
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "tide_social_invoice_oct2026.txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast("Downloaded invoice tide_social_invoice_oct2026.txt");
+});
+
+document.getElementById("btn-manage-subscription")?.addEventListener("click", () => {
+  toast("Stripe customer billing portal loaded. Active plan: Studio Unlimited.");
+});
+
+// Team Invite Modal Submit
+document.getElementById("btn-invite-team-member")?.addEventListener("click", () => {
+  openModal("invite-modal");
+});
+
+document.getElementById("invite-member-form")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("invite-name")?.value.trim();
+  const email = document.getElementById("invite-email")?.value.trim();
+  const role = document.getElementById("invite-role")?.value;
+
+  if (!name || !email) return toast("Name and Email are required.");
+
+  const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "TM";
+  teamMembers.push({ id: Date.now(), name, email, role, initials });
+  write("tide-team", teamMembers);
+
+  renderTeam();
+  closeModal(document.getElementById("invite-modal"));
+  e.currentTarget.reset();
+  toast(`Invitation sent to ${email} as ${role}!`);
+});
+
+// MCP Connection Handlers
+document.getElementById("btn-copy-mcp-key")?.addEventListener("click", () => {
+  navigator.clipboard?.writeText("http://localhost:3000/sse").catch(() => {});
+  toast("Copied MCP endpoint http://localhost:3000/sse to clipboard!");
+});
+
+document.getElementById("btn-test-mcp-connection")?.addEventListener("click", function() {
+  this.textContent = "Connecting...";
+  setTimeout(() => {
+    this.textContent = "Test connection ✓";
+    toast("MCP Server online! 17 social queue and skill tools ready for AI agents.");
+  }, 600);
+});
+
+document.getElementById("btn-open-full-profile")?.addEventListener("click", () => {
+  closeModal(document.getElementById("profile-modal"));
+  showView("profile");
+});
+
 // Initial Render
 setupPlatforms();
 renderWeek();
@@ -1817,4 +2007,6 @@ renderThreads();
 renderAccounts();
 renderConcepts("");
 renderBrand();
+renderProfile();
+renderTeam();
 updateBadges();

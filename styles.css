@@ -326,3 +326,67 @@
   align-items: center;
   gap: 8px;
 }
+
+/* Profile & Team Page Styles */
+.profile-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 900px) {
+  .profile-layout-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+.team-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  gap: 12px;
+}
+.team-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.team-row strong {
+  display: block;
+  font-size: 13px;
+  color: var(--ink);
+}
+.team-row small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.role-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f0eee6;
+  color: var(--ink);
+}
+.role-badge.owner {
+  background: #eef8f1;
+  color: var(--green);
+  border: 1px solid #cee8d7;
+}
+.btn-remove-team {
+  border: 0;
+  background: transparent;
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.btn-remove-team:hover {
+  text-decoration: underline;
+}
