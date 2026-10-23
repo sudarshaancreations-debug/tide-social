@@ -125,7 +125,14 @@ function updateBadges() {
   const overApprBadge = document.getElementById('overview-approval-badge');
   const apprFilter = document.getElementById('approvals-filter-count');
   if (apprBadge) apprBadge.textContent = remainingApprovals;
-  if (overApprBadge) overApprBadge.textContent = remainingApprovals;
+  if (overApprBadge) {
+    overApprBadge.textContent = remainingApprovals;
+    if (remainingApprovals === 0) {
+      overApprBadge.classList.add('zero');
+    } else {
+      overApprBadge.classList.remove('zero');
+    }
+  }
   if (apprFilter) apprFilter.textContent = `${remainingApprovals} awaiting review`;
 
   const inboxBadge = document.getElementById('inbox-badge');
@@ -169,63 +176,327 @@ function closeModal(modal) {
   document.body.style.overflow = '';
 }
 
-function renderWeek() {
-  const weekGrid = document.getElementById('week-grid');
-  if (!weekGrid) return;
-  const days = [['MON', 19], ['TUE', 20], ['WED', 21], ['THU', 22], ['FRI', 23], ['SAT', 24], ['SUN', 25]];
-  weekGrid.innerHTML = days.map(([day, date]) => `
-    <div class="day ${date === 23 ? 'today' : ''}">
-      ${day}<strong>${date}</strong>
-    </div>
-  `).join('');
+let calCurrentYear = 2026;
+let calCurrentMonth = 9; // 0-indexed: 9 = October
+let calSelectedDate = "2026-10-23";
+let calFilterPlatform = "All";
+let calViewMode = "month";
+let overviewSelectedDate = "2026-10-23";
+let activeViewingPostId = null;
 
-  const postList = document.getElementById('post-list');
-  if (!postList) return;
-  postList.innerHTML = scheduled.slice(0, 5).map(post => `
-    <div class="scheduled-post">
-      <span class="post-time">${post.time || '10:00'}</span>
-      <div class="post-title">
-        <strong>${post.title || post.copy?.slice(0, 48) || 'Scheduled Post'}</strong>
-        <small>${post.meta || (post.channels ? post.channels.join(' · ') : 'Instagram')}</small>
+const calMonthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function openComposerForDate(dateStr) {
+  const dateInput = document.querySelector("#composer-form [name=\"date\"]");
+  if (dateInput && dateStr) dateInput.value = dateStr;
+  openModal("composer-modal");
+  toast("Scheduling post for " + dateStr);
+}
+
+function openPostDetails(postId) {
+  const post = scheduled.find(p => String(p.id) === String(postId));
+  if (!post) return;
+  activeViewingPostId = post.id;
+
+  const platformBadge = document.getElementById("post-detail-platform");
+  const metaEl = document.getElementById("post-detail-meta");
+  const titleEl = document.getElementById("post-details-title");
+  const copyEl = document.getElementById("post-detail-copy-wrap");
+  const dateInput = document.getElementById("post-detail-date");
+  const timeInput = document.getElementById("post-detail-time");
+
+  const mainPlatform = post.channels?.[0] || post.meta?.split(" ")[0] || "Instagram";
+  if (platformBadge) {
+    platformBadge.className = "platform " + (post.cls || platformClass(mainPlatform));
+    platformBadge.textContent = platformMark(mainPlatform);
+  }
+  if (metaEl) metaEl.textContent = post.meta || (mainPlatform + " · Scheduled");
+  if (titleEl) titleEl.textContent = post.title || "Scheduled Post";
+  if (copyEl) copyEl.textContent = post.copy || post.title || "No copy provided.";
+  if (dateInput) dateInput.value = post.date || "2026-10-23";
+  if (timeInput) timeInput.value = post.time || "10:00";
+
+  openModal("post-details-modal");
+}
+
+function renderWeek() {
+  const weekGrid = document.getElementById("week-grid");
+  if (!weekGrid) return;
+  
+  const weekDates = [
+    { day: "MON", dateNum: 19, dateStr: "2026-10-19" },
+    { day: "TUE", dateNum: 20, dateStr: "2026-10-20" },
+    { day: "WED", dateNum: 21, dateStr: "2026-10-21" },
+    { day: "THU", dateNum: 22, dateStr: "2026-10-22" },
+    { day: "FRI", dateNum: 23, dateStr: "2026-10-23" },
+    { day: "SAT", dateNum: 24, dateStr: "2026-10-24" },
+    { day: "SUN", dateNum: 25, dateStr: "2026-10-25" }
+  ];
+
+  weekGrid.innerHTML = weekDates.map(item => {
+    const isToday = item.dateStr === "2026-10-23";
+    const isActive = item.dateStr === overviewSelectedDate;
+    const count = scheduled.filter(p => p.date === item.dateStr).length;
+    return `
+      <div class="day ${isActive ? "active" : ""} ${isToday ? "today" : ""}" data-date="${item.dateStr}">
+        ${item.day}<strong>${item.dateNum}</strong>
+        ${count > 0 ? `<b class="day-count-dot">${count}</b>` : ""}
       </div>
-      <span class="platform ${post.cls || platformClass(post.channels?.[0] || 'Instagram')}">
-        ${platformMark(post.channels?.[0] || post.meta?.split(' ')[0] || 'Instagram')}
-      </span>
-    </div>
-  `).join('');
+    `;
+  }).join("");
+
+  weekGrid.querySelectorAll(".day").forEach(d => {
+    d.addEventListener("click", () => {
+      overviewSelectedDate = d.dataset.date;
+      renderWeek();
+  renderCalendar();
+    });
+  });
+
+  const postList = document.getElementById("post-list");
+  if (!postList) return;
+
+  const dayPosts = scheduled.filter(p => p.date === overviewSelectedDate);
+
+  if (dayPosts.length === 0) {
+    postList.innerHTML = `
+      <div style="padding: 22px 14px; text-align: center; border: 1px dashed var(--line); border-radius: 10px; margin-top: 10px; background: #fffdfa;">
+        <p style="font-size: 12px; color: var(--muted); margin: 0 0 8px;">No posts scheduled for ${overviewSelectedDate}.</p>
+        <button type="button" class="button secondary small" id="btn-overview-schedule-day" style="font-size: 11px; padding: 5px 12px; font-weight: 700;">+ Schedule for this date</button>
+      </div>
+    `;
+    document.getElementById("btn-overview-schedule-day")?.addEventListener("click", () => {
+      openComposerForDate(overviewSelectedDate);
+    });
+    return;
+  }
+
+  postList.innerHTML = dayPosts.map(post => {
+    const mainPlatform = post.channels?.[0] || post.meta?.split(" ")[0] || "Instagram";
+    return `
+      <div class="scheduled-post" data-post-id="${post.id}">
+        <span class="post-time">${post.time || "10:00"}</span>
+        <div class="post-title">
+          <strong>${escapeHtml(post.title || post.copy?.slice(0, 48) || "Scheduled Post")}</strong>
+          <small>${escapeHtml(post.meta || mainPlatform)}</small>
+        </div>
+        <span class="platform ${post.cls || platformClass(mainPlatform)}">
+          ${platformMark(mainPlatform)}
+        </span>
+        <button type="button" class="btn-post-action" data-post-id="${post.id}">Manage ↗</button>
+      </div>
+    `;
+  }).join("");
+
+  postList.querySelectorAll(".scheduled-post, .btn-post-action").forEach(el => {
+    el.addEventListener("click", () => {
+      const postId = el.dataset.postId || el.closest("[data-post-id]")?.dataset.postId;
+      if (postId) openPostDetails(postId);
+    });
+  });
+}
+
+function getCalendarGrid(year, month) {
+  const firstDay = new Date(year, month, 1).getDay();
+  const startOffset = (firstDay + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  
+  const cells = [];
+  for (let i = startOffset - 1; i >= 0; i--) {
+    const d = daysInPrevMonth - i;
+    const pm = month === 0 ? 11 : month - 1;
+    const py = month === 0 ? year - 1 : year;
+    const dateStr = `${py}-${String(pm + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    cells.push({ day: d, dateStr, muted: true });
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    cells.push({ day: d, dateStr, muted: false });
+  }
+  const total = cells.length;
+  const rem = (7 - (total % 7)) % 7;
+  for (let d = 1; d <= rem; d++) {
+    const nm = month === 11 ? 0 : month + 1;
+    const ny = month === 11 ? year + 1 : year;
+    const dateStr = `${ny}-${String(nm + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    cells.push({ day: d, dateStr, muted: true });
+  }
+  return cells;
 }
 
 function renderCalendar() {
-  const monthTitle = document.getElementById('cal-month-title');
-  if (monthTitle) monthTitle.textContent = months[currentMonthIdx];
+  const monthTitle = document.getElementById("cal-month-title");
+  if (monthTitle) monthTitle.textContent = `${calMonthNames[calCurrentMonth]} ${calCurrentYear}`;
 
-  const monthGrid = document.getElementById('month-grid');
-  if (!monthGrid) return;
-  const cells = [];
-  for (let index = 28; index <= 38; index++) cells.push({ day: index > 30 ? index - 30 : index, muted: true });
-  for (let day = 1; day <= 31; day++) cells.push({ day, muted: false });
-  for (let day = 1; day <= 7; day++) cells.push({ day, muted: true });
-  
-  const events = {
-    5: ['Launch story', ''],
-    9: ['Founder lesson', 'blue'],
-    14: ['Carousel', ''],
-    18: ['Top post remix', 'blue'],
-    23: ['3 posts scheduled', ''],
-    27: ['Product reel', 'blue']
-  };
+  const monthGrid = document.getElementById("month-grid");
+  const weekView = document.getElementById("week-calendar-view");
+  const weekdaysBar = document.getElementById("calendar-weekdays");
+  const monthBtn = document.getElementById("cal-view-month");
+  const weekBtn = document.getElementById("cal-view-week");
 
-  monthGrid.innerHTML = cells.slice(0, 42).map(cell => {
-    const event = !cell.muted && events[cell.day];
-    return `
-      <div class="calendar-cell ${cell.muted ? 'muted' : ''}">
-        ${cell.day}
-        ${event ? `<div class="calendar-event ${event[1]}">${event[0]}</div>` : ''}
-      </div>
-    `;
-  }).join('');
+  if (calViewMode === "month") {
+    if (monthBtn) monthBtn.classList.add("active");
+    if (weekBtn) weekBtn.classList.remove("active");
+    if (monthGrid) monthGrid.hidden = false;
+    if (weekdaysBar) weekdaysBar.hidden = false;
+    if (weekView) weekView.hidden = true;
+
+    if (!monthGrid) return;
+    const cells = getCalendarGrid(calCurrentYear, calCurrentMonth);
+
+    monthGrid.innerHTML = cells.map(cell => {
+      const isToday = cell.dateStr === "2026-10-23";
+      const isSelected = cell.dateStr === calSelectedDate;
+      const dayPosts = scheduled.filter(p => {
+        if (p.date !== cell.dateStr) return false;
+        if (calFilterPlatform !== "All") {
+          const matchesMeta = p.meta && p.meta.toLowerCase().includes(calFilterPlatform.toLowerCase());
+          const matchesCls = p.cls === platformClass(calFilterPlatform);
+          const matchesChan = p.channels && p.channels.includes(calFilterPlatform);
+          return matchesMeta || matchesCls || matchesChan;
+        }
+        return true;
+      });
+
+      return `
+        <div class="calendar-cell ${cell.muted ? "muted" : ""} ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}" data-date="${cell.dateStr}">
+          <div class="cell-head">
+            <span class="cell-day-num">${cell.day}</span>
+            <button type="button" class="btn-cell-add" data-add-date="${cell.dateStr}" title="Add post on ${cell.dateStr}">＋</button>
+          </div>
+          <div class="cell-events">
+            ${dayPosts.map(post => {
+              const mainPlatform = post.channels?.[0] || post.meta?.split(" ")[0] || "Instagram";
+              let eventColor = "";
+              if (post.cls === "li" || mainPlatform === "LinkedIn") eventColor = "blue";
+              else if (post.cls === "tk" || mainPlatform === "TikTok") eventColor = "lime";
+              else if (post.cls === "fb" || mainPlatform === "Facebook") eventColor = "blue";
+              return `
+                <div class="calendar-event ${eventColor}" data-post-id="${post.id}" title="${escapeHtml(post.title || post.copy)}">
+                  <span class="platform-mini ${post.cls || platformClass(mainPlatform)}">${platformMark(mainPlatform)}</span>
+                  <span class="event-time">${post.time || "10:00"}</span>
+                  <span class="event-title">${escapeHtml(post.title || post.copy?.slice(0, 20) || "Post")}</span>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    monthGrid.querySelectorAll(".calendar-cell").forEach(cellEl => {
+      cellEl.addEventListener("click", (e) => {
+        const eventEl = e.target.closest(".calendar-event");
+        if (eventEl) {
+          e.stopPropagation();
+          openPostDetails(eventEl.dataset.postId);
+          return;
+        }
+        const addBtn = e.target.closest(".btn-cell-add");
+        if (addBtn) {
+          e.stopPropagation();
+          openComposerForDate(addBtn.dataset.addDate);
+          return;
+        }
+        calSelectedDate = cellEl.dataset.date;
+        monthGrid.querySelectorAll(".calendar-cell").forEach(c => c.classList.remove("selected"));
+        cellEl.classList.add("selected");
+      });
+    });
+
+    monthGrid.querySelectorAll(".btn-cell-add").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openComposerForDate(btn.dataset.addDate);
+      });
+    });
+
+  } else {
+    if (monthBtn) monthBtn.classList.remove("active");
+    if (weekBtn) weekBtn.classList.add("active");
+    if (monthGrid) monthGrid.hidden = true;
+    if (weekdaysBar) weekdaysBar.hidden = true;
+    if (weekView) weekView.hidden = false;
+
+    if (!weekView) return;
+    const weekDays = [
+      { name: "Monday", dateStr: "2026-10-19", label: "Oct 19" },
+      { name: "Tuesday", dateStr: "2026-10-20", label: "Oct 20" },
+      { name: "Wednesday", dateStr: "2026-10-21", label: "Oct 21" },
+      { name: "Thursday", dateStr: "2026-10-22", label: "Oct 22" },
+      { name: "Friday", dateStr: "2026-10-23", label: "Oct 23", isToday: true },
+      { name: "Saturday", dateStr: "2026-10-24", label: "Oct 24" },
+      { name: "Sunday", dateStr: "2026-10-25", label: "Oct 25" }
+    ];
+
+    weekView.innerHTML = weekDays.map(dayItem => {
+      const dayPosts = scheduled.filter(p => {
+        if (p.date !== dayItem.dateStr) return false;
+        if (calFilterPlatform !== "All") {
+          const matchesMeta = p.meta && p.meta.toLowerCase().includes(calFilterPlatform.toLowerCase());
+          const matchesCls = p.cls === platformClass(calFilterPlatform);
+          const matchesChan = p.channels && p.channels.includes(calFilterPlatform);
+          return matchesMeta || matchesCls || matchesChan;
+        }
+        return true;
+      });
+
+      return `
+        <div class="week-col ${dayItem.isToday ? "today" : ""}">
+          <div class="week-col-head">
+            <div>
+              <span style="display:block; font-size:11px; color:var(--muted);">${dayItem.name}</span>
+              <strong>${dayItem.label}</strong>
+            </div>
+            ${dayItem.isToday ? "<b>Today</b>" : ""}
+          </div>
+          <div class="week-col-posts">
+            ${dayPosts.length === 0 ? `<div style="color:var(--muted); font-size:11px; text-align:center; padding:20px 0;">No posts</div>` : ""}
+            ${dayPosts.map(post => {
+              const mainPlatform = post.channels?.[0] || post.meta?.split(" ")[0] || "Instagram";
+              return `
+                <div class="week-post-card" data-post-id="${post.id}">
+                  <div class="week-post-card-head">
+                    <span class="platform ${post.cls || platformClass(mainPlatform)}">${platformMark(mainPlatform)}</span>
+                    <strong style="color:var(--muted);">${post.time || "10:00"}</strong>
+                  </div>
+                  <div class="week-post-card-copy">${escapeHtml(post.title || post.copy?.slice(0, 48) || "Post")}</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+          <button type="button" class="btn-week-add" data-add-date="${dayItem.dateStr}">＋ Schedule post</button>
+        </div>
+      `;
+    }).join("");
+
+    weekView.querySelectorAll(".week-post-card").forEach(card => {
+      card.addEventListener("click", () => {
+        openPostDetails(card.dataset.postId);
+      });
+    });
+
+    weekView.querySelectorAll(".btn-week-add").forEach(btn => {
+      btn.addEventListener("click", () => {
+        openComposerForDate(btn.dataset.addDate);
+      });
+    });
+  }
 }
-
 function renderApprovals() {
   const board = document.getElementById('approval-board');
   if (!board) return;
@@ -254,6 +525,131 @@ function renderApprovals() {
       </div>
     </article>
   `).join('');
+}
+
+function renderOverviewApprovals() {
+  const container = document.getElementById("overview-approvals-container");
+  const badge = document.getElementById("overview-approval-badge");
+  if (!container) return;
+
+  if (approvalsList.length === 0) {
+    if (badge) {
+      badge.textContent = "0";
+      badge.classList.add("zero");
+    }
+    container.innerHTML = `
+      <div class="approval-empty-state">
+        <div class="empty-icon">🎉</div>
+        <strong>All caught up!</strong>
+        <p>No drafts waiting for your review. All scheduled posts are queued.</p>
+        <button type="button" class="button secondary small" id="btn-overview-empty-new" style="font-size: 11px; font-weight: 700; padding: 6px 14px; margin-top: 6px;">+ Create New Draft</button>
+      </div>
+    `;
+    document.getElementById("btn-overview-empty-new")?.addEventListener("click", () => {
+      openModal("composer-modal");
+    });
+    return;
+  }
+
+  if (badge) {
+    badge.textContent = approvalsList.length;
+    badge.classList.remove("zero");
+  }
+
+  const first = approvalsList[0];
+  const second = approvalsList[1];
+
+  let html = `
+    <div class="approval-card" id="overview-featured-approval" data-id="${first.id}">
+      <div class="reel-preview"><span class="reel-kicker">${escapeHtml(first.kicker || "YOUR BRAND")}</span><span class="play">▶</span><small>00:18</small></div>
+      <div class="approval-copy">
+        <span class="platform ${first.cls || platformClass(first.platform)}">${first.mark || platformMark(first.platform)}</span>
+        <strong>${escapeHtml(first.title)}</strong>
+        <p>${escapeHtml(first.type)} · Ready to review</p>
+        ${first.revision ? `<div class="revision-badge">Revision: "${escapeHtml(first.revision)}"</div>` : ""}
+      </div>
+      <div class="approval-actions">
+        <button class="approve" id="approve-featured-btn" data-id="${first.id}" aria-label="Approve reel">✓ Approve</button>
+        <button class="change" id="change-featured-btn" data-id="${first.id}" aria-label="Request change">Change</button>
+        <button class="storyboard-btn" id="btn-open-storyboard" type="button">🎬 Storyboard</button>
+      </div>
+    </div>
+  `;
+
+  if (second) {
+    html += `
+      <div class="approval-mini" data-id="${second.id}">
+        <span class="mini-visual ${second.cls === "li" ? "lemon" : (second.cls === "ig" ? "coral" : "blue")}">${second.mark || "✦"}</span>
+        <div>
+          <strong>${escapeHtml(second.title)}</strong>
+          <p>${escapeHtml(second.type)}</p>
+        </div>
+        <button class="approve" id="approve-mini-btn" data-id="${second.id}" aria-label="Approve draft">✓</button>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+
+  document.getElementById("approve-featured-btn")?.addEventListener("click", function () {
+    const id = this.dataset.id;
+    const item = approvalsList.find(a => a.id === id);
+    if (item) {
+      scheduled.unshift({
+        id: Date.now(),
+        time: "11:00",
+        date: "2026-10-26",
+        title: item.title,
+        meta: item.platform + " · Approved",
+        cls: item.cls,
+        copy: item.kicker
+      });
+      write("tide-posts", scheduled);
+      renderWeek();
+  renderCalendar();
+    }
+    approvalsList = approvalsList.filter(a => a.id !== id);
+    write("tide-approvals", approvalsList);
+    renderOverviewApprovals();
+    renderApprovals();
+    updateBadges();
+    toast("Draft approved and added to your publishing queue!");
+  });
+
+  document.getElementById("change-featured-btn")?.addEventListener("click", function () {
+    activeChangeCardId = this.dataset.id;
+    openModal("change-modal");
+  });
+
+  document.getElementById("btn-open-storyboard")?.addEventListener("click", () => {
+    renderStoryboard(first.title || "Brand Content");
+    openModal("storyboard-modal");
+  });
+
+  document.getElementById("approve-mini-btn")?.addEventListener("click", function () {
+    const id = this.dataset.id;
+    const item = approvalsList.find(a => a.id === id);
+    if (item) {
+      scheduled.unshift({
+        id: Date.now(),
+        time: "14:30",
+        date: "2026-10-26",
+        title: item.title,
+        meta: item.platform + " · Approved",
+        cls: item.cls,
+        copy: item.kicker
+      });
+      write("tide-posts", scheduled);
+      renderWeek();
+  renderCalendar();
+    }
+    approvalsList = approvalsList.filter(a => a.id !== id);
+    write("tide-approvals", approvalsList);
+    renderOverviewApprovals();
+    renderApprovals();
+    updateBadges();
+    toast("Draft approved and scheduled.");
+  });
 }
 
 function renderThreads(filter = 'All', search = '') {
@@ -749,6 +1145,7 @@ document.getElementById('composer-form')?.addEventListener('submit', event => {
     mediaPreview.innerHTML = '';
   }
   renderWeek();
+  renderCalendar();
   closeModal(document.getElementById('composer-modal'));
   toast(`Post scheduled for ${result.post.date} at ${result.post.time}!`);
 });
@@ -804,81 +1201,58 @@ document.getElementById('idea-results-list')?.addEventListener('click', event =>
 });
 
 // Approvals page logic
-document.getElementById('approval-board')?.addEventListener('click', event => {
-  const approveBtn = event.target.closest('.approve-board');
+document.getElementById("approval-board")?.addEventListener("click", event => {
+  const approveBtn = event.target.closest(".approve-board");
   if (approveBtn) {
     const id = approveBtn.dataset.id;
     const item = approvalsList.find(a => a.id === id);
     if (item) {
       scheduled.unshift({
         id: Date.now(),
-        time: '11:00',
-        date: '2026-10-26',
+        time: "11:00",
+        date: "2026-10-26",
         title: item.title,
-        meta: `${item.platform} · Approved`,
+        meta: item.platform + " · Approved",
         cls: item.cls,
         copy: item.kicker
       });
-      write('tide-posts', scheduled);
+      write("tide-posts", scheduled);
       renderWeek();
+  renderCalendar();
     }
     approvalsList = approvalsList.filter(a => a.id !== id);
-    write('tide-approvals', approvalsList);
+    write("tide-approvals", approvalsList);
     renderApprovals();
+    renderOverviewApprovals();
     updateBadges();
-    toast('Draft approved and added to your publishing queue!');
+    toast("Draft approved and added to your publishing queue!");
   }
 
-  const changeBtn = event.target.closest('.request-change');
+  const changeBtn = event.target.closest(".request-change");
   if (changeBtn) {
     activeChangeCardId = changeBtn.dataset.id;
-    openModal('change-modal');
+    openModal("change-modal");
   }
-});
-
-// Overview featured approval buttons
-document.getElementById('approve-featured-btn')?.addEventListener('click', function () {
-  this.textContent = 'Approved ✓';
-  this.disabled = true;
-  approvalsList = approvalsList.filter(a => a.id !== 'appr-1');
-  write('tide-approvals', approvalsList);
-  updateBadges();
-  renderApprovals();
-  toast('Reel approved and scheduled.');
-});
-
-document.getElementById('approve-mini-btn')?.addEventListener('click', function () {
-  this.textContent = '✓ Done';
-  this.disabled = true;
-  approvalsList = approvalsList.filter(a => a.id !== 'appr-2');
-  write('tide-approvals', approvalsList);
-  updateBadges();
-  renderApprovals();
-  toast('LinkedIn carousel approved.');
-});
-
-document.querySelector('[data-target="featured"]')?.addEventListener('click', () => {
-  activeChangeCardId = 'appr-1';
-  openModal('change-modal');
 });
 
 // Submit Change Request Modal
-document.getElementById('submit-change')?.addEventListener('click', () => {
-  const reqText = document.getElementById('change-request')?.value.trim();
-  if (!reqText) return toast('Describe the change you need.');
+document.getElementById("submit-change")?.addEventListener("click", () => {
+  const reqText = document.getElementById("change-request")?.value.trim();
+  if (!reqText) return toast("Describe the change you need.");
 
   if (activeChangeCardId) {
     const item = approvalsList.find(a => a.id === activeChangeCardId);
     if (item) {
       item.revision = reqText;
-      write('tide-approvals', approvalsList);
+      write("tide-approvals", approvalsList);
       renderApprovals();
+      renderOverviewApprovals();
     }
   }
-  closeModal(document.getElementById('change-modal'));
-  const changeInput = document.getElementById('change-request');
-  if (changeInput) changeInput.value = '';
-  toast('Revision requested. Note saved to the approval card.');
+  closeModal(document.getElementById("change-modal"));
+  const changeInput = document.getElementById("change-request");
+  if (changeInput) changeInput.value = "";
+  toast("Revision requested. Note saved to the approval card.");
 });
 
 // Unified Inbox logic
@@ -995,56 +1369,139 @@ document.getElementById('active-conversation')?.addEventListener('click', event 
   }
 });
 
-// Calendar Month Navigation & Toggle
-document.getElementById('cal-prev')?.addEventListener('click', () => {
-  if (currentMonthIdx > 0) {
-    currentMonthIdx--;
-    renderCalendar();
-    toast(`Viewing ${months[currentMonthIdx]}`);
-  }
+// Calendar Navigation & Controls
+document.getElementById("btn-cal-schedule-post")?.addEventListener("click", () => {
+  openComposerForDate(calSelectedDate);
 });
 
-document.getElementById('cal-next')?.addEventListener('click', () => {
-  if (currentMonthIdx < months.length - 1) {
-    currentMonthIdx++;
-    renderCalendar();
-    toast(`Viewing ${months[currentMonthIdx]}`);
+document.getElementById("cal-prev")?.addEventListener("click", () => {
+  calCurrentMonth--;
+  if (calCurrentMonth < 0) {
+    calCurrentMonth = 11;
+    calCurrentYear--;
   }
+  renderCalendar();
+  toast("Viewing " + calMonthNames[calCurrentMonth] + " " + calCurrentYear);
 });
 
-const monthBtn = document.getElementById('cal-view-month');
-const weekBtn = document.getElementById('cal-view-week');
-const monthGrid = document.getElementById('month-grid');
-const weekView = document.getElementById('week-calendar-view');
+document.getElementById("cal-next")?.addEventListener("click", () => {
+  calCurrentMonth++;
+  if (calCurrentMonth > 11) {
+    calCurrentMonth = 0;
+    calCurrentYear++;
+  }
+  renderCalendar();
+  toast("Viewing " + calMonthNames[calCurrentMonth] + " " + calCurrentYear);
+});
 
-if (monthBtn && weekBtn) {
-  monthBtn.addEventListener('click', () => {
-    monthBtn.classList.add('active');
-    weekBtn.classList.remove('active');
-    if (monthGrid) monthGrid.hidden = false;
-    if (weekView) weekView.hidden = true;
+document.getElementById("cal-today-btn")?.addEventListener("click", () => {
+  calCurrentYear = 2026;
+  calCurrentMonth = 9;
+  calSelectedDate = "2026-10-23";
+  overviewSelectedDate = "2026-10-23";
+  renderCalendar();
+  renderWeek();
+  renderCalendar();
+  toast("Jumped to today (Oct 23, 2026)");
+});
+
+document.getElementById("cal-platform-filter")?.addEventListener("change", function () {
+  calFilterPlatform = this.value;
+  renderCalendar();
+  toast(calFilterPlatform === "All" ? "Showing all platforms" : "Filtered to " + calFilterPlatform);
+});
+
+document.getElementById("cal-view-month")?.addEventListener("click", () => {
+  calViewMode = "month";
+  renderCalendar();
+});
+
+document.getElementById("cal-view-week")?.addEventListener("click", () => {
+  calViewMode = "week";
+  renderCalendar();
+});
+
+// Scheduled Post Details Modal Handlers (Reschedule, Edit, Publish, Delete)
+document.getElementById("btn-save-reschedule")?.addEventListener("click", () => {
+  if (!activeViewingPostId) return;
+  const post = scheduled.find(p => String(p.id) === String(activeViewingPostId));
+  if (!post) return;
+
+  const newDate = document.getElementById("post-detail-date")?.value;
+  const newTime = document.getElementById("post-detail-time")?.value;
+  if (!newDate || !newTime) return toast("Please select both date and time.");
+
+  post.date = newDate;
+  post.time = newTime;
+  write("tide-posts", scheduled);
+  renderCalendar();
+  renderWeek();
+  renderCalendar();
+  closeModal(document.getElementById("post-details-modal"));
+  toast("Post rescheduled for " + newDate + " at " + newTime + "!");
+});
+
+document.getElementById("btn-edit-in-composer")?.addEventListener("click", () => {
+  if (!activeViewingPostId) return;
+  const post = scheduled.find(p => String(p.id) === String(activeViewingPostId));
+  if (!post) return;
+
+  closeModal(document.getElementById("post-details-modal"));
+  if (composerCopy) {
+    composerCopy.value = post.copy || post.title || "";
+    const charCount = document.querySelector(".char-count");
+    if (charCount) charCount.textContent = composerCopy.value.length.toLocaleString() + " / 2,200";
+  }
+  const dateInput = document.querySelector("#composer-form [name=\"date\"]");
+  const timeInput = document.querySelector("#composer-form [name=\"time\"]");
+  if (dateInput) dateInput.value = post.date || "2026-10-26";
+  if (timeInput) timeInput.value = post.time || "10:30";
+
+  const mainPlatform = post.channels?.[0] || post.meta?.split(" ")[0] || "Instagram";
+  document.querySelectorAll("#composer-channel-checks input").forEach(input => {
+    input.checked = (input.value === mainPlatform);
   });
 
-  weekBtn.addEventListener('click', () => {
-    weekBtn.classList.add('active');
-    monthBtn.classList.remove('active');
-    if (monthGrid) monthGrid.hidden = true;
-    if (weekView) {
-      weekView.hidden = false;
-      const days = ['Mon Oct 19', 'Tue Oct 20', 'Wed Oct 21', 'Thu Oct 22', 'Thu Oct 23', 'Sat Oct 24', 'Sun Oct 25'];
-      weekView.innerHTML = days.map((day, idx) => `
-        <div class="week-col">
-          <div class="week-col-head"><span>${day}</span><b>${idx === 4 ? 'Today' : ''}</b></div>
-          ${scheduled[idx] ? `
-            <div class="calendar-event blue" style="margin-top: 4px;">
-              <strong>${scheduled[idx].time || '10:00'}</strong>: ${scheduled[idx].title || scheduled[idx].copy?.slice(0, 24)}
-            </div>
-          ` : `<small style="color: var(--muted);">No posts</small>`}
-        </div>
-      `).join('');
-    }
-  });
-}
+  openModal("composer-modal");
+  toast("Post loaded into Composer for editing.");
+});
+
+document.getElementById("btn-publish-now")?.addEventListener("click", () => {
+  if (!activeViewingPostId) return;
+  const postIdx = scheduled.findIndex(p => String(p.id) === String(activeViewingPostId));
+  if (postIdx === -1) return;
+
+  const post = scheduled[postIdx];
+  scheduled.splice(postIdx, 1);
+  write("tide-posts", scheduled);
+
+  const publishedCount = document.getElementById("metric-published");
+  if (publishedCount) {
+    const cur = parseInt(publishedCount.textContent) || 48;
+    publishedCount.textContent = cur + 1;
+  }
+
+  renderCalendar();
+  renderWeek();
+  renderCalendar();
+  closeModal(document.getElementById("post-details-modal"));
+  toast("Published \"" + (post.title || "Post") + "\" immediately to connected channels! 🚀");
+});
+
+document.getElementById("btn-delete-scheduled-post")?.addEventListener("click", () => {
+  if (!activeViewingPostId) return;
+  const postIdx = scheduled.findIndex(p => String(p.id) === String(activeViewingPostId));
+  if (postIdx === -1) return;
+
+  const post = scheduled[postIdx];
+  scheduled.splice(postIdx, 1);
+  write("tide-posts", scheduled);
+  renderCalendar();
+  renderWeek();
+  renderCalendar();
+  closeModal(document.getElementById("post-details-modal"));
+  toast("Deleted \"" + (post.title || "Post") + "\" from scheduled queue.");
+});
 
 // Brand Brain Edit Logic
 let activeBrandField = null;
@@ -1133,25 +1590,34 @@ document.getElementById('btn-refresh-analytics')?.addEventListener('click', func
   }, 900);
 });
 
-document.getElementById('btn-customize-columns')?.addEventListener('click', () => {
-  toast('Showing all standard metrics: Reach, Engagement, and Attributed Leads.');
+document.getElementById("btn-customize-columns")?.addEventListener("click", () => {
+  openModal("columns-modal");
 });
 
-// Analytics Period Select
-document.getElementById('pulse-period-select')?.addEventListener('change', function () {
-  const reach = document.getElementById('metric-reach');
-  const eng = document.getElementById('metric-engagement');
-  if (this.value === '7') {
-    if (reach) reach.textContent = '76.2K';
-    if (eng) eng.textContent = '9.1%';
-    toast('Showing last 7 days of performance');
-  } else {
-    if (reach) reach.textContent = '284.7K';
-    if (eng) eng.textContent = '8.6%';
-    toast('Showing last 30 days of performance');
+document.getElementById("btn-save-columns")?.addEventListener("click", () => {
+  const showReach = document.getElementById("col-toggle-reach")?.checked;
+  const showEng = document.getElementById("col-toggle-eng")?.checked;
+  const showLeads = document.getElementById("col-toggle-leads")?.checked;
+
+  const table = document.getElementById("analytics-table");
+  if (table) {
+    table.querySelectorAll("th:nth-child(3), td:nth-child(3)").forEach(cell => {
+      cell.style.display = showReach ? "" : "none";
+    });
+    table.querySelectorAll("th:nth-child(4), td:nth-child(4)").forEach(cell => {
+      cell.style.display = showEng ? "" : "none";
+    });
+    table.querySelectorAll("th:nth-child(5), td:nth-child(5)").forEach(cell => {
+      cell.style.display = showLeads ? "" : "none";
+    });
   }
+  closeModal(document.getElementById("columns-modal"));
+  toast("Table columns updated.");
 });
 
+document.getElementById("btn-service-status")?.addEventListener("click", () => {
+  openModal("status-modal");
+});
 // Policy Dialogs
 const policies = {
   privacy: [
@@ -1183,22 +1649,37 @@ document.querySelectorAll('[data-policy]').forEach(button => {
 });
 
 // Cookie Consent Logic
-const cookieBanner = document.querySelector('.cookie-banner');
-if (cookieBanner && !localStorage.getItem('tide-cookie-consent')) {
+const cookieBanner = document.querySelector(".cookie-banner");
+if (cookieBanner && !localStorage.getItem("tide-cookie-consent")) {
   cookieBanner.hidden = false;
 }
+
 function saveCookieConsent(value) {
-  localStorage.setItem('tide-cookie-consent', value);
+  localStorage.setItem("tide-cookie-consent", value);
   if (cookieBanner) cookieBanner.hidden = true;
-  toast('Cookie preference saved.');
+  toast("Cookie preference saved.");
 }
-document.getElementById('cookie-accept')?.addEventListener('click', () => saveCookieConsent('analytics'));
-document.getElementById('cookie-reject')?.addEventListener('click', () => saveCookieConsent('necessary'));
-document.getElementById('cookie-settings')?.addEventListener('click', () => openModal('cookie-modal'));
-document.getElementById('cookie-save')?.addEventListener('click', () => {
-  const isAnalytics = document.getElementById('analytics-cookie')?.checked;
-  saveCookieConsent(isAnalytics ? 'analytics' : 'necessary');
-  closeModal(document.getElementById('cookie-modal'));
+
+document.getElementById("cookie-accept")?.addEventListener("click", () => saveCookieConsent("analytics"));
+document.getElementById("cookie-reject")?.addEventListener("click", () => saveCookieConsent("necessary"));
+document.getElementById("cookie-settings")?.addEventListener("click", () => {
+  const cur = localStorage.getItem("tide-cookie-consent") || "necessary";
+  const analyticsInput = document.getElementById("analytics-cookie");
+  const marketingInput = document.getElementById("marketing-cookie");
+  if (analyticsInput) analyticsInput.checked = (cur === "analytics" || cur === "all");
+  if (marketingInput) marketingInput.checked = (cur === "all");
+  openModal("cookie-modal");
+});
+
+document.getElementById("cookie-save")?.addEventListener("click", () => {
+  const isAnalytics = document.getElementById("analytics-cookie")?.checked;
+  const isMarketing = document.getElementById("marketing-cookie")?.checked;
+  let val = "necessary";
+  if (isAnalytics && isMarketing) val = "all";
+  else if (isAnalytics) val = "analytics";
+  else if (isMarketing) val = "marketing";
+  saveCookieConsent(val);
+  closeModal(document.getElementById("cookie-modal"));
 });
 
 // --- REVERSE-ENGINEERED SKILL 1: Hormozi Hooks Engine ---
@@ -1331,8 +1812,9 @@ setupPlatforms();
 renderWeek();
 renderCalendar();
 renderApprovals();
+renderOverviewApprovals();
 renderThreads();
 renderAccounts();
-renderConcepts('');
+renderConcepts("");
 renderBrand();
 updateBadges();

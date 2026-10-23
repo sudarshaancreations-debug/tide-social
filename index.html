@@ -84,16 +84,7 @@
 
             <article class="panel approvals-panel">
               <div class="panel-head"><div><p class="eyebrow">YOUR CALL</p><h2>Ready for approval</h2></div><span class="count-badge" id="overview-approval-badge">3</span></div>
-              <div class="approval-card" id="overview-featured-approval">
-                <div class="reel-preview"><span class="reel-kicker">YOUR BRAND DOESN'T<br>NEED MORE CONTENT.</span><span class="play">▶</span><small>00:18</small></div>
-                <div class="approval-copy"><span class="platform ig">IG</span><strong>What your content is really missing</strong><p>AI reel · 18 seconds · 9:16</p></div>
-                <div class="approval-actions">
-                  <button class="approve" id="approve-featured-btn" aria-label="Approve reel">✓ Approve</button>
-                  <button class="change" data-open="change-modal" data-target="featured">Change</button>
-                  <button class="text-button" id="btn-open-storyboard" type="button" style="padding:0 6px;">Storyboard 🎬</button>
-                </div>
-              </div>
-              <div class="approval-mini"><span class="mini-visual lemon">5×</span><div><strong>Five hooks that stop the scroll</strong><p>LinkedIn carousel · 6 slides</p></div><button class="approve" id="approve-mini-btn" aria-label="Approve carousel">✓</button></div>
+              <div id="overview-approvals-container"></div>
               <button class="wide-link" data-view-link="approvals">Review all drafts <span>→</span></button>
             </article>
 
@@ -144,15 +135,39 @@
         </section>
 
         <section class="view" id="view-calendar" data-title="Calendar">
-          <div class="section-intro"><div><p class="eyebrow">PUBLISH</p><h2>One calendar. Every channel.</h2><p>Flexible queues by campaign, format, and account — with clear failure alerts.</p></div><button class="button primary" data-open="composer-modal">Schedule post ↗</button></div>
+          <div class="section-intro">
+            <div>
+              <p class="eyebrow">PUBLISH</p>
+              <h2>One calendar. Every channel.</h2>
+              <p>Flexible queues by campaign, format, and account — click any date or event to manage posts.</p>
+            </div>
+            <button class="button primary" id="btn-cal-schedule-post" type="button">Schedule post ↗</button>
+          </div>
           <article class="panel full-calendar">
             <div class="calendar-toolbar">
-              <button type="button" id="cal-prev">←</button>
+              <button type="button" id="cal-prev" aria-label="Previous month">←</button>
               <strong id="cal-month-title">October 2026</strong>
-              <button type="button" id="cal-next">→</button>
+              <button type="button" id="cal-next" aria-label="Next month">→</button>
+              <button type="button" class="button secondary small" id="cal-today-btn" style="padding:6px 12px; font-size:11px; margin-left:4px;">Today</button>
               <span></span>
+              <div class="cal-filter-group" style="display:flex; align-items:center; gap:6px; margin-right:8px;">
+                <label for="cal-platform-filter" style="font-size:11px; font-weight:700; color:var(--muted); margin:0;">Filter:</label>
+                <select id="cal-platform-filter" aria-label="Filter posts by platform" style="padding:6px 10px; font-size:11px; border:1px solid var(--line); border-radius:6px; background:#fff;">
+                  <option value="All">All platforms</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                  <option value="TikTok">TikTok</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="Threads">Threads</option>
+                  <option value="X">X (Twitter)</option>
+                  <option value="YouTube">YouTube</option>
+                </select>
+              </div>
               <button type="button" class="active" id="cal-view-month">Month</button>
               <button type="button" id="cal-view-week">Week</button>
+            </div>
+            <div class="calendar-weekdays" id="calendar-weekdays">
+              <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
             </div>
             <div class="month-grid" id="month-grid"></div>
             <div class="week-calendar-view" id="week-calendar-view" hidden></div>
@@ -384,8 +399,108 @@
   <!-- Cookie Notice Banner -->
   <aside class="cookie-banner" aria-label="Cookie notice" hidden><div><strong>Your choices, not ours.</strong><p>We use necessary cookies to keep Tide working. With your permission, analytics helps us improve the product. No ad tracking.</p></div><div><button class="button secondary" id="cookie-settings">Settings</button><button class="button secondary" id="cookie-reject">Necessary only</button><button class="button primary" id="cookie-accept">Accept analytics</button></div></aside>
 
+  <!-- Scheduled Post Details & Management Modal -->
+  <div class="modal" id="post-details-modal" role="dialog" aria-modal="true" aria-labelledby="post-details-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <span class="platform" id="post-detail-platform">IG</span>
+        <p class="eyebrow" id="post-detail-meta" style="margin:0;">Instagram · Scheduled</p>
+      </div>
+      <h2 id="post-details-title" style="font-size:20px; line-height:1.3; margin:4px 0 12px;">Scheduled Post</h2>
+      <div id="post-detail-copy-wrap" style="background:#fbfaf6; border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:14px; font-size:13px; line-height:1.5; white-space:pre-wrap; max-height:200px; overflow-y:auto;"></div>
+      
+      <div class="form-row" style="margin-bottom:14px;">
+        <label>Scheduled Date
+          <input type="date" id="post-detail-date">
+        </label>
+        <label>Scheduled Time
+          <input type="time" id="post-detail-time">
+        </label>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="button primary" id="btn-save-reschedule" style="flex:1;">Save Date &amp; Time</button>
+          <button type="button" class="button secondary" id="btn-edit-in-composer" style="flex:1;">Edit in Composer</button>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="button secondary" id="btn-publish-now" style="flex:1; color:var(--green); border-color:#bfe9ca; background:#f0f9f3;">Publish Now ↗</button>
+          <button type="button" class="button secondary" id="btn-delete-scheduled-post" style="flex:1; color:var(--danger); border-color:#f5c6c2; background:#fff7f6;">Delete Post ✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customize Columns Modal -->
+  <div class="modal" id="columns-modal" role="dialog" aria-modal="true" aria-labelledby="columns-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">CUSTOMIZE REPORT TABLE</p>
+      <h2 id="columns-title">Choose metrics to show</h2>
+      <div class="cookie-option">
+        <div><strong>Post Title &amp; Topic</strong><p>Content title, scheduled tag, and format category.</p></div>
+        <input type="checkbox" checked disabled>
+      </div>
+      <div class="cookie-option">
+        <div><strong>Channel</strong><p>Social network account icon and handle tag.</p></div>
+        <input type="checkbox" checked disabled>
+      </div>
+      <div class="cookie-option">
+        <div><strong>Reach (Impressions)</strong><p>Total unique screens the post was delivered to.</p></div>
+        <input type="checkbox" id="col-toggle-reach" checked>
+      </div>
+      <div class="cookie-option">
+        <div><strong>Engagement Rate</strong><p>Likes, comments, shares, and watch retention percentage.</p></div>
+        <input type="checkbox" id="col-toggle-eng" checked>
+      </div>
+      <div class="cookie-option">
+        <div><strong>Attributed Leads</strong><p>Direct DMs, link clicks, bio-link inquiries generated.</p></div>
+        <input type="checkbox" id="col-toggle-leads" checked>
+      </div>
+      <button class="button primary full" id="btn-save-columns" type="button">Apply columns</button>
+    </div>
+  </div>
+
+  <!-- Service Status Modal -->
+  <div class="modal" id="status-modal" role="dialog" aria-modal="true" aria-labelledby="status-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">SYSTEM MONITOR</p>
+      <h2 id="status-title">All Systems Operational</h2>
+      <p style="color:var(--muted); font-size:12px; margin-bottom:12px;">Live connection latency &amp; API rate-limit health across all 12 supported platforms.</p>
+      <div style="display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto; padding-right:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#f4fbf6; border-radius:8px; font-size:12px;">
+          <span>Instagram Graph API (v21.0)</span><b style="color:var(--green);">● 99.98% Healthy</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#f4fbf6; border-radius:8px; font-size:12px;">
+          <span>LinkedIn Community API</span><b style="color:var(--green);">● 100% Healthy</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#f4fbf6; border-radius:8px; font-size:12px;">
+          <span>TikTok Content Posting API</span><b style="color:var(--green);">● 99.95% Healthy</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#f4fbf6; border-radius:8px; font-size:12px;">
+          <span>Facebook Pages Graph API</span><b style="color:var(--green);">● 100% Healthy</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#f4fbf6; border-radius:8px; font-size:12px;">
+          <span>Threads Publishing API</span><b style="color:var(--green);">● 100% Healthy</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#f4fbf6; border-radius:8px; font-size:12px;">
+          <span>X (Twitter) API v2</span><b style="color:var(--green);">● 100% Healthy</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#f4fbf6; border-radius:8px; font-size:12px;">
+          <span>YouTube Data API v3</span><b style="color:var(--green);">● 100% Healthy</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#f4fbf6; border-radius:8px; font-size:12px;">
+          <span>Bluesky AT Protocol</span><b style="color:var(--green);">● 100% Healthy</b>
+        </div>
+      </div>
+      <button class="button primary full" data-close type="button" style="margin-top:14px;">Done</button>
+    </div>
+  </div>
+
   <!-- Cookie Settings Modal -->
-  <div class="modal" id="cookie-modal" role="dialog" aria-modal="true" aria-labelledby="cookie-title" hidden><div class="modal-card small-modal"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">COOKIE SETTINGS</p><h2 id="cookie-title">Choose what Tide may store</h2><div class="cookie-option"><div><strong>Necessary</strong><p>Authentication, security, consent and core product state.</p></div><input type="checkbox" checked disabled aria-label="Necessary cookies always enabled"></div><div class="cookie-option"><div><strong>Product analytics</strong><p>Anonymous usage patterns that help us improve flows.</p></div><input id="analytics-cookie" type="checkbox" aria-label="Allow product analytics"></div><button class="button primary full" id="cookie-save">Save choices</button></div></div>
+  <div class="modal" id="cookie-modal" role="dialog" aria-modal="true" aria-labelledby="cookie-title" hidden><div class="modal-card small-modal"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">COOKIE SETTINGS</p><h2 id="cookie-title">Choose what Tide may store</h2><div class="cookie-option"><div><strong>Necessary</strong><p>Authentication, security, consent and core product state.</p></div><input type="checkbox" id="cookie-necessary" checked disabled aria-label="Necessary cookies always enabled"></div><div class="cookie-option"><div><strong>Product analytics</strong><p>Anonymous usage patterns that help us improve flows.</p></div><input id="analytics-cookie" type="checkbox" aria-label="Allow product analytics"></div><div class="cookie-option"><div><strong>Marketing &amp; Embeds</strong><p>Social media embeds and preview rendering cookies.</p></div><input id="marketing-cookie" type="checkbox" aria-label="Allow marketing cookies"></div><button class="button primary full" id="cookie-save">Save choices</button></div></div>
 
   <script src="core.js"></script>
   <script src="app.js"></script>
