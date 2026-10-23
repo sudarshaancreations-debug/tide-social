@@ -1,0 +1,84 @@
+const fs = require('fs');
+const path = require('path');
+const core = require('../core.js');
+
+const STATE_FILE = path.join(__dirname, 'tide-state.json');
+
+const defaultState = {
+  accounts: [
+    { platform: 'Instagram', handle: '@acmestudio', audience: '42.8K followers', cls: 'ig', status: 'Healthy', tokenExpires: '60 days' },
+    { platform: 'LinkedIn', handle: 'ACME Studio', audience: '18.2K followers', cls: 'li', status: 'Healthy', tokenExpires: '90 days' },
+    { platform: 'TikTok', handle: '@acme.studio', audience: '31.4K followers', cls: 'tk', status: 'Healthy', tokenExpires: '45 days' },
+    { platform: 'Facebook', handle: 'ACME Studio', audience: '12.7K followers', cls: 'fb', status: 'Healthy', tokenExpires: '120 days' }
+  ],
+  scheduled: [
+    { id: 1, time: '09:30', date: '2026-10-23', title: 'The 10-minute content system', channels: ['Instagram'], meta: 'Instagram · Reel', cls: 'ig', copy: 'The 10-minute content system that gave us our Fridays back.' },
+    { id: 2, time: '12:00', date: '2026-10-24', title: 'What 183 posts taught us', channels: ['LinkedIn'], meta: 'LinkedIn · Carousel', cls: 'li', copy: 'What 183 posts taught us about consistency vs quality.' },
+    { id: 3, time: '16:45', date: '2026-10-25', title: 'A week behind the scenes', channels: ['TikTok'], meta: 'TikTok · Video', cls: 'tk', copy: 'Behind our weekly planning ritual at ACME.' }
+  ],
+  approvals: [
+    { id: 'appr-1', kicker: 'YOUR BRAND DOESN’T NEED MORE CONTENT.', type: 'Instagram reel', title: 'What your content is really missing', platform: 'Instagram', cls: 'ig', mark: 'IG', revision: null },
+    { id: 'appr-2', kicker: '5 HOOKS THAT STOP THE SCROLL', type: 'LinkedIn carousel', title: 'Five hooks that earn attention', platform: 'LinkedIn', cls: 'li', mark: 'in', revision: null },
+    { id: 'appr-3', kicker: 'THE 10-MINUTE CONTENT SYSTEM', type: 'TikTok video', title: 'A calmer way to stay consistent', platform: 'TikTok', cls: 'tk', mark: '♪', revision: null }
+  ],
+  threads: [
+    { id: 'th-1', initials: 'JM', name: '@julesmakes', message: 'Can you send me the template?', platform: 'Instagram', time: '2m', tone: 'coral', intent: 'Lead', reply: 'Absolutely — here’s the complete content planning template. I’d love to hear what you build with it.', replies: [], handled: false },
+    { id: 'th-2', initials: 'SL', name: 'Sarah Lin', message: 'This breakdown is so useful — saving it.', platform: 'LinkedIn', time: '18m', tone: 'blue', intent: 'Positive', reply: 'So glad it was useful, Sarah. The save is the highest compliment — thank you.', replies: [], handled: false },
+    { id: 'th-3', initials: 'TK', name: '@theokitchen', message: 'Where can I find the full guide?', platform: 'TikTok', time: '42m', tone: 'lime', intent: 'Lead', reply: 'It’s ready for you. I’ll send the full guide by DM so it’s easy to find later.', replies: [], handled: false },
+    { id: 'th-4', initials: 'MC', name: 'Maya Chen', message: 'Do you work with agencies too?', platform: 'Instagram', time: '1h', tone: 'lemon', intent: 'Lead', reply: 'Yes — agencies can manage unlimited client channels with separate approvals and brand rules.', replies: [], handled: false }
+  ],
+  brand: {
+    voice: {
+      title: 'Warm expert, never guru',
+      desc: 'Direct, generous, quietly opinionated. Short sentences. No hustle language.'
+    },
+    guardrails: {
+      title: 'Claims we never make',
+      desc: 'No guaranteed growth, fake urgency, competitor attacks, or unsupported statistics.'
+    },
+    visuals: {
+      title: 'Coral, ink, paper',
+      desc: 'Editorial layouts, candid people, natural light. Avoid glossy stock imagery.'
+    },
+    score: 92
+  },
+  analytics: {
+    reach30d: '284.7K',
+    reach7d: '76.2K',
+    engagementRate: '8.6%',
+    attributedLeads: 318,
+    bestFormat: 'Reels (3.2x avg reach)',
+    topPosts: [
+      { title: 'The content system that gave us Fridays back', platform: 'Instagram', reach: 84210, engagement: '11.8%', leads: 126 },
+      { title: 'Stop measuring consistency like this', platform: 'LinkedIn', reach: 42662, engagement: '9.4%', leads: 88 },
+      { title: 'Behind our weekly planning ritual', platform: 'TikTok', reach: 37901, engagement: '8.9%', leads: 47 }
+    ]
+  }
+};
+
+function loadState() {
+  try {
+    if (fs.existsSync(STATE_FILE)) {
+      const data = fs.readFileSync(STATE_FILE, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error('Error reading state file, using defaults:', err);
+  }
+  saveState(defaultState);
+  return defaultState;
+}
+
+function saveState(state) {
+  try {
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error writing state file:', err);
+  }
+}
+
+module.exports = {
+  loadState,
+  saveState,
+  core
+};

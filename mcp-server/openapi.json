@@ -1,0 +1,220 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tide Social API",
+    "description": "API for Tide Social to manage unlimited accounts, generate AI concepts, schedule posts, approve drafts, manage unified inboxes, and view social analytics across Instagram, LinkedIn, TikTok, Threads, and 8 other networks.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3100",
+      "description": "Local Tide Social HTTP server"
+    }
+  ],
+  "paths": {
+    "/api/accounts": {
+      "get": {
+        "operationId": "listAccounts",
+        "summary": "List all connected social media accounts and health status",
+        "responses": {
+          "200": {
+            "description": "A list of connected accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "connectAccount",
+        "summary": "Connect a new social media handle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": { "type": "string" },
+                  "handle": { "type": "string" },
+                  "workspace": { "type": "string" }
+                },
+                "required": ["platform", "handle"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account connected successfully"
+          }
+        }
+      }
+    },
+    "/api/concepts/generate": {
+      "post": {
+        "operationId": "generateConcepts",
+        "summary": "Generate brand-aligned content ideas and angles",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": { "type": "string" }
+                },
+                "required": ["prompt"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of generated concepts"
+          }
+        }
+      }
+    },
+    "/api/posts": {
+      "get": {
+        "operationId": "listScheduledPosts",
+        "summary": "List all scheduled social posts",
+        "responses": {
+          "200": {
+            "description": "List of scheduled posts"
+          }
+        }
+      },
+      "post": {
+        "operationId": "schedulePost",
+        "summary": "Schedule a new post across channels",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "copy": { "type": "string" },
+                  "channels": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "date": { "type": "string" },
+                  "time": { "type": "string" }
+                },
+                "required": ["copy", "channels", "date", "time"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post scheduled successfully"
+          }
+        }
+      }
+    },
+    "/api/approvals": {
+      "get": {
+        "operationId": "listApprovals",
+        "summary": "List all drafts awaiting approval",
+        "responses": {
+          "200": {
+            "description": "List of pending drafts"
+          }
+        }
+      }
+    },
+    "/api/approvals/{id}/approve": {
+      "post": {
+        "operationId": "approveDraft",
+        "summary": "Approve a pending draft post",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Draft approved"
+          }
+        }
+      }
+    },
+    "/api/inbox": {
+      "get": {
+        "operationId": "getInbox",
+        "summary": "Get unified inbox messages and comments",
+        "responses": {
+          "200": {
+            "description": "Inbox conversations"
+          }
+        }
+      }
+    },
+    "/api/inbox/{id}/reply": {
+      "post": {
+        "operationId": "replyToInbox",
+        "summary": "Send a reply to an inbox conversation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reply_text": { "type": "string" }
+                },
+                "required": ["reply_text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reply sent successfully"
+          }
+        }
+      }
+    },
+    "/api/analytics": {
+      "get": {
+        "operationId": "getAnalytics",
+        "summary": "Get social reach and engagement analytics",
+        "responses": {
+          "200": {
+            "description": "Analytics performance data"
+          }
+        }
+      }
+    },
+    "/api/brand": {
+      "get": {
+        "operationId": "getBrandBrain",
+        "summary": "Get brand voice rules and guardrails",
+        "responses": {
+          "200": {
+            "description": "Brand brain settings"
+          }
+        }
+      }
+    }
+  }
+}
