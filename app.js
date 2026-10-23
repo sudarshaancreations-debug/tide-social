@@ -49,6 +49,9 @@ const defaultBrand = {
   score: 92
 };
 
+const months = ['August 2026', 'September 2026', 'October 2026', 'November 2026', 'December 2026'];
+let currentMonthIdx = 2; // October 2026
+
 const platformClass = platform => ({
   Instagram: 'ig',
   LinkedIn: 'li',
@@ -99,6 +102,7 @@ let brandData = read('tide-brand', defaultBrand);
 let activeAccountIndex = null;
 let activeChangeCardId = null;
 let currentInboxFilter = 'All';
+let unreadOnlyFilter = false;
 let uploadedMediaFile = null;
 
 function toast(message) {
@@ -132,6 +136,9 @@ function updateBadges() {
 
   const publishedCount = document.getElementById('metric-published');
   if (publishedCount) publishedCount.textContent = 48 + (3 - remainingApprovals);
+
+  const profileCount = document.getElementById('profile-connected-count');
+  if (profileCount) profileCount.textContent = accounts.length;
 }
 
 function showView(name) {
@@ -186,6 +193,9 @@ function renderWeek() {
 }
 
 function renderCalendar() {
+  const monthTitle = document.getElementById('cal-month-title');
+  if (monthTitle) monthTitle.textContent = months[currentMonthIdx];
+
   const monthGrid = document.getElementById('month-grid');
   if (!monthGrid) return;
   const cells = [];
@@ -226,7 +236,7 @@ function renderApprovals() {
     return;
   }
 
-  board.innerHTML = approvalsList.map((item, index) => `
+  board.innerHTML = approvalsList.map((item) => `
     <article class="board-card" data-appr-id="${item.id}">
       <div class="board-art">${item.kicker}</div>
       <div class="board-body">
@@ -249,8 +259,9 @@ function renderThreads(filter = 'All', search = '') {
 
   const filtered = threadsList.filter(t => {
     const matchFilter = (filter === 'All' || t.platform === filter);
+    const matchUnread = unreadOnlyFilter ? !t.handled : true;
     const matchSearch = (!search || t.name.toLowerCase().includes(search.toLowerCase()) || t.message.toLowerCase().includes(search.toLowerCase()));
-    return matchFilter && matchSearch;
+    return matchFilter && matchUnread && matchSearch;
   });
 
   if (filtered.length === 0) {
@@ -350,7 +361,7 @@ function renderConversation(threadId) {
           ${thread.intent === 'Lead' ? 'Asked a product or resource question' : 'Regularly saves educational content'}
         </p>
       </div>
-      <button type="button">View profile →</button>
+      <button type="button" class="btn-view-audience-profile" data-name="${thread.name}" data-intent="${thread.intent}">View profile →</button>
     </aside>
   `;
 }
@@ -401,7 +412,6 @@ function renderAccounts() {
     `).join('');
   }
 
-  // Update composer channel checkboxes
   const composerChecks = document.getElementById('composer-channel-checks');
   if (composerChecks) {
     composerChecks.innerHTML = accounts.map((account, index) => `
@@ -458,7 +468,7 @@ function renderBrand() {
   if (visualsDesc) visualsDesc.textContent = brandData.visuals.desc;
 }
 
-// Global Event Handlers
+// Global Event Listeners
 document.querySelectorAll('[data-view]').forEach(button => {
   button.addEventListener('click', () => showView(button.dataset.view));
 });
@@ -491,6 +501,38 @@ if (mobileMenu) {
     document.querySelector('.sidebar')?.classList.toggle('open');
   });
 }
+
+// Profile Modal & Sidebar Click
+document.getElementById('sidebar-profile-btn')?.addEventListener('click', () => {
+  openModal('profile-modal');
+});
+
+document.getElementById('btn-workspace-switch')?.addEventListener('click', () => {
+  const ws = document.getElementById('profile-workspace-select')?.value;
+  const label = document.getElementById('header-workspace-label');
+  if (label && ws) label.textContent = ws.toUpperCase();
+  closeModal(document.getElementById('profile-modal'));
+  toast(`Switched workspace to ${ws}`);
+});
+
+// Notifications
+document.getElementById('notification-button')?.addEventListener('click', () => {
+  openModal('notification-modal');
+});
+
+document.getElementById('btn-clear-notifications')?.addEventListener('click', () => {
+  const dot = document.getElementById('notif-badge-dot');
+  if (dot) dot.style.display = 'none';
+  const list = document.getElementById('notification-list');
+  if (list) list.innerHTML = `<div style="text-align: center; color: var(--muted); padding: 20px;">All caught up! No unread notifications.</div>`;
+  closeModal(document.getElementById('notification-modal'));
+  toast('All notifications marked as read.');
+});
+
+// Service Status
+document.getElementById('btn-service-status')?.addEventListener('click', () => {
+  openModal('status-modal');
+});
 
 // Capacity card click -> open add channel modal
 document.getElementById('platform-capacity')?.addEventListener('click', event => {
@@ -535,6 +577,7 @@ document.getElementById('account-form')?.addEventListener('submit', event => {
   });
   write('tide-accounts', accounts);
   renderAccounts();
+  updateBadges();
   closeModal(document.getElementById('account-modal'));
   event.currentTarget.reset();
   toast(`${result.handle} connected successfully! Live token verified.`);
@@ -577,6 +620,7 @@ document.getElementById('btn-disconnect-channel')?.addEventListener('click', () 
     accounts.splice(activeAccountIndex, 1);
     write('tide-accounts', accounts);
     renderAccounts();
+    updateBadges();
     closeModal(document.getElementById('channel-options-modal'));
     toast(`Disconnected ${handle}.`);
   }
@@ -800,6 +844,16 @@ document.getElementById('approve-featured-btn')?.addEventListener('click', funct
   toast('Reel approved and scheduled.');
 });
 
+document.getElementById('approve-mini-btn')?.addEventListener('click', function () {
+  this.textContent = '✓ Done';
+  this.disabled = true;
+  approvalsList = approvalsList.filter(a => a.id !== 'appr-2');
+  write('tide-approvals', approvalsList);
+  updateBadges();
+  renderApprovals();
+  toast('LinkedIn carousel approved.');
+});
+
 document.querySelector('[data-target="featured"]')?.addEventListener('click', () => {
   activeChangeCardId = 'appr-1';
   openModal('change-modal');
@@ -836,6 +890,14 @@ document.getElementById('thread-list')?.addEventListener('click', event => {
 document.getElementById('thread-search')?.addEventListener('input', event => {
   const query = event.target.value;
   renderThreads(currentInboxFilter, query);
+});
+
+document.getElementById('thread-filter-toggle')?.addEventListener('click', function () {
+  unreadOnlyFilter = !unreadOnlyFilter;
+  this.style.background = unreadOnlyFilter ? 'var(--coral)' : '#fff';
+  this.style.color = unreadOnlyFilter ? '#fff' : 'inherit';
+  renderThreads(currentInboxFilter, document.getElementById('thread-search')?.value || '');
+  toast(unreadOnlyFilter ? 'Showing unread conversations only' : 'Showing all conversations');
 });
 
 document.getElementById('inbox-filter-btn')?.addEventListener('click', function () {
@@ -910,9 +972,43 @@ document.getElementById('active-conversation')?.addEventListener('click', event 
       toast('Saved snippet inserted.');
     }
   }
+
+  const viewProf = event.target.closest('.btn-view-audience-profile');
+  if (viewProf) {
+    const name = viewProf.dataset.name;
+    const intent = viewProf.dataset.intent;
+    const profContent = document.getElementById('audience-profile-content');
+    if (profContent) {
+      profContent.innerHTML = `
+        <div style="font-size:12px; display:grid; gap:6px;">
+          <div><strong>User:</strong> <span>${name}</span></div>
+          <div><strong>Intent:</strong> <span style="color:var(--coral); font-weight:700;">${intent}</span></div>
+          <div><strong>Past Engagement:</strong> <span>3 comments, 5 saves, 1 DM inquiry</span></div>
+          <div><strong>Status:</strong> <span>Qualified Lead (Sales handoff available)</span></div>
+        </div>
+      `;
+    }
+    openModal('audience-profile-modal');
+  }
 });
 
-// Calendar Month / Week toggle
+// Calendar Month Navigation & Toggle
+document.getElementById('cal-prev')?.addEventListener('click', () => {
+  if (currentMonthIdx > 0) {
+    currentMonthIdx--;
+    renderCalendar();
+    toast(`Viewing ${months[currentMonthIdx]}`);
+  }
+});
+
+document.getElementById('cal-next')?.addEventListener('click', () => {
+  if (currentMonthIdx < months.length - 1) {
+    currentMonthIdx++;
+    renderCalendar();
+    toast(`Viewing ${months[currentMonthIdx]}`);
+  }
+});
+
 const monthBtn = document.getElementById('cal-view-month');
 const weekBtn = document.getElementById('cal-view-week');
 const monthGrid = document.getElementById('month-grid');
@@ -932,7 +1028,7 @@ if (monthBtn && weekBtn) {
     if (monthGrid) monthGrid.hidden = true;
     if (weekView) {
       weekView.hidden = false;
-      const days = ['Mon Oct 19', 'Tue Oct 20', 'Wed Oct 21', 'Thu Oct 22', 'Fri Oct 23', 'Sat Oct 24', 'Sun Oct 25'];
+      const days = ['Mon Oct 19', 'Tue Oct 20', 'Wed Oct 21', 'Thu Oct 22', 'Thu Oct 23', 'Sat Oct 24', 'Sun Oct 25'];
       weekView.innerHTML = days.map((day, idx) => `
         <div class="week-col">
           <div class="week-col-head"><span>${day}</span><b>${idx === 4 ? 'Today' : ''}</b></div>
@@ -1021,6 +1117,23 @@ document.getElementById('btn-export-report')?.addEventListener('click', () => {
   toast('Report exported to tide_social_analytics_report.csv');
 });
 
+// Analytics Refresh & Column toggle
+document.getElementById('btn-refresh-analytics')?.addEventListener('click', function () {
+  this.textContent = 'Syncing APIs…';
+  setTimeout(() => {
+    this.textContent = 'Refresh data';
+    const audGrowth = document.getElementById('metric-aud-growth');
+    const leads = document.getElementById('metric-leads-count');
+    if (audGrowth) audGrowth.textContent = '+13,290';
+    if (leads) leads.textContent = '342';
+    toast('Analytics synced live with Meta & LinkedIn APIs.');
+  }, 900);
+});
+
+document.getElementById('btn-customize-columns')?.addEventListener('click', () => {
+  toast('Showing all standard metrics: Reach, Engagement, and Attributed Leads.');
+});
+
 // Analytics Period Select
 document.getElementById('pulse-period-select')?.addEventListener('change', function () {
   const reach = document.getElementById('metric-reach');
@@ -1048,8 +1161,7 @@ const policies = {
   ],
   terms: [
     'Terms of service',
-    '<h3>Your content</h3><p>You keep ownership of content you provide. You grant Tide only the rights needed to create, transform, schedule, and publish it at your direction.</p><h3>Platform rules</h3><p>You are responsible for having permission to connect accounts and for complying with each social platform’s rules. Tide may pause risky automation to protect your accounts.</p><h3>Service limits</h3><p>Publishing depends on third-party APIs. Tide reports confirmed, failed, and unknown outcomes separately and never treats an unverified publish as successful.</p>'
-  ],
+    '<h3>Your content</h3><p>You keep ownership of content you provide. You grant Tide only the rights needed to create, transform, schedule, and publish it at your direction.</p><h3>Platform rules</h3><p>You are responsible for having permission to connect accounts and for complying with each social platform’s rules. Tide may pause risky automation to protect your accounts.</p><h3>Service limits</h3><p>Publishing depends on third-party APIs. Tide reports confirmed, failed, and unknown outcomes separately and never treats an unverified publish as successful.</p>'],
   security: [
     'Security overview',
     '<h3>Designed for least privilege</h3><p>OAuth tokens are encrypted, scoped per channel, and revocable. Sensitive operations are logged. Team access supports roles and approval boundaries.</p><h3>Operational safeguards</h3><p>Monitoring, dependency review, backups, incident response, and recovery testing protect service continuity. Responsible disclosures receive a tracked human response.</p>'

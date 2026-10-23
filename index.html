@@ -38,7 +38,7 @@
           <div class="usage-track"><i id="automation-bar" style="width: 72%;"></i></div>
           <small id="automation-stat">18 of 25 posts approved</small>
         </div>
-        <button class="profile" type="button" aria-label="Open account menu">
+        <button class="profile" id="sidebar-profile-btn" type="button" aria-label="Open account menu">
           <span class="avatar">AK</span><span><strong>Arjun Kapoor</strong><small>Studio plan (Unlimited)</small></span><span>•••</span>
         </button>
       </div>
@@ -48,11 +48,11 @@
       <header class="topbar">
         <button class="mobile-menu" type="button" aria-label="Open navigation">☰</button>
         <div>
-          <p class="eyebrow">ACME STUDIO</p>
+          <p class="eyebrow" id="header-workspace-label">ACME STUDIO</p>
           <h1 id="page-title">Good morning, Arjun</h1>
         </div>
         <div class="top-actions">
-          <button class="icon-button" id="notification-button" type="button" aria-label="Notifications"><span aria-hidden="true">◉</span><i></i></button>
+          <button class="icon-button" id="notification-button" type="button" aria-label="Notifications"><span aria-hidden="true">◉</span><i id="notif-badge-dot"></i></button>
           <button class="button secondary" data-open="account-modal">＋ Add channel</button>
           <button class="button primary" data-open="composer-modal">Create post <span>↗</span></button>
         </div>
@@ -89,7 +89,7 @@
                 <div class="approval-copy"><span class="platform ig">IG</span><strong>What your content is really missing</strong><p>AI reel · 18 seconds · 9:16</p></div>
                 <div class="approval-actions"><button class="approve" id="approve-featured-btn" aria-label="Approve reel">✓ Approve</button><button class="change" data-open="change-modal" data-target="featured">Change</button></div>
               </div>
-              <div class="approval-mini"><span class="mini-visual lemon">5×</span><div><strong>Five hooks that stop the scroll</strong><p>LinkedIn carousel · 6 slides</p></div><button class="approve" aria-label="Approve carousel">✓</button></div>
+              <div class="approval-mini"><span class="mini-visual lemon">5×</span><div><strong>Five hooks that stop the scroll</strong><p>LinkedIn carousel · 6 slides</p></div><button class="approve" id="approve-mini-btn" aria-label="Approve carousel">✓</button></div>
               <button class="wide-link" data-view-link="approvals">Review all drafts <span>→</span></button>
             </article>
 
@@ -158,8 +158,8 @@
 
         <section class="view" id="view-analytics" data-title="Analytics">
           <div class="section-intro"><div><p class="eyebrow">ANSWERS, NOT CHARTS</p><h2>Know what to make next.</h2><p>Cross-channel reporting with post-level revenue, tags, exports, and explanations.</p></div><button class="button secondary" id="btn-export-report">Export report (.csv)</button></div>
-          <div class="analytics-grid"><article class="panel big-number"><p>Audience growth</p><strong>+12,842</strong><small>↑ 24% in 30 days</small></article><article class="panel big-number"><p>Attributed leads</p><strong>318</strong><small>↑ 41 from last period</small></article><article class="panel big-number"><p>Best format</p><strong>Reels</strong><small>3.2× average reach</small></article></div>
-          <article class="panel table-panel"><div class="panel-head"><h2>Top content</h2><button class="text-button" id="btn-refresh-analytics">Refresh data</button></div><table id="analytics-table"><thead><tr><th>Post</th><th>Channel</th><th>Reach</th><th>Engagement</th><th>Leads</th></tr></thead><tbody><tr><td><strong>The content system that gave us Fridays back</strong><small>Oct 18 · Educational</small></td><td><span class="platform ig">IG</span></td><td>84,210</td><td>11.8%</td><td>126</td></tr><tr><td><strong>Stop measuring consistency like this</strong><small>Oct 14 · Contrarian</small></td><td><span class="platform li">in</span></td><td>42,662</td><td>9.4%</td><td>88</td></tr><tr><td><strong>Behind our weekly planning ritual</strong><small>Oct 10 · BTS</small></td><td><span class="platform tk">♪</span></td><td>37,901</td><td>8.9%</td><td>47</td></tr><tr><td><strong>How to build an audience without burnout</strong><small>Oct 06 · Framework</small></td><td><span class="platform th">@</span></td><td>29,140</td><td>7.4%</td><td>38</td></tr></tbody></table></article>
+          <div class="analytics-grid"><article class="panel big-number"><p>Audience growth</p><strong id="metric-aud-growth">+12,842</strong><small>↑ 24% in 30 days</small></article><article class="panel big-number"><p>Attributed leads</p><strong id="metric-leads-count">318</strong><small>↑ 41 from last period</small></article><article class="panel big-number"><p>Best format</p><strong>Reels</strong><small>3.2× average reach</small></article></div>
+          <article class="panel table-panel"><div class="panel-head"><h2>Top content</h2><div style="display:flex; gap:8px;"><button class="text-button" id="btn-customize-columns">Customize columns</button><button class="text-button" id="btn-refresh-analytics">Refresh data</button></div></div><table id="analytics-table"><thead><tr><th>Post</th><th>Channel</th><th>Reach</th><th>Engagement</th><th>Leads</th></tr></thead><tbody><tr><td><strong>The content system that gave us Fridays back</strong><small>Oct 18 · Educational</small></td><td><span class="platform ig">IG</span></td><td>84,210</td><td>11.8%</td><td>126</td></tr><tr><td><strong>Stop measuring consistency like this</strong><small>Oct 14 · Contrarian</small></td><td><span class="platform li">in</span></td><td>42,662</td><td>9.4%</td><td>88</td></tr><tr><td><strong>Behind our weekly planning ritual</strong><small>Oct 10 · BTS</small></td><td><span class="platform tk">♪</span></td><td>37,901</td><td>8.9%</td><td>47</td></tr><tr><td><strong>How to build an audience without burnout</strong><small>Oct 06 · Framework</small></td><td><span class="platform th">@</span></td><td>29,140</td><td>7.4%</td><td>38</td></tr></tbody></table></article>
         </section>
 
         <section class="view" id="view-brand" data-title="Brand brain">
@@ -175,11 +175,92 @@
         </section>
       </main>
 
-      <footer><span>© 2026 Tide Social</span><nav aria-label="Legal"><button data-policy="privacy">Privacy</button><button data-policy="cookies">Cookie policy</button><button data-policy="terms">Terms</button><button data-policy="security">Security</button></nav><span>Service status: <b id="service-status">Operational</b></span></footer>
+      <footer><span>© 2026 Tide Social</span><nav aria-label="Legal"><button data-policy="privacy">Privacy</button><button data-policy="cookies">Cookie policy</button><button data-policy="terms">Terms</button><button data-policy="security">Security</button></nav><span>Service status: <button id="btn-service-status" style="border:0; background:none; color:var(--green); font-weight:700; cursor:pointer;" type="button">● Operational</button></span></footer>
     </div>
   </div>
 
   <div class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Notifications Modal -->
+  <div class="modal" id="notification-modal" role="dialog" aria-modal="true" aria-labelledby="notification-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">WORKSPACE ACTIVITY</p>
+      <h2 id="notification-title">Notifications</h2>
+      <div id="notification-list" style="display:flex; flex-direction:column; gap:8px; margin: 14px 0;">
+        <div class="scheduled-post" style="padding: 10px 0;">
+          <span class="platform ig">IG</span>
+          <div class="post-title"><strong>Instagram OAuth token verified</strong><small>Health status: 100% · Valid for 60 days</small></div>
+          <small style="color:var(--green);">● Active</small>
+        </div>
+        <div class="scheduled-post" style="padding: 10px 0;">
+          <span class="platform li">in</span>
+          <div class="post-title"><strong>Sarah Lin saved your carousel</strong><small>High lead intent detected</small></div>
+          <small>+1 lead</small>
+        </div>
+        <div class="scheduled-post" style="padding: 10px 0;">
+          <span class="platform tk">♪</span>
+          <div class="post-title"><strong>New comment on Reel #4</strong><small>@theokitchen: Where can I find guide?</small></div>
+          <small>AI draft ready</small>
+        </div>
+      </div>
+      <button class="button secondary full" id="btn-clear-notifications" type="button">Mark all as read</button>
+    </div>
+  </div>
+
+  <!-- Profile & Workspace Modal -->
+  <div class="modal" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">ACCOUNT SETTINGS</p>
+      <h2 id="profile-title">Arjun Kapoor</h2>
+      <div class="mini-rule" style="margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 6px;"><strong>Active Plan:</strong> <span>Studio Plan (Unlimited Channels)</span></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 6px;"><strong>Connected handles:</strong> <span id="profile-connected-count">4</span></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 6px;"><strong>Storage:</strong> <span>1.2 GB / Unlimited</span></div>
+        <div style="display:flex; justify-content:space-between;"><strong>Automation status:</strong> <span style="color: var(--green);">Active (72% approved)</span></div>
+      </div>
+      <label>Workspace
+        <select id="profile-workspace-select">
+          <option>ACME Studio</option>
+          <option>Client Accounts</option>
+          <option>Personal Brand</option>
+        </select>
+      </label>
+      <div style="display:flex; gap: 8px; margin-top: 16px;">
+        <button class="button secondary" style="flex:1;" data-close type="button">Close</button>
+        <button class="button primary" id="btn-workspace-switch" style="flex:1;" type="button">Switch workspace</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Health Modal -->
+  <div class="modal" id="status-modal" role="dialog" aria-modal="true" aria-labelledby="status-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">SYSTEM HEALTH</p>
+      <h2 id="status-title">All Systems Operational</h2>
+      <div class="mini-rule" style="display: grid; gap: 10px; margin-top: 12px;">
+        <div style="display:flex; justify-content:space-between;"><span>Meta Graph API (IG &amp; Threads)</span> <b style="color: var(--green);">● 100% Operational (21ms)</b></div>
+        <div style="display:flex; justify-content:space-between;"><span>LinkedIn API</span> <b style="color: var(--green);">● 100% Operational (18ms)</b></div>
+        <div style="display:flex; justify-content:space-between;"><span>TikTok Business API</span> <b style="color: var(--green);">● 100% Operational (32ms)</b></div>
+        <div style="display:flex; justify-content:space-between;"><span>YouTube Data v3</span> <b style="color: var(--green);">● 100% Operational (15ms)</b></div>
+        <div style="display:flex; justify-content:space-between;"><span>AI Generation Engine</span> <b style="color: var(--green);">● Healthy (0.8s avg)</b></div>
+      </div>
+      <button class="button primary full" data-close style="margin-top: 14px;" type="button">Close</button>
+    </div>
+  </div>
+
+  <!-- Audience Profile Modal -->
+  <div class="modal" id="audience-profile-modal" role="dialog" aria-modal="true" aria-labelledby="audience-profile-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">AUDIENCE INSIGHT</p>
+      <h2 id="audience-profile-title">Audience Profile</h2>
+      <div class="mini-rule" id="audience-profile-content" style="margin: 14px 0;"></div>
+      <button class="button primary full" data-close type="button">Done</button>
+    </div>
+  </div>
 
   <!-- Add Channel Modal -->
   <div class="modal" id="account-modal" role="dialog" aria-modal="true" aria-labelledby="account-title" hidden>
