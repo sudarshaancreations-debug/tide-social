@@ -12,54 +12,37 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class="app-shell">
-    <aside class="sidebar" aria-label="Primary navigation">
-      <a class="brand" href="#" aria-label="Tide Social home">
+  <div class="mobile-app" id="mobile-app">
+    <!-- Mobile App Header -->
+    <header class="mobile-header">
+      <a class="mobile-brand" href="#" data-view="home" aria-label="Tide Social home">
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span>Tide</span>
+        <span class="brand-title">Tide</span>
       </a>
 
-      <nav class="main-nav">
-        <p class="nav-label">Workspace</p>
-        <button class="nav-item active" data-view="home"><span aria-hidden="true">⌂</span> Overview</button>
-        <button class="nav-item" data-view="create"><span aria-hidden="true">✦</span> Create</button>
-        <button class="nav-item" data-view="calendar"><span aria-hidden="true">▦</span> Calendar</button>
-        <button class="nav-item" data-view="approvals"><span aria-hidden="true">✓</span> Approvals <b id="approvals-badge">3</b></button>
-        <button class="nav-item" data-view="inbox"><span aria-hidden="true">↗</span> Inbox <b id="inbox-badge">12</b></button>
-        <button class="nav-item" data-view="analytics"><span aria-hidden="true">⌁</span> Analytics</button>
-        <p class="nav-label">Intelligence</p>
-        <button class="nav-item" data-view="brand"><span aria-hidden="true">◇</span> Brand brain</button>
-        <button class="nav-item" data-view="accounts"><span aria-hidden="true">◎</span> Channels</button>
-        <button class="nav-item" data-view="profile"><span aria-hidden="true">👤</span> Profile &amp; Team</button>
-      </nav>
-
-      <div class="side-bottom">
-        <div class="usage-card">
-          <div class="usage-head"><span>Automation</span><strong id="automation-rate">72%</strong></div>
-          <div class="usage-track"><i id="automation-bar" style="width: 72%;"></i></div>
-          <small id="automation-stat">18 of 25 posts approved</small>
-        </div>
-        <button class="profile" id="sidebar-profile-btn" type="button" aria-label="Open profile settings" data-view-link="profile">
-          <span class="avatar" id="sidebar-avatar-initials">AK</span><span><strong id="sidebar-profile-name">Arjun Kapoor</strong><small>Studio plan (Unlimited)</small></span><span>⚙</span>
+      <div class="mobile-header-actions">
+        <button class="mobile-ws-btn" id="mobile-ws-btn" type="button" data-view-link="profile" aria-label="Workspace switcher">
+          <span class="ws-dot"></span>
+          <span id="mobile-header-ws-name">Acme Studio</span>
+          <span class="ws-arrow">▾</span>
+        </button>
+        <button class="icon-button mobile-notif-btn" id="notification-button" type="button" aria-label="Notifications" data-open="notification-modal">
+          <span aria-hidden="true">🔔</span>
+          <i id="notif-badge-dot"></i>
         </button>
       </div>
-    </aside>
+    </header>
 
-    <div class="workspace">
-      <header class="topbar">
-        <button class="mobile-menu" type="button" aria-label="Open navigation">☰</button>
-        <div>
-          <p class="eyebrow" id="header-workspace-label">ACME STUDIO</p>
-          <h1 id="page-title">Good morning, Arjun</h1>
-        </div>
-        <div class="top-actions">
-          <button class="icon-button" id="notification-button" type="button" aria-label="Notifications"><span aria-hidden="true">◉</span><i id="notif-badge-dot"></i></button>
-          <button class="button secondary" data-open="account-modal">＋ Add channel</button>
-          <button class="button primary" data-open="composer-modal">Create post <span>↗</span></button>
-        </div>
-      </header>
+    <!-- Quick Filter Navigation Chips -->
+    <nav class="mobile-quick-nav" aria-label="Quick section navigation">
+      <button class="quick-chip active" data-view="home">Feed</button>
+      <button class="quick-chip" data-view="approvals">Approvals <b class="chip-badge" id="approvals-badge">3</b></button>
+      <button class="quick-chip" data-view="brand">Brand Brain</button>
+      <button class="quick-chip" data-view="accounts">Channels</button>
+      <button class="quick-chip" data-view="analytics">Analytics</button>
+    </nav>
 
-      <main id="main" tabindex="-1">
+    <main id="main" tabindex="-1">
         <section class="view active" id="view-home" data-title="Good morning, Arjun">
           <div class="hero-row">
             <div>
@@ -719,9 +702,40 @@
         </section>
       </main>
 
-      <footer><span>© 2026 Tide Social</span><nav aria-label="Legal"><button data-policy="privacy">Privacy</button><button data-policy="cookies">Cookie policy</button><button data-policy="terms">Terms</button><button data-policy="security">Security</button></nav><span>Service status: <button id="btn-service-status" style="border:0; background:none; color:var(--green); font-weight:700; cursor:pointer;" type="button">● Operational</button></span></footer>
+      <footer class="mobile-footer">
+        <span>© 2026 Tide Social</span>
+        <nav aria-label="Legal">
+          <button data-policy="privacy">Privacy</button>
+          <button data-policy="cookies">Cookies</button>
+          <button data-policy="terms">Terms</button>
+        </nav>
+        <button id="btn-service-status" style="border:0; background:none; color:var(--green); font-weight:700; cursor:pointer;" type="button">● Operational</button>
+      </footer>
+
+      <!-- Native Mobile Bottom Tab Bar -->
+      <nav class="mobile-tab-bar" aria-label="Bottom Navigation">
+        <button class="tab-btn active" data-view="home" aria-label="Home">
+          <span class="tab-icon">⌂</span>
+          <span class="tab-label">Home</span>
+        </button>
+        <button class="tab-btn" data-view="calendar" aria-label="Schedule">
+          <span class="tab-icon">▦</span>
+          <span class="tab-label">Schedule</span>
+        </button>
+        <button class="tab-btn tab-btn-create" id="btn-bottom-create" data-open="composer-modal" aria-label="Create Post">
+          <span class="create-fab">＋</span>
+        </button>
+        <button class="tab-btn" data-view="inbox" aria-label="Inbox">
+          <span class="tab-icon">↗</span>
+          <span class="tab-label">Inbox</span>
+          <b class="tab-badge" id="tab-inbox-badge">12</b>
+        </button>
+        <button class="tab-btn" data-view="profile" aria-label="Profile & Team">
+          <span class="tab-icon">👤</span>
+          <span class="tab-label">Profile</span>
+        </button>
+      </nav>
     </div>
-  </div>
 
   <div class="toast" role="status" aria-live="polite"></div>
 

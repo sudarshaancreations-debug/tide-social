@@ -154,6 +154,8 @@ function updateBadges() {
 function showView(name) {
   document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === `view-${name}`));
   document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === name));
+  document.querySelectorAll('.tab-btn').forEach(item => item.classList.toggle('active', item.dataset.view === name));
+  document.querySelectorAll('.quick-chip').forEach(item => item.classList.toggle('active', item.dataset.view === name));
   const view = document.querySelector(`#view-${name}`);
   const titleEl = document.querySelector('#page-title');
   if (titleEl && view) titleEl.textContent = view.dataset.title || 'Tide Social';
@@ -910,6 +912,8 @@ document.getElementById('btn-workspace-switch')?.addEventListener('click', () =>
   const ws = document.getElementById('profile-workspace-select')?.value;
   const label = document.getElementById('header-workspace-label');
   if (label && ws) label.textContent = ws.toUpperCase();
+  const mobileWs = document.getElementById('mobile-header-ws-name');
+  if (mobileWs && ws) mobileWs.textContent = ws;
   closeModal(document.getElementById('profile-modal'));
   toast(`Switched workspace to ${ws}`);
 });
