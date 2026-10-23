@@ -209,120 +209,513 @@
           <div class="accounts-list panel" id="accounts-list"></div>
         </section>
 
-        <section class="view" id="view-profile" data-title="Profile & Team">
-          <div class="section-intro">
-            <div>
-              <p class="eyebrow">ACCOUNT &amp; WORKSPACE</p>
-              <h2>Profile &amp; Organization</h2>
-              <p>Manage your identity, team permissions, active plan limits, and AI API integrations.</p>
-            </div>
-            <button class="button primary" id="btn-save-profile-top" type="button">Save profile</button>
-          </div>
-
-          <div class="profile-layout-grid">
-            <!-- Personal Details -->
-            <article class="panel" style="padding:22px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                <p class="eyebrow" style="margin:0;">PERSONAL DETAILS</p>
-                <span class="status-indicator" style="padding:4px 10px; font-size:11px;">Active Member</span>
+        <section class="view" id="view-profile" data-title="Profile &amp; Workspace">
+          <div class="profile-wrapper">
+            <!-- Hero Identity Card -->
+            <div class="profile-hero-card">
+              <div class="profile-cover">
+                <div class="profile-cover-tag">⚡ Acme Studio • Studio Pro Tier</div>
               </div>
-              <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px;">
-                <div class="avatar" id="profile-display-avatar" style="width:58px; height:58px; font-size:18px; border:2px solid var(--line);">AK</div>
+              <div class="profile-hero-body">
+                <div class="profile-avatar-stack">
+                  <div class="avatar-interactive-wrap" id="profile-display-avatar" title="Click to change avatar appearance">
+                    AK
+                    <span class="avatar-camera-btn" title="Change avatar photo">📷</span>
+                  </div>
+                  <div class="profile-identity-info">
+                    <div class="profile-name-row">
+                      <h2 id="profile-header-name">Arjun Kapoor</h2>
+                      <span class="verified-badge" title="Verified Workspace Owner">✓</span>
+                    </div>
+                    <p class="profile-identity-subtitle" id="profile-header-title">Head of Growth &amp; Content Strategy</p>
+                    <div class="profile-meta-chips">
+                      <span class="meta-chip role-owner">★ Workspace Owner</span>
+                      <span class="meta-chip plan-pro">● Studio Pro Plan</span>
+                      <span class="meta-chip">📍 Mumbai, IST</span>
+                      <span class="meta-chip" id="profile-connected-chip">🔗 4 Channels Connected</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="profile-hero-actions">
+                  <button type="button" class="button secondary" id="btn-switch-workspace-hero">Switch Workspace</button>
+                  <button type="button" class="button primary" id="btn-save-profile-top">Save Changes</button>
+                </div>
+              </div>
+
+              <!-- Profile Navigation Tabs -->
+              <nav class="profile-tabs-nav" aria-label="Profile navigation">
+                <button type="button" class="profile-tab-btn active" data-profile-tab="general">
+                  <span>👤</span> My Profile
+                </button>
+                <button type="button" class="profile-tab-btn" data-profile-tab="team">
+                  <span>👥</span> Team &amp; Approvals <span class="tab-badge" id="team-tab-badge">3</span>
+                </button>
+                <button type="button" class="profile-tab-btn" data-profile-tab="billing">
+                  <span>💳</span> Plan &amp; Invoices <span class="tab-badge">Pro</span>
+                </button>
+                <button type="button" class="profile-tab-btn" data-profile-tab="mcp">
+                  <span>🤖</span> AI Agents &amp; MCP <span class="tab-badge">17 Tools</span>
+                </button>
+                <button type="button" class="profile-tab-btn" data-profile-tab="preferences">
+                  <span>⚙️</span> Security &amp; Alerts
+                </button>
+              </nav>
+            </div>
+
+            <!-- Tab 1: General & Profile Details -->
+            <div class="profile-tab-pane active" id="pane-general">
+              <!-- Avatar Appearance Bar -->
+              <div class="avatar-selection-panel">
                 <div>
-                  <button type="button" class="button secondary small" id="btn-change-avatar" style="margin-bottom:4px;">Change avatar</button>
-                  <small style="display:block; color:var(--muted); font-size:11px;">JPG, PNG or GIF. Max 5MB.</small>
+                  <strong style="font-size:13px; display:block;">Avatar Accent &amp; Photo</strong>
+                  <span style="font-size:11px; color:var(--text-muted);">Choose a signature color tone or customize your avatar identity</span>
                 </div>
-              </div>
-              <form id="profile-details-form">
-                <label>Full Name
-                  <input type="text" id="input-profile-name" value="Arjun Kapoor" required>
-                </label>
-                <label style="margin-top:12px;">Email Address
-                  <input type="email" id="input-profile-email" value="arjun@acmestudio.com" required>
-                </label>
-                <label style="margin-top:12px;">Role &amp; Title
-                  <input type="text" id="input-profile-title" value="Head of Growth &amp; Content Strategy">
-                </label>
-                <div class="form-row" style="margin-top:12px;">
-                  <label>Timezone
-                    <select id="input-profile-timezone">
-                      <option value="America/New_York">(UTC-05:00) Eastern Time (US &amp; Canada)</option>
-                      <option value="Europe/London">(UTC+00:00) London</option>
-                      <option value="Asia/Kolkata" selected>(UTC+05:30) Mumbai, New Delhi</option>
-                      <option value="America/Los_Angeles">(UTC-08:00) Pacific Time (US &amp; Canada)</option>
-                    </select>
-                  </label>
-                  <label>Language
-                    <select id="input-profile-lang">
-                      <option value="en-US">English (United States)</option>
-                      <option value="en-GB">English (UK)</option>
-                    </select>
-                  </label>
-                </div>
-                <button type="submit" class="button secondary full" style="margin-top:18px;">Update profile info</button>
-              </form>
-            </article>
-
-            <!-- Plan & Usage Card -->
-            <article class="panel" style="padding:22px; display:flex; flex-direction:column;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                <p class="eyebrow" style="margin:0;">PLAN &amp; USAGE</p>
-                <b style="color:var(--green); font-size:12px;">● Active Subscription</b>
-              </div>
-              <div style="background:#f9f8f3; border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px;">
-                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
-                  <strong style="font-size:18px;">Studio Pro Tier</strong>
-                  <span style="font-weight:700; font-size:16px;">$99<small style="color:var(--muted); font-size:11px;">/mo</small></span>
-                </div>
-                <p style="font-size:12px; color:var(--muted); margin:0 0 14px;">Unlimited Instagram, LinkedIn, TikTok, Facebook, and Threads connections.</p>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
-                  <div><strong>Channels:</strong> <span id="profile-stat-channels">4 Connected / Unlimited</span></div>
-                  <div><strong>AI Hooks:</strong> <span>Unlimited Runs</span></div>
-                  <div><strong>Team Seats:</strong> <span>5 Active Seats</span></div>
-                  <div><strong>Storage:</strong> <span>1.2 GB / Unlimited</span></div>
+                <div class="avatar-color-options">
+                  <button type="button" class="color-dot active" data-avatar-bg="var(--lemon)" data-avatar-color="#423811" style="background:#ffe57a;" title="Lemon Gold"></button>
+                  <button type="button" class="color-dot" data-avatar-bg="#c8f35c" data-avatar-color="#2a3f07" style="background:#c8f35c;" title="Fresh Lime"></button>
+                  <button type="button" class="color-dot" data-avatar-bg="#ff745b" data-avatar-color="#ffffff" style="background:#ff745b;" title="Sunset Coral"></button>
+                  <button type="button" class="color-dot" data-avatar-bg="#9ed8ff" data-avatar-color="#0a2a4a" style="background:#9ed8ff;" title="Ocean Blue"></button>
+                  <button type="button" class="color-dot" data-avatar-bg="#171814" data-avatar-color="#ffffff" style="background:#171814;" title="Editorial Ink"></button>
+                  <button type="button" class="button secondary small" id="btn-custom-avatar-prompt" style="margin-left:8px;">Custom Initials / Photo</button>
                 </div>
               </div>
 
-              <div style="margin-top:auto; display:flex; flex-direction:column; gap:8px;">
-                <button type="button" class="button secondary" id="btn-download-invoice" style="justify-content:center;">Download latest receipt (.txt)</button>
-                <button type="button" class="button primary" id="btn-manage-subscription" style="justify-content:center;">Manage billing portal ↗</button>
+              <div class="profile-card">
+                <div class="profile-card-head">
+                  <div>
+                    <h3>Personal Information</h3>
+                    <p>Update your public identity, contact details, and locale preferences.</p>
+                  </div>
+                  <span class="meta-chip plan-pro">● Active Account</span>
+                </div>
+
+                <form id="profile-details-form">
+                  <div class="form-grid-2">
+                    <div class="form-field">
+                      <label class="field-label" for="input-profile-firstname">First Name <span class="req">*</span></label>
+                      <input type="text" class="field-input" id="input-profile-firstname" value="Arjun" required>
+                    </div>
+                    <div class="form-field">
+                      <label class="field-label" for="input-profile-lastname">Last Name <span class="req">*</span></label>
+                      <input type="text" class="field-input" id="input-profile-lastname" value="Kapoor" required>
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-field">
+                      <label class="field-label" for="input-profile-email">Work Email Address <span class="req">*</span> <small>✓ Verified</small></label>
+                      <input type="email" class="field-input" id="input-profile-email" value="arjun@acmestudio.com" required>
+                      <span class="field-helper">Used for approval alerts, weekly social digests, and login.</span>
+                    </div>
+                    <div class="form-field">
+                      <label class="field-label" for="input-profile-title">Professional Role &amp; Title</label>
+                      <input type="text" class="field-input" id="input-profile-title" value="Head of Growth &amp; Content Strategy">
+                      <span class="field-helper">Displayed on post approval requests and activity logs.</span>
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-field">
+                      <label class="field-label" for="input-profile-timezone">Primary Timezone</label>
+                      <select class="field-select" id="input-profile-timezone">
+                        <option value="Asia/Kolkata" selected>(UTC+05:30) Mumbai, New Delhi, Kolkata</option>
+                        <option value="America/New_York">(UTC-05:00) Eastern Time (US &amp; Canada)</option>
+                        <option value="America/Los_Angeles">(UTC-08:00) Pacific Time (US &amp; Canada)</option>
+                        <option value="Europe/London">(UTC+00:00) London, Edinburgh</option>
+                        <option value="Europe/Paris">(UTC+01:00) Paris, Berlin, Amsterdam</option>
+                        <option value="Asia/Dubai">(UTC+04:00) Dubai, Abu Dhabi</option>
+                        <option value="Asia/Singapore">(UTC+08:00) Singapore, Hong Kong</option>
+                        <option value="Australia/Sydney">(UTC+11:00) Sydney, Melbourne</option>
+                      </select>
+                      <span class="field-helper">Schedules and publishing queues will adhere to this timezone.</span>
+                    </div>
+                    <div class="form-field">
+                      <label class="field-label" for="input-profile-lang">Display Language</label>
+                      <select class="field-select" id="input-profile-lang">
+                        <option value="en-US" selected>English (United States)</option>
+                        <option value="en-GB">English (United Kingdom)</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                        <option value="ja">日本語</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-field">
+                    <label class="field-label" for="input-profile-bio">Bio / Strategy Focus <small>Max 240 chars</small></label>
+                    <textarea class="field-textarea" id="input-profile-bio" rows="3">Directing omnichannel social campaigns, viral Reels workflows, and AI-assisted brand voice consistency across all studio channels.</textarea>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-field">
+                      <label class="field-label" for="input-profile-x">X / Twitter Handle</label>
+                      <input type="text" class="field-input" id="input-profile-x" value="@arjunkapoor_growth" placeholder="@username">
+                    </div>
+                    <div class="form-field">
+                      <label class="field-label" for="input-profile-linkedin">LinkedIn Profile URL</label>
+                      <input type="text" class="field-input" id="input-profile-linkedin" value="https://linkedin.com/in/arjunkapoor-social" placeholder="https://linkedin.com/in/...">
+                    </div>
+                  </div>
+
+                  <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:16px;">
+                    <button type="button" class="button secondary" id="btn-reset-profile">Reset Form</button>
+                    <button type="submit" class="button primary" id="btn-save-profile-bottom">Save Profile Changes</button>
+                  </div>
+                </form>
               </div>
-            </article>
+            </div>
+
+            <!-- Tab 2: Team & Permissions -->
+            <div class="profile-tab-pane" id="pane-team">
+              <!-- Team Stats Banner -->
+              <div class="team-stats-banner">
+                <div class="team-stat-item">
+                  <strong id="stat-team-count">3 of 5</strong>
+                  <span>Active Workspace Seats</span>
+                </div>
+                <div class="team-stat-item">
+                  <strong>2 Seats</strong>
+                  <span>Available to Invite</span>
+                </div>
+                <div class="team-stat-item">
+                  <strong>100%</strong>
+                  <span>Approval Compliance</span>
+                </div>
+              </div>
+
+              <!-- Team Members Roster -->
+              <div class="profile-card">
+                <div class="profile-card-head">
+                  <div>
+                    <h3>Workspace Team Members</h3>
+                    <p>Manage who can create drafts, review scheduled posts, or publish directly.</p>
+                  </div>
+                  <button type="button" class="button primary small" id="btn-invite-team-member">+ Invite Team Member</button>
+                </div>
+
+                <div class="team-roster" id="team-members-list"></div>
+              </div>
+
+              <!-- Publishing Guardrails & Governance -->
+              <div class="profile-card">
+                <div class="profile-card-head">
+                  <div>
+                    <h3>Publishing Guardrails &amp; Governance</h3>
+                    <p>Enforce quality thresholds before posts are released to live channels.</p>
+                  </div>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Mandatory Approval for Creator Posts</strong>
+                    <p>Posts written by team members with Creator permissions must be signed off by an Approver or Owner.</p>
+                  </div>
+                  <input type="checkbox" class="toggle-input" id="toggle-mandatory-approvals" checked>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Brand Brain AI Guardrail Checking</strong>
+                    <p>Prevent scheduling if AI detects banned claims, competitor attacks, or off-brand tone.</p>
+                  </div>
+                  <input type="checkbox" class="toggle-input" id="toggle-brand-guardrails" checked>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Real-time Slack Notification on Draft Submission</strong>
+                    <p>Notify `#social-approvals` channel whenever a new creative draft is queued for review.</p>
+                  </div>
+                  <input type="checkbox" class="toggle-input" id="toggle-slack-approvals" checked>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 3: Billing & Subscription -->
+            <div class="profile-tab-pane" id="pane-billing">
+              <!-- Tier Banner Card -->
+              <div class="plan-banner-card">
+                <div class="plan-banner-header">
+                  <div>
+                    <span class="plan-tier-badge">Active Plan</span>
+                    <h3 style="font:800 24px var(--font-display); margin:8px 0 4px; color:#fff;">Studio Pro Subscription</h3>
+                    <p style="color:#c5c7bd; font-size:13px; margin:0;">Enterprise-grade social orchestration with unmetered channel capacity.</p>
+                  </div>
+                  <div class="plan-price-tag">
+                    $99<small>/month</small>
+                  </div>
+                </div>
+
+                <div class="plan-features-grid">
+                  <div class="plan-feature-item"><span>✓</span> Unlimited Channels</div>
+                  <div class="plan-feature-item"><span>✓</span> 25 Queued Post Slots</div>
+                  <div class="plan-feature-item"><span>✓</span> Multi-Agent MCP Server</div>
+                  <div class="plan-feature-item"><span>✓</span> Full Analytics Suite</div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                  <span style="font-size:12px; color:#a2a59a;">Renews automatically on Nov 23, 2026 • Mastercard ending in 4242</span>
+                  <div style="display:flex; gap:10px;">
+                    <button type="button" class="button secondary small" id="btn-change-plan" style="background:#fff; color:var(--ink);">Change Plan</button>
+                    <button type="button" class="button primary small" id="btn-manage-subscription" style="background:var(--lime); color:var(--ink); border-color:var(--lime);">Stripe Billing Portal ↗</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quota Meters -->
+              <div class="profile-card">
+                <div class="profile-card-head">
+                  <div>
+                    <h3>Current Cycle Resource Usage</h3>
+                    <p>Live quotas for the billing cycle ending Nov 23, 2026.</p>
+                  </div>
+                  <span style="font-size:12px; color:var(--text-muted);">Reset in 31 days</span>
+                </div>
+
+                <div class="quota-meters-grid">
+                  <div class="quota-meter-box">
+                    <div class="quota-meter-head">
+                      <strong>Connected Channels</strong>
+                      <span id="meter-text-channels">4 / Unlimited</span>
+                    </div>
+                    <div class="meter-track">
+                      <div class="meter-fill lime" style="width: 100%;"></div>
+                    </div>
+                    <span class="quota-subtext">All 4 social accounts operating normally</span>
+                  </div>
+
+                  <div class="quota-meter-box">
+                    <div class="quota-meter-head">
+                      <strong>Scheduled Posts Queue</strong>
+                      <span>18 / 25 posts</span>
+                    </div>
+                    <div class="meter-track">
+                      <div class="meter-fill coral" style="width: 72%;"></div>
+                    </div>
+                    <span class="quota-subtext">7 slots available for upcoming campaigns</span>
+                  </div>
+
+                  <div class="quota-meter-box">
+                    <div class="quota-meter-head">
+                      <strong>AI Brain Generations</strong>
+                      <span>840 / 2,000 runs</span>
+                    </div>
+                    <div class="meter-track">
+                      <div class="meter-fill blue" style="width: 42%;"></div>
+                    </div>
+                    <span class="quota-subtext">Used across idea generation and image hooks</span>
+                  </div>
+
+                  <div class="quota-meter-box">
+                    <div class="quota-meter-head">
+                      <strong>Team Member Seats</strong>
+                      <span>3 / 5 seats</span>
+                    </div>
+                    <div class="meter-track">
+                      <div class="meter-fill ink" style="width: 60%;"></div>
+                    </div>
+                    <span class="quota-subtext">2 seats available to invite teammates</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Invoices & Receipts -->
+              <div class="profile-card">
+                <div class="profile-card-head">
+                  <div>
+                    <h3>Billing History &amp; Official Receipts</h3>
+                    <p>Download itemized PDF receipts and tax documentation for expense reporting.</p>
+                  </div>
+                  <button type="button" class="button secondary small" id="btn-download-all-invoices">Download All (.zip)</button>
+                </div>
+
+                <table class="invoices-table" aria-label="Billing Invoices">
+                  <thead>
+                    <tr>
+                      <th>Invoice ID</th>
+                      <th>Billing Date</th>
+                      <th>Plan Description</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th style="text-align:right;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>#TIDE-2026-102</strong></td>
+                      <td>Oct 23, 2026</td>
+                      <td>Studio Pro Monthly (Unlimited)</td>
+                      <td><strong>$99.00 USD</strong></td>
+                      <td><span class="invoice-badge-paid">✓ Paid</span></td>
+                      <td style="text-align:right;">
+                        <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="102" style="font-size:11px; padding:5px 10px;">Download Receipt</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>#TIDE-2026-091</strong></td>
+                      <td>Sep 23, 2026</td>
+                      <td>Studio Pro Monthly (Unlimited)</td>
+                      <td><strong>$99.00 USD</strong></td>
+                      <td><span class="invoice-badge-paid">✓ Paid</span></td>
+                      <td style="text-align:right;">
+                        <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="091" style="font-size:11px; padding:5px 10px;">Download Receipt</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>#TIDE-2026-080</strong></td>
+                      <td>Aug 23, 2026</td>
+                      <td>Studio Pro Monthly (Unlimited)</td>
+                      <td><strong>$99.00 USD</strong></td>
+                      <td><span class="invoice-badge-paid">✓ Paid</span></td>
+                      <td style="text-align:right;">
+                        <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="080" style="font-size:11px; padding:5px 10px;">Download Receipt</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tab 4: AI Agents & Developer Hub (MCP) -->
+            <div class="profile-tab-pane" id="pane-mcp">
+              <div class="profile-card">
+                <div class="profile-card-head">
+                  <div>
+                    <h3>Model Context Protocol (MCP) Server</h3>
+                    <p>Connect Claude Code, Google Antigravity, and ChatGPT directly to your live Tide workspace.</p>
+                  </div>
+                  <span class="meta-chip plan-pro">● 17 Tools Available</span>
+                </div>
+
+                <div class="mcp-console-box" style="margin-bottom:18px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span style="color:#c8f35c; font-weight:700;">● SSE Streaming Protocol Endpoint</span>
+                    <span style="color:#888a80; font-size:11px;">Port 3000 • Protocol v2024-11-05</span>
+                  </div>
+                  <div class="mcp-code-block">
+                    <span id="mcp-endpoint-text">https://tide-social.vercel.app/api/mcp</span>
+                    <button type="button" class="button secondary small" id="btn-copy-mcp-endpoint" style="background:#fff; color:var(--ink); font-size:11px; padding:4px 10px;">Copy URL</button>
+                  </div>
+                  <p style="color:#9d9e96; margin:6px 0 0; font-size:11px;">Allows external coding agents to read your post calendar, generate on-brand copy, audit drafts against Brand Brain, and schedule posts autonomously.</p>
+                </div>
+
+                <div class="form-grid-2" style="margin-bottom:18px;">
+                  <div class="form-field">
+                    <label class="field-label" for="mcp-api-key-input">Workspace API Token</label>
+                    <div style="display:flex; gap:8px;">
+                      <input type="password" class="field-input" id="mcp-api-key-input" value="tide_live_98a72f01bcd8294a65ef9012" readonly>
+                      <button type="button" class="button secondary small" id="btn-toggle-mcp-key" style="white-space:nowrap;">Reveal</button>
+                      <button type="button" class="button secondary small" id="btn-copy-mcp-key-val" style="white-space:nowrap;">Copy</button>
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <label class="field-label">Server Health &amp; Latency</label>
+                    <div style="display:flex; gap:8px;">
+                      <button type="button" class="button primary small" id="btn-test-mcp-ping" style="width:100%;">⚡ Ping &amp; Test MCP Connection</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Ping Output Container -->
+                <div id="mcp-ping-result" style="display:none; background:#0f100d; border:1px solid #33342d; border-radius:8px; padding:16px; margin-top:14px; font-family:monospace; font-size:12px; color:#c8f35c;">
+                  <div style="display:flex; justify-content:space-between; color:#a0a298; margin-bottom:8px;">
+                    <span>✓ CONNECTION VERIFIED</span>
+                    <span id="mcp-ping-latency">14ms latency</span>
+                  </div>
+                  <pre style="margin:0; overflow-x:auto; line-height:1.4;" id="mcp-ping-json">{
+  "status": "connected",
+  "workspace": "Acme Studio",
+  "tools": [
+    "tide_create_draft",
+    "tide_schedule_post",
+    "tide_list_channels",
+    "tide_approve_post",
+    "tide_fetch_analytics",
+    "tide_check_brand_rules"
+  ],
+  "agent_support": ["Claude Code", "Google Antigravity", "Cursor", "ChatGPT"]
+}</pre>
+                </div>
+
+                <!-- 1-Click Setup Snippet -->
+                <div style="margin-top:20px; padding:16px; background:#faf9f5; border:1px solid var(--line); border-radius:8px;">
+                  <strong style="font-size:13px; display:block; margin-bottom:6px;">Add Tide to your Claude Code terminal:</strong>
+                  <code style="display:block; background:#fff; border:1px solid var(--line); padding:8px 12px; border-radius:6px; font-size:12px; font-family:monospace;">claude mcp add tide -- https://tide-social.vercel.app/api/mcp</code>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 5: Security & Alerts -->
+            <div class="profile-tab-pane" id="pane-preferences">
+              <div class="profile-card">
+                <div class="profile-card-head">
+                  <div>
+                    <h3>Security &amp; Authentication</h3>
+                    <p>Manage your account credentials and login sessions.</p>
+                  </div>
+                  <span class="meta-chip role-owner">2FA Enabled</span>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Two-Factor Authentication (2FA)</strong>
+                    <p>Protect your workspace with an authenticator app (Google Authenticator or 1Password).</p>
+                  </div>
+                  <button type="button" class="button secondary small" id="btn-manage-2fa">Manage 2FA</button>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Account Password</strong>
+                    <p>Last changed 42 days ago. Strong password recommended.</p>
+                  </div>
+                  <button type="button" class="button secondary small" id="btn-change-password">Update Password</button>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Active Browser Sessions</strong>
+                    <p>Currently logged in on macOS Chrome (Current session) and iPhone 16 Pro Safari.</p>
+                  </div>
+                  <button type="button" class="button secondary small" id="btn-signout-all" style="color:var(--danger);">Sign Out Others</button>
+                </div>
+              </div>
+
+              <div class="profile-card">
+                <div class="profile-card-head">
+                  <div>
+                    <h3>Notification Channels &amp; Digest</h3>
+                    <p>Control where and when Tide dispatches operational alerts.</p>
+                  </div>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Instant Email on Post Approval Request</strong>
+                    <p>Send an email notification immediately when a team member submits a draft for sign-off.</p>
+                  </div>
+                  <input type="checkbox" class="toggle-input" checked>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Weekly Monday Executive Performance Report</strong>
+                    <p>Comprehensive email digest covering 30-day reach, top posts, and AI recommendations.</p>
+                  </div>
+                  <input type="checkbox" class="toggle-input" checked>
+                </div>
+
+                <div class="switch-row">
+                  <div class="switch-text">
+                    <strong>Direct Message &amp; Comment Alerts</strong>
+                    <p>Alert when unified inbox receives high-intent questions or customer support tickets.</p>
+                  </div>
+                  <input type="checkbox" class="toggle-input" checked>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <!-- Team & Access Hierarchy -->
-          <article class="panel" style="padding:22px; margin-bottom:16px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-              <div>
-                <p class="eyebrow">ORGANIZATION</p>
-                <h3 style="margin:2px 0 0; font-size:18px;">Team &amp; Approvals Hierarchy</h3>
-              </div>
-              <button type="button" class="button primary small" id="btn-invite-team-member">+ Invite member</button>
-            </div>
-            <div id="team-members-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-          </article>
-
-          <!-- API & MCP Server Settings -->
-          <article class="panel" style="padding:22px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-              <div>
-                <p class="eyebrow">DEVELOPER &amp; AI AGENTS</p>
-                <h3 style="margin:2px 0 0; font-size:18px;">Model Context Protocol (MCP) Server</h3>
-              </div>
-              <span class="status-indicator" style="padding:4px 10px; font-size:11px;">17 Tools Ready</span>
-            </div>
-            <div style="display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:center; background:#faf9f5; border:1px solid var(--line); border-radius:10px; padding:16px;">
-              <div>
-                <strong style="display:block; font-size:13px; margin-bottom:4px;">Live SSE MCP Endpoint</strong>
-                <code style="display:block; background:#fff; border:1px solid var(--line); border-radius:6px; padding:8px 12px; font-size:12px; font-family:monospace; margin-bottom:8px;">http://localhost:3000/sse</code>
-                <small style="color:var(--muted);">Allows Claude Code, Google Antigravity, and ChatGPT to manage social queues and run creative skills.</small>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:6px;">
-                <button type="button" class="button secondary small" id="btn-copy-mcp-key" style="justify-content:center;">Copy endpoint</button>
-                <button type="button" class="button secondary small" id="btn-test-mcp-connection" style="justify-content:center; color:var(--green);">Test connection ✓</button>
-              </div>
-            </div>
-          </article>
         </section>
       </main>
 
