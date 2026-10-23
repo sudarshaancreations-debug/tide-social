@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tide Social — create, approve, publish and learn across every social channel.">
+  <title>Tide Social — Your social team, in one current</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <a class="brand" href="#" aria-label="Tide Social home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Tide</span>
+      </a>
+
+      <nav class="main-nav">
+        <p class="nav-label">Workspace</p>
+        <button class="nav-item active" data-view="home"><span aria-hidden="true">⌂</span> Overview</button>
+        <button class="nav-item" data-view="create"><span aria-hidden="true">✦</span> Create</button>
+        <button class="nav-item" data-view="calendar"><span aria-hidden="true">▦</span> Calendar</button>
+        <button class="nav-item" data-view="approvals"><span aria-hidden="true">✓</span> Approvals <b id="approvals-badge">3</b></button>
+        <button class="nav-item" data-view="inbox"><span aria-hidden="true">↗</span> Inbox <b id="inbox-badge">12</b></button>
+        <button class="nav-item" data-view="analytics"><span aria-hidden="true">⌁</span> Analytics</button>
+        <p class="nav-label">Intelligence</p>
+        <button class="nav-item" data-view="brand"><span aria-hidden="true">◇</span> Brand brain</button>
+        <button class="nav-item" data-view="accounts"><span aria-hidden="true">◎</span> Channels</button>
+      </nav>
+
+      <div class="side-bottom">
+        <div class="usage-card">
+          <div class="usage-head"><span>Automation</span><strong id="automation-rate">72%</strong></div>
+          <div class="usage-track"><i id="automation-bar" style="width: 72%;"></i></div>
+          <small id="automation-stat">18 of 25 posts approved</small>
+        </div>
+        <button class="profile" type="button" aria-label="Open account menu">
+          <span class="avatar">AK</span><span><strong>Arjun Kapoor</strong><small>Studio plan (Unlimited)</small></span><span>•••</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button class="mobile-menu" type="button" aria-label="Open navigation">☰</button>
+        <div>
+          <p class="eyebrow">ACME STUDIO</p>
+          <h1 id="page-title">Good morning, Arjun</h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="notification-button" type="button" aria-label="Notifications"><span aria-hidden="true">◉</span><i></i></button>
+          <button class="button secondary" data-open="account-modal">＋ Add channel</button>
+          <button class="button primary" data-open="composer-modal">Create post <span>↗</span></button>
+        </div>
+      </header>
+
+      <main id="main" tabindex="-1">
+        <section class="view active" id="view-home" data-title="Good morning, Arjun">
+          <div class="hero-row">
+            <div>
+              <p class="date-line">Friday, 23 October</p>
+              <p class="subcopy">Your content engine is moving. Three posts need your eye today.</p>
+            </div>
+            <div class="health-pill"><span></span> All systems healthy <button data-view-link="accounts">View channels</button></div>
+          </div>
+
+          <div class="metric-grid" aria-label="Performance summary">
+            <article class="metric-card coral"><div class="metric-icon">↗</div><p>30-day reach</p><strong id="metric-reach">284.7K</strong><small><b>↑ 18.4%</b> vs last period</small></article>
+            <article class="metric-card lime"><div class="metric-icon">♡</div><p>Engagement</p><strong id="metric-engagement">8.6%</strong><small><b>↑ 2.1%</b> vs last period</small></article>
+            <article class="metric-card blue"><div class="metric-icon">◌</div><p>Posts published</p><strong id="metric-published">48</strong><small>4 platforms · 0 failed</small></article>
+            <article class="metric-card ink"><div class="metric-icon">✦</div><p>Hours saved</p><strong>21.5</strong><small>By drafts, replies &amp; routing</small></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel calendar-panel">
+              <div class="panel-head"><div><p class="eyebrow">THIS WEEK</p><h2>Publishing calendar</h2></div><button class="text-button" data-view-link="calendar">Full calendar →</button></div>
+              <div class="week" id="week-grid"></div>
+              <div class="post-list" id="post-list"></div>
+            </article>
+
+            <article class="panel approvals-panel">
+              <div class="panel-head"><div><p class="eyebrow">YOUR CALL</p><h2>Ready for approval</h2></div><span class="count-badge" id="overview-approval-badge">3</span></div>
+              <div class="approval-card" id="overview-featured-approval">
+                <div class="reel-preview"><span class="reel-kicker">YOUR BRAND DOESN'T<br>NEED MORE CONTENT.</span><span class="play">▶</span><small>00:18</small></div>
+                <div class="approval-copy"><span class="platform ig">IG</span><strong>What your content is really missing</strong><p>AI reel · 18 seconds · 9:16</p></div>
+                <div class="approval-actions"><button class="approve" id="approve-featured-btn" aria-label="Approve reel">✓ Approve</button><button class="change" data-open="change-modal" data-target="featured">Change</button></div>
+              </div>
+              <div class="approval-mini"><span class="mini-visual lemon">5×</span><div><strong>Five hooks that stop the scroll</strong><p>LinkedIn carousel · 6 slides</p></div><button class="approve" aria-label="Approve carousel">✓</button></div>
+              <button class="wide-link" data-view-link="approvals">Review all drafts <span>→</span></button>
+            </article>
+
+            <article class="panel pulse-panel">
+              <div class="panel-head"><div><p class="eyebrow">LIVE SIGNALS</p><h2>What’s working</h2></div><select id="pulse-period-select" aria-label="Analytics period"><option value="30">Last 30 days</option><option value="7">Last 7 days</option></select></div>
+              <div class="chart-wrap"><div class="chart-labels"><span>30K</span><span>20K</span><span>10K</span><span>0</span></div><svg viewBox="0 0 620 190" role="img" aria-label="Reach rose from 8,000 to 28,000 during the past 30 days"><defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff765d" stop-opacity=".24"/><stop offset="1" stop-color="#ff765d" stop-opacity="0"/></linearGradient></defs><path class="area" d="M0 156 C50 150 65 138 110 141 S170 126 205 131 S275 104 315 112 S372 85 420 92 S475 60 520 70 S575 30 620 24 L620 190 L0 190Z"/><path class="line" d="M0 156 C50 150 65 138 110 141 S170 126 205 131 S275 104 315 112 S372 85 420 92 S475 60 520 70 S575 30 620 24"/><circle cx="620" cy="24" r="5"/></svg><div class="chart-dates"><span>Sep 24</span><span>Oct 1</span><span>Oct 8</span><span>Oct 15</span><span>Oct 23</span></div></div>
+              <div class="insight"><span>✦</span><p><strong>Your educational reels are outperforming promos by 3.2×.</strong><br>We moved two more into next week’s plan.</p><button data-open="insight-modal">See why</button></div>
+            </article>
+
+            <article class="panel inbox-panel">
+              <div class="panel-head"><div><p class="eyebrow">ONE INBOX</p><h2>Comments &amp; DMs</h2></div><span class="count-badge light" id="overview-inbox-badge">12 new</span></div>
+              <div class="message"><span class="avatar person-a">JM</span><div><strong>@julesmakes <i class="platform ig">IG</i></strong><p>Can you send me the template?</p><small>2 minutes ago</small></div><button data-view-link="inbox">Reply</button></div>
+              <div class="message"><span class="avatar person-b">SL</span><div><strong>Sarah Lin <i class="platform li">in</i></strong><p>This breakdown is so useful — saving it.</p><small>18 minutes ago</small></div><button data-view-link="inbox">Reply</button></div>
+              <div class="message"><span class="avatar person-c">TK</span><div><strong>@theokitchen <i class="platform tk">♪</i></strong><p>Where can I find the full guide?</p><small>42 minutes ago</small></div><button data-view-link="inbox">Reply</button></div>
+              <button class="wide-link" data-view-link="inbox">Open unified inbox <span>→</span></button>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-create" data-title="Create">
+          <div class="section-intro"><div><p class="eyebrow">AI CREATIVE STUDIO</p><h2>Turn one thought into every format.</h2><p>Start with a URL, an idea, or your own footage. Tide adapts it to your voice and each channel.</p></div><button class="button primary" data-open="composer-modal">New post ↗</button></div>
+          <div class="creator-layout">
+            <article class="panel prompt-panel">
+              <label for="idea">What should we make?</label>
+              <textarea id="idea" placeholder="e.g. Turn our new product page into a launch story…"></textarea>
+              <div class="prompt-chips">
+                <button type="button" id="chip-url">From a URL</button>
+                <button type="button" id="chip-media">Upload media</button>
+                <button type="button" id="chip-top">Use top post</button>
+              </div>
+              <button class="button primary generate-button" id="btn-generate-concepts">✦ Generate concepts</button>
+            </article>
+            <article class="panel idea-results">
+              <p class="eyebrow">SUGGESTED FROM YOUR BRAND</p>
+              <div id="idea-results-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-calendar" data-title="Calendar">
+          <div class="section-intro"><div><p class="eyebrow">PUBLISH</p><h2>One calendar. Every channel.</h2><p>Flexible queues by campaign, format, and account — with clear failure alerts.</p></div><button class="button primary" data-open="composer-modal">Schedule post ↗</button></div>
+          <article class="panel full-calendar">
+            <div class="calendar-toolbar">
+              <button type="button" id="cal-prev">←</button>
+              <strong id="cal-month-title">October 2026</strong>
+              <button type="button" id="cal-next">→</button>
+              <span></span>
+              <button type="button" class="active" id="cal-view-month">Month</button>
+              <button type="button" id="cal-view-week">Week</button>
+            </div>
+            <div class="month-grid" id="month-grid"></div>
+            <div class="week-calendar-view" id="week-calendar-view" hidden></div>
+          </article>
+        </section>
+
+        <section class="view" id="view-approvals" data-title="Approvals">
+          <div class="section-intro"><div><p class="eyebrow">HUMAN IN THE LOOP</p><h2>Nothing posts before your yes.</h2><p>Approve, annotate, or ask for a plain-language change. Every revision stays visible.</p></div><span class="filter-pill" id="approvals-filter-count">3 awaiting review</span></div>
+          <div class="approval-board" id="approval-board"></div>
+        </section>
+
+        <section class="view" id="view-inbox" data-title="Unified inbox">
+          <div class="section-intro inbox-intro"><div><p class="eyebrow">COMMUNITY</p><h2>Every conversation, one place.</h2><p>AI drafts replies in your voice. You choose when it may send automatically.</p></div><div class="inbox-filters"><button type="button" class="filter-pill" id="inbox-filter-btn">Channel: All ⌄</button><span class="filter-pill unread-pill" id="inbox-unread-count">12 unread</span></div></div>
+          <div class="inbox-summary" aria-label="Inbox summary"><article><span>↗</span><div><strong id="inbox-summary-new">12</strong><small>New messages</small></div></article><article><span>✦</span><div><strong>4</strong><small>AI drafts ready</small></div></article><article><span>◎</span><div><strong>3</strong><small>High-intent leads</small></div></article><article><span>✓</span><div><strong>86%</strong><small>Replied in 1 hour</small></div></article></div>
+          <article class="panel inbox-workspace"><div class="thread-column"><div class="thread-toolbar"><label for="thread-search">Inbox</label><div><input id="thread-search" type="search" placeholder="Search conversations" aria-label="Search conversations"><button type="button" id="thread-filter-toggle" aria-label="Filter conversations">≡</button></div></div><div class="thread-list" id="thread-list"></div></div><div class="conversation" id="active-conversation"></div></article>
+        </section>
+
+        <section class="view" id="view-analytics" data-title="Analytics">
+          <div class="section-intro"><div><p class="eyebrow">ANSWERS, NOT CHARTS</p><h2>Know what to make next.</h2><p>Cross-channel reporting with post-level revenue, tags, exports, and explanations.</p></div><button class="button secondary" id="btn-export-report">Export report (.csv)</button></div>
+          <div class="analytics-grid"><article class="panel big-number"><p>Audience growth</p><strong>+12,842</strong><small>↑ 24% in 30 days</small></article><article class="panel big-number"><p>Attributed leads</p><strong>318</strong><small>↑ 41 from last period</small></article><article class="panel big-number"><p>Best format</p><strong>Reels</strong><small>3.2× average reach</small></article></div>
+          <article class="panel table-panel"><div class="panel-head"><h2>Top content</h2><button class="text-button" id="btn-refresh-analytics">Refresh data</button></div><table id="analytics-table"><thead><tr><th>Post</th><th>Channel</th><th>Reach</th><th>Engagement</th><th>Leads</th></tr></thead><tbody><tr><td><strong>The content system that gave us Fridays back</strong><small>Oct 18 · Educational</small></td><td><span class="platform ig">IG</span></td><td>84,210</td><td>11.8%</td><td>126</td></tr><tr><td><strong>Stop measuring consistency like this</strong><small>Oct 14 · Contrarian</small></td><td><span class="platform li">in</span></td><td>42,662</td><td>9.4%</td><td>88</td></tr><tr><td><strong>Behind our weekly planning ritual</strong><small>Oct 10 · BTS</small></td><td><span class="platform tk">♪</span></td><td>37,901</td><td>8.9%</td><td>47</td></tr><tr><td><strong>How to build an audience without burnout</strong><small>Oct 06 · Framework</small></td><td><span class="platform th">@</span></td><td>29,140</td><td>7.4%</td><td>38</td></tr></tbody></table></article>
+        </section>
+
+        <section class="view" id="view-brand" data-title="Brand brain">
+          <div class="section-intro"><div><p class="eyebrow">LIVING BRAND SYSTEM</p><h2>Teach it once. Edit it anytime.</h2><p>Tide learns from your site and best posts, then shows its work.</p></div><button class="button secondary" id="btn-rescan-brand">Rescan website</button></div>
+          <div class="brand-grid"><article class="panel brand-score"><div class="score-ring" id="brand-score-display">92<small>%</small></div><div><h3>Brand confidence</h3><p id="brand-confidence-desc">Built from your site, 183 published posts, and 4 approved guidelines.</p></div></article><article class="panel rule-card"><p class="eyebrow">VOICE</p><h3 id="brand-voice-title">Warm expert, never guru</h3><p id="brand-voice-desc">Direct, generous, quietly opinionated. Short sentences. No hustle language.</p><button type="button" class="btn-edit-brand" data-brand-field="voice">Edit rules</button></article><article class="panel rule-card"><p class="eyebrow">GUARDRAILS</p><h3 id="brand-guardrails-title">Claims we never make</h3><p id="brand-guardrails-desc">No guaranteed growth, fake urgency, competitor attacks, or unsupported statistics.</p><button type="button" class="btn-edit-brand" data-brand-field="guardrails">Edit guardrails</button></article><article class="panel rule-card"><p class="eyebrow">VISUALS</p><h3 id="brand-visuals-title">Coral, ink, paper</h3><p id="brand-visuals-desc">Editorial layouts, candid people, natural light. Avoid glossy stock imagery.</p><button type="button" class="btn-edit-brand" data-brand-field="visuals">Edit look</button></article></div>
+        </section>
+
+        <section class="view" id="view-accounts" data-title="Channels">
+          <div class="section-intro"><div><p class="eyebrow">UNLIMITED CONNECTIONS</p><h2>Every account, clearly monitored.</h2><p>Add as many Instagram, LinkedIn, TikTok, Facebook, Threads, X, YouTube, Pinterest, Bluesky, Mastodon, Google Business, or Substack accounts as you need.</p></div><button class="button primary" data-open="account-modal">＋ Add channel</button></div>
+          <div class="account-summary"><div><strong id="account-count">4</strong><span>Connected</span></div><div><strong id="healthy-count">4</strong><span>Healthy</span></div><div><strong id="attention-count">0</strong><span>Need attention</span></div><div><strong id="check-time">2 min</strong><span>Last check</span></div></div>
+          <div class="platform-capacity" id="platform-capacity" aria-label="Connection capacity"></div>
+          <div class="accounts-list panel" id="accounts-list"></div>
+        </section>
+      </main>
+
+      <footer><span>© 2026 Tide Social</span><nav aria-label="Legal"><button data-policy="privacy">Privacy</button><button data-policy="cookies">Cookie policy</button><button data-policy="terms">Terms</button><button data-policy="security">Security</button></nav><span>Service status: <b id="service-status">Operational</b></span></footer>
+    </div>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Add Channel Modal -->
+  <div class="modal" id="account-modal" role="dialog" aria-modal="true" aria-labelledby="account-title" hidden>
+    <div class="modal-card account-modal-card"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">NEW CONNECTION</p><h2 id="account-title">Add a social channel</h2><p><strong>Unlimited handles.</strong> Connect any number of Instagram, LinkedIn, Threads, or other supported accounts.</p><form id="account-form"><fieldset><legend>Choose platform</legend><div class="platform-grid" id="platform-grid"></div></fieldset><label>Account handle<input name="handle" autocomplete="off" placeholder="@yourbrand" required></label><label>Workspace<select name="workspace"><option>ACME Studio</option><option>Client accounts</option><option>Personal brand</option></select></label><div class="trust-note"><span>⌾</span><p><strong>Secure connection</strong><br>You’ll authorize each handle through the platform’s own login. Tide never sees or stores your password.</p></div><button class="button primary full" type="submit">Continue to connect →</button></form></div>
+  </div>
+
+  <!-- Channel Options & Health Diagnostics Modal -->
+  <div class="modal" id="channel-options-modal" role="dialog" aria-modal="true" aria-labelledby="channel-options-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">CHANNEL HEALTH</p>
+      <h2 id="channel-options-title">Manage account</h2>
+      <div id="channel-options-details" class="mini-rule" style="margin-bottom: 14px;"></div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="button primary full" id="btn-reconnect-channel" type="button">↻ Re-verify token</button>
+        <button class="button secondary full" id="btn-disconnect-channel" type="button" style="color: var(--danger); border-color: var(--danger);">Disconnect channel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Composer Modal -->
+  <div class="modal" id="composer-modal" role="dialog" aria-modal="true" aria-labelledby="composer-title" hidden>
+    <div class="modal-card composer-card"><button class="modal-close" data-close aria-label="Close">×</button><div class="composer-head"><div><p class="eyebrow">COMPOSER</p><h2 id="composer-title">Create a post</h2></div><span id="save-state">Draft saved</span></div><form id="composer-form"><fieldset><legend>Publish to</legend><div class="channel-checks" id="composer-channel-checks"><label><input type="checkbox" value="Instagram" checked><span class="platform ig">IG</span> @acmestudio</label><label><input type="checkbox" value="LinkedIn"><span class="platform li">in</span> ACME Studio</label><label><input type="checkbox" value="TikTok"><span class="platform tk">♪</span> @acme.studio</label></div></fieldset><label class="post-copy">Post copy<textarea name="copy" maxlength="2200" placeholder="Share something worth stopping for…"></textarea><span class="char-count">0 / 2,200</span></label><div class="ai-row"><button type="button" data-rewrite="rewrite">✦ Rewrite</button><button type="button" data-rewrite="shorten">Shorten</button><button type="button" data-rewrite="add_hook">Add hook</button><button type="button" data-rewrite="change_tone">Change tone</button></div>
+    
+    <input type="file" id="composer-file-input" accept="image/*,video/*" hidden>
+    <div class="media-drop" id="composer-media-drop" tabindex="0" role="button" aria-label="Add media">
+      <span aria-hidden="true">＋</span>
+      <strong>Add media (click or drag &amp; drop)</strong>
+      <small>Automatic preflight checks: 9:16 / 1:1 / 16:9 ratio, MP4/PNG/JPG format, file size limits.</small>
+    </div>
+    <div id="media-preview-container" class="media-preview-box" hidden></div>
+
+    <div class="form-row"><label>Date<input name="date" type="date" value="2026-10-26" required></label><label>Time<input name="time" type="time" value="10:30" required></label></div><div class="composer-actions"><button class="button secondary" type="button" data-close>Save draft</button><button class="button primary" type="submit">Schedule post →</button></div></form></div>
+  </div>
+
+  <!-- Change Request Modal -->
+  <div class="modal" id="change-modal" role="dialog" aria-modal="true" aria-labelledby="change-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">REQUEST A CHANGE</p>
+      <h2 id="change-title">What should feel different?</h2>
+      <textarea id="change-request" placeholder="e.g. Make the opening hook punchier and remove the promotional call-to-action."></textarea>
+      <button class="button primary full" id="submit-change">Send change request →</button>
+    </div>
+  </div>
+
+  <!-- Insight Modal -->
+  <div class="modal" id="insight-modal" role="dialog" aria-modal="true" aria-labelledby="insight-title" hidden><div class="modal-card small-modal"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">WHY IT WORKED</p><h2 id="insight-title">Practical beats promotional.</h2><p>Your educational reels hold attention for 7.8 seconds longer and earn 2.4× more saves. The strongest hooks name a specific problem in the first six words.</p><div class="mini-rule"><strong>Next plan update</strong><span>2 educational reels added · 1 promo moved</span></div></div></div>
+
+  <!-- Brand Brain Editor Modal -->
+  <div class="modal" id="brand-modal" role="dialog" aria-modal="true" aria-labelledby="brand-modal-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">BRAND BRAIN</p>
+      <h2 id="brand-modal-title">Edit brand rules</h2>
+      <label>Heading / Summary<input type="text" id="brand-edit-title" required></label>
+      <label>Details &amp; Guidelines<textarea id="brand-edit-content" rows="4" required></textarea></label>
+      <button class="button primary full" id="brand-modal-save" type="button">Save guidelines</button>
+    </div>
+  </div>
+
+  <!-- Legal Policies Modal -->
+  <div class="modal" id="policy-modal" role="dialog" aria-modal="true" aria-labelledby="policy-title" hidden><div class="modal-card policy-card"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">TIDE SOCIAL</p><h2 id="policy-title">Privacy policy</h2><div id="policy-content"></div></div></div>
+
+  <!-- Cookie Notice Banner -->
+  <aside class="cookie-banner" aria-label="Cookie notice" hidden><div><strong>Your choices, not ours.</strong><p>We use necessary cookies to keep Tide working. With your permission, analytics helps us improve the product. No ad tracking.</p></div><div><button class="button secondary" id="cookie-settings">Settings</button><button class="button secondary" id="cookie-reject">Necessary only</button><button class="button primary" id="cookie-accept">Accept analytics</button></div></aside>
+
+  <!-- Cookie Settings Modal -->
+  <div class="modal" id="cookie-modal" role="dialog" aria-modal="true" aria-labelledby="cookie-title" hidden><div class="modal-card small-modal"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">COOKIE SETTINGS</p><h2 id="cookie-title">Choose what Tide may store</h2><div class="cookie-option"><div><strong>Necessary</strong><p>Authentication, security, consent and core product state.</p></div><input type="checkbox" checked disabled aria-label="Necessary cookies always enabled"></div><div class="cookie-option"><div><strong>Product analytics</strong><p>Anonymous usage patterns that help us improve flows.</p></div><input id="analytics-cookie" type="checkbox" aria-label="Allow product analytics"></div><button class="button primary full" id="cookie-save">Save choices</button></div></div>
+
+  <script src="core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
