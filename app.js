@@ -201,11 +201,13 @@ function escapeHtml(str) {
     .replace(/'/g, "&#039;");
 }
 
-function openComposerForDate(dateStr) {
+function openComposerForDate(dateStr, timeStr) {
   const dateInput = document.querySelector("#composer-form [name=\"date\"]");
+  const timeInput = document.querySelector("#composer-form [name=\"time\"]");
   if (dateInput && dateStr) dateInput.value = dateStr;
+  if (timeInput && timeStr) timeInput.value = timeStr;
   openModal("composer-modal");
-  toast("Scheduling post for " + dateStr);
+  toast("Scheduling post for " + dateStr + (timeStr ? " at " + timeStr : ""));
 }
 
 function openPostDetails(postId) {
@@ -349,155 +351,205 @@ function renderCalendar() {
   const weekdaysBar = document.getElementById("calendar-weekdays");
   const monthBtn = document.getElementById("cal-view-month");
   const weekBtn = document.getElementById("cal-view-week");
+  const dayBtn = document.getElementById("cal-view-day");
+  const timelineCard = document.getElementById("cal-day-timeline-card");
+
+  if (monthBtn) monthBtn.classList.toggle("active", calViewMode === "month");
+  if (weekBtn) weekBtn.classList.toggle("active", calViewMode === "week");
+  if (dayBtn) dayBtn.classList.toggle("active", calViewMode === "day");
 
   if (calViewMode === "month") {
-    if (monthBtn) monthBtn.classList.add("active");
-    if (weekBtn) weekBtn.classList.remove("active");
     if (monthGrid) monthGrid.hidden = false;
     if (weekdaysBar) weekdaysBar.hidden = false;
     if (weekView) weekView.hidden = true;
+    if (timelineCard) timelineCard.hidden = false;
 
-    if (!monthGrid) return;
-    const cells = getCalendarGrid(calCurrentYear, calCurrentMonth);
+    if (monthGrid) {
+      const cells = getCalendarGrid(calCurrentYear, calCurrentMonth);
+      monthGrid.innerHTML = cells.map(cell => {
+        const isToday = cell.dateStr === "2026-10-23";
+        const isSelected = cell.dateStr === calSelectedDate;
+        const dayPosts = scheduled.filter(p => {
+          if (p.date !== cell.dateStr) return false;
+          if (calFilterPlatform !== "All") {
+            const matchesMeta = p.meta && p.meta.toLowerCase().includes(calFilterPlatform.toLowerCase());
+            const matchesCls = p.cls === platformClass(calFilterPlatform);
+            const matchesChan = p.channels && p.channels.includes(calFilterPlatform);
+            return matchesMeta || matchesCls || matchesChan;
+          }
+          return true;
+        });
 
-    monthGrid.innerHTML = cells.map(cell => {
-      const isToday = cell.dateStr === "2026-10-23";
-      const isSelected = cell.dateStr === calSelectedDate;
-      const dayPosts = scheduled.filter(p => {
-        if (p.date !== cell.dateStr) return false;
-        if (calFilterPlatform !== "All") {
-          const matchesMeta = p.meta && p.meta.toLowerCase().includes(calFilterPlatform.toLowerCase());
-          const matchesCls = p.cls === platformClass(calFilterPlatform);
-          const matchesChan = p.channels && p.channels.includes(calFilterPlatform);
-          return matchesMeta || matchesCls || matchesChan;
-        }
-        return true;
-      });
+        const dotsHtml = dayPosts.slice(0, 3).map(post => {
+          const mainPlatform = post.channels?.[0] || post.meta?.split(" ")[0] || "Instagram";
+          const cls = post.cls || platformClass(mainPlatform);
+          return `<span class="cell-dot ${cls}"></span>`;
+        }).join("");
 
-      return `
-        <div class="calendar-cell ${cell.muted ? "muted" : ""} ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}" data-date="${cell.dateStr}">
-          <div class="cell-head">
+        return `
+          <div class="calendar-cell ${cell.muted ? "muted" : ""} ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}" data-date="${cell.dateStr}">
             <span class="cell-day-num">${cell.day}</span>
-            <button type="button" class="btn-cell-add" data-add-date="${cell.dateStr}" title="Add post on ${cell.dateStr}">＋</button>
+            <div class="cell-dots">${dotsHtml}</div>
           </div>
-          <div class="cell-events">
-            ${dayPosts.map(post => {
-              const mainPlatform = post.channels?.[0] || post.meta?.split(" ")[0] || "Instagram";
-              let eventColor = "";
-              if (post.cls === "li" || mainPlatform === "LinkedIn") eventColor = "blue";
-              else if (post.cls === "tk" || mainPlatform === "TikTok") eventColor = "lime";
-              else if (post.cls === "fb" || mainPlatform === "Facebook") eventColor = "blue";
-              return `
-                <div class="calendar-event ${eventColor}" data-post-id="${post.id}" title="${escapeHtml(post.title || post.copy)}">
-                  <span class="platform-mini ${post.cls || platformClass(mainPlatform)}">${platformMark(mainPlatform)}</span>
-                  <span class="event-time">${post.time || "10:00"}</span>
-                  <span class="event-title">${escapeHtml(post.title || post.copy?.slice(0, 20) || "Post")}</span>
-                </div>
-              `;
-            }).join("")}
-          </div>
-        </div>
-      `;
-    }).join("");
+        `;
+      }).join("");
 
-    monthGrid.querySelectorAll(".calendar-cell").forEach(cellEl => {
-      cellEl.addEventListener("click", (e) => {
-        const eventEl = e.target.closest(".calendar-event");
-        if (eventEl) {
-          e.stopPropagation();
-          openPostDetails(eventEl.dataset.postId);
-          return;
-        }
-        const addBtn = e.target.closest(".btn-cell-add");
-        if (addBtn) {
-          e.stopPropagation();
-          openComposerForDate(addBtn.dataset.addDate);
-          return;
-        }
-        calSelectedDate = cellEl.dataset.date;
-        monthGrid.querySelectorAll(".calendar-cell").forEach(c => c.classList.remove("selected"));
-        cellEl.classList.add("selected");
+      monthGrid.querySelectorAll(".calendar-cell").forEach(cellEl => {
+        cellEl.addEventListener("click", () => {
+          calSelectedDate = cellEl.dataset.date;
+          monthGrid.querySelectorAll(".calendar-cell").forEach(c => c.classList.remove("selected"));
+          cellEl.classList.add("selected");
+          renderDayTimeline(calSelectedDate);
+        });
       });
-    });
+    }
 
-    monthGrid.querySelectorAll(".btn-cell-add").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        openComposerForDate(btn.dataset.addDate);
-      });
-    });
-
-  } else {
-    if (monthBtn) monthBtn.classList.remove("active");
-    if (weekBtn) weekBtn.classList.add("active");
+  } else if (calViewMode === "week") {
     if (monthGrid) monthGrid.hidden = true;
     if (weekdaysBar) weekdaysBar.hidden = true;
     if (weekView) weekView.hidden = false;
+    if (timelineCard) timelineCard.hidden = false;
 
-    if (!weekView) return;
-    const weekDays = [
-      { name: "Monday", dateStr: "2026-10-19", label: "Oct 19" },
-      { name: "Tuesday", dateStr: "2026-10-20", label: "Oct 20" },
-      { name: "Wednesday", dateStr: "2026-10-21", label: "Oct 21" },
-      { name: "Thursday", dateStr: "2026-10-22", label: "Oct 22" },
-      { name: "Friday", dateStr: "2026-10-23", label: "Oct 23", isToday: true },
-      { name: "Saturday", dateStr: "2026-10-24", label: "Oct 24" },
-      { name: "Sunday", dateStr: "2026-10-25", label: "Oct 25" }
-    ];
+    if (weekView) {
+      const weekDays = [
+        { name: "Mon", dateStr: "2026-10-19", label: "Oct 19" },
+        { name: "Tue", dateStr: "2026-10-20", label: "Oct 20" },
+        { name: "Wed", dateStr: "2026-10-21", label: "Oct 21" },
+        { name: "Thu", dateStr: "2026-10-22", label: "Oct 22" },
+        { name: "Fri", dateStr: "2026-10-23", label: "Oct 23", isToday: true },
+        { name: "Sat", dateStr: "2026-10-24", label: "Oct 24" },
+        { name: "Sun", dateStr: "2026-10-25", label: "Oct 25" }
+      ];
 
-    weekView.innerHTML = weekDays.map(dayItem => {
-      const dayPosts = scheduled.filter(p => {
-        if (p.date !== dayItem.dateStr) return false;
-        if (calFilterPlatform !== "All") {
-          const matchesMeta = p.meta && p.meta.toLowerCase().includes(calFilterPlatform.toLowerCase());
-          const matchesCls = p.cls === platformClass(calFilterPlatform);
-          const matchesChan = p.channels && p.channels.includes(calFilterPlatform);
-          return matchesMeta || matchesCls || matchesChan;
-        }
-        return true;
-      });
-
-      return `
-        <div class="week-col ${dayItem.isToday ? "today" : ""}">
-          <div class="week-col-head">
-            <div>
-              <span style="display:block; font-size:11px; color:var(--muted);">${dayItem.name}</span>
-              <strong>${dayItem.label}</strong>
-            </div>
-            ${dayItem.isToday ? "<b>Today</b>" : ""}
-          </div>
-          <div class="week-col-posts">
-            ${dayPosts.length === 0 ? `<div style="color:var(--muted); font-size:11px; text-align:center; padding:20px 0;">No posts</div>` : ""}
-            ${dayPosts.map(post => {
-              const mainPlatform = post.channels?.[0] || post.meta?.split(" ")[0] || "Instagram";
-              return `
-                <div class="week-post-card" data-post-id="${post.id}">
-                  <div class="week-post-card-head">
-                    <span class="platform ${post.cls || platformClass(mainPlatform)}">${platformMark(mainPlatform)}</span>
-                    <strong style="color:var(--muted);">${post.time || "10:00"}</strong>
-                  </div>
-                  <div class="week-post-card-copy">${escapeHtml(post.title || post.copy?.slice(0, 48) || "Post")}</div>
-                </div>
-              `;
-            }).join("")}
-          </div>
-          <button type="button" class="btn-week-add" data-add-date="${dayItem.dateStr}">＋ Schedule post</button>
+      weekView.innerHTML = `
+        <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; scrollbar-width:none;">
+          ${weekDays.map(d => `
+            <button type="button" class="quick-chip ${d.dateStr === calSelectedDate ? "active" : ""}" data-week-day="${d.dateStr}">
+              ${d.name} ${d.label} ${d.isToday ? "• Today" : ""}
+            </button>
+          `).join("")}
         </div>
       `;
-    }).join("");
 
-    weekView.querySelectorAll(".week-post-card").forEach(card => {
-      card.addEventListener("click", () => {
-        openPostDetails(card.dataset.postId);
+      weekView.querySelectorAll("[data-week-day]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          calSelectedDate = btn.dataset.weekDay;
+          renderCalendar();
+        });
       });
-    });
+    }
 
-    weekView.querySelectorAll(".btn-week-add").forEach(btn => {
-      btn.addEventListener("click", () => {
-        openComposerForDate(btn.dataset.addDate);
-      });
-    });
+  } else if (calViewMode === "day") {
+    if (monthGrid) monthGrid.hidden = true;
+    if (weekdaysBar) weekdaysBar.hidden = true;
+    if (weekView) weekView.hidden = true;
+    if (timelineCard) timelineCard.hidden = false;
   }
+
+  renderDayTimeline(calSelectedDate);
+}
+
+function renderDayTimeline(dateStr) {
+  const titleEl = document.getElementById("cal-timeline-date-title");
+  const countEl = document.getElementById("cal-timeline-posts-count");
+  const slotsList = document.getElementById("hourly-slots-list");
+  if (!slotsList) return;
+
+  const [y, m, d] = (dateStr || "2026-10-23").split("-").map(Number);
+  const dateObj = new Date(y, m - 1, d);
+  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const dayName = daysOfWeek[dateObj.getDay()];
+  const monthName = calMonthNames[dateObj.getMonth()];
+  const formattedTitle = `${dayName}, ${monthName} ${d}, ${y}`;
+  if (titleEl) titleEl.textContent = formattedTitle;
+
+  const dayPosts = scheduled.filter(p => {
+    if (p.date !== dateStr) return false;
+    if (calFilterPlatform !== "All") {
+      const matchesMeta = p.meta && p.meta.toLowerCase().includes(calFilterPlatform.toLowerCase());
+      const matchesCls = p.cls === platformClass(calFilterPlatform);
+      const matchesChan = p.channels && p.channels.includes(calFilterPlatform);
+      return matchesMeta || matchesCls || matchesChan;
+    }
+    return true;
+  });
+
+  if (countEl) {
+    countEl.textContent = dayPosts.length === 0
+      ? "No posts scheduled"
+      : `${dayPosts.length} post${dayPosts.length === 1 ? "" : "s"} scheduled`;
+  }
+
+  const timeSlots = [
+    { time: "08:00", label: "08:00 AM" },
+    { time: "09:30", label: "09:30 AM" },
+    { time: "11:00", label: "11:00 AM" },
+    { time: "12:30", label: "12:30 PM" },
+    { time: "02:00", label: "02:00 PM" },
+    { time: "03:45", label: "03:45 PM" },
+    { time: "05:00", label: "05:00 PM" },
+    { time: "06:30", label: "06:30 PM" },
+    { time: "08:00", label: "08:00 PM" }
+  ];
+
+  slotsList.innerHTML = timeSlots.map(slot => {
+    const matchedPost = dayPosts.find(p => {
+      if (!p.time) return false;
+      const pHour = parseInt(p.time.split(":")[0], 10);
+      const sHour = parseInt(slot.time.split(":")[0], 10);
+      return Math.abs(pHour - sHour) <= 1;
+    });
+
+    if (matchedPost) {
+      const mainPlatform = matchedPost.channels?.[0] || matchedPost.meta?.split(" ")[0] || "Instagram";
+      const cls = matchedPost.cls || platformClass(mainPlatform);
+      let borderCol = "coral";
+      if (cls === "li") borderCol = "blue";
+      else if (cls === "tk") borderCol = "lime";
+
+      return `
+        <div class="hourly-slot-row">
+          <span class="hourly-time-label">${matchedPost.time || slot.label}</span>
+          <div class="hourly-slot-post ${borderCol}" data-post-id="${matchedPost.id}">
+            <div class="hourly-post-info">
+              <span class="platform ${cls}">${platformMark(mainPlatform)}</span>
+              <div>
+                <span class="hourly-post-title">${escapeHtml(matchedPost.title || matchedPost.copy?.slice(0, 32) || "Scheduled Post")}</span>
+                <span class="hourly-post-channel">${escapeHtml(matchedPost.meta || mainPlatform)}</span>
+              </div>
+            </div>
+            <button type="button" class="btn-slot-manage" data-post-id="${matchedPost.id}">Manage ↗</button>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="hourly-slot-row">
+        <span class="hourly-time-label">${slot.label}</span>
+        <div class="hourly-slot-empty" data-slot-date="${dateStr}" data-slot-time="${slot.time}">
+          <span>Empty queue slot</span>
+          <span style="font-weight:700; color:var(--ink);">＋ Schedule</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  slotsList.querySelectorAll(".hourly-slot-post, .btn-slot-manage").forEach(el => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = el.dataset.postId;
+      if (id) openPostDetails(id);
+    });
+  });
+
+  slotsList.querySelectorAll(".hourly-slot-empty").forEach(slotEl => {
+    slotEl.addEventListener("click", () => {
+      const d = slotEl.dataset.slotDate;
+      const t = slotEl.dataset.slotTime;
+      openComposerForDate(d, t);
+    });
+  });
 }
 function renderApprovals() {
   const board = document.getElementById('approval-board');
@@ -1424,6 +1476,68 @@ document.getElementById("cal-view-week")?.addEventListener("click", () => {
   calViewMode = "week";
   renderCalendar();
 });
+
+document.getElementById("cal-view-day")?.addEventListener("click", () => {
+  calViewMode = "day";
+  renderCalendar();
+});
+
+document.getElementById("btn-add-post-timeline")?.addEventListener("click", () => {
+  openComposerForDate(calSelectedDate, "10:30");
+});
+
+document.getElementById("btn-cal-schedule-post")?.addEventListener("click", () => {
+  openComposerForDate(calSelectedDate, "10:30");
+});
+
+// Calendar Touch Swipe Navigation (Slide left/right on mobile)
+const fullCalContainer = document.querySelector(".full-calendar");
+if (fullCalContainer) {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  fullCalContainer.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  fullCalContainer.addEventListener("touchend", (e) => {
+    const deltaX = e.changedTouches[0].screenX - touchStartX;
+    const deltaY = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < 0) {
+        // Swiped Left -> Next
+        if (calViewMode === "month") {
+          calCurrentMonth++;
+          if (calCurrentMonth > 11) {
+            calCurrentMonth = 0;
+            calCurrentYear++;
+          }
+        } else {
+          const cur = new Date(calSelectedDate);
+          cur.setDate(cur.getDate() + (calViewMode === "week" ? 7 : 1));
+          calSelectedDate = cur.toISOString().split("T")[0];
+        }
+        renderCalendar();
+        toast("Next ➔");
+      } else {
+        // Swiped Right -> Previous
+        if (calViewMode === "month") {
+          calCurrentMonth--;
+          if (calCurrentMonth < 0) {
+            calCurrentMonth = 11;
+            calCurrentYear--;
+          }
+        } else {
+          const cur = new Date(calSelectedDate);
+          cur.setDate(cur.getDate() - (calViewMode === "week" ? 7 : 1));
+          calSelectedDate = cur.toISOString().split("T")[0];
+        }
+        renderCalendar();
+        toast("⬅ Previous");
+      }
+    }
+  }, { passive: true });
+}
 
 // Scheduled Post Details Modal Handlers (Reschedule, Edit, Publish, Delete)
 document.getElementById("btn-save-reschedule")?.addEventListener("click", () => {

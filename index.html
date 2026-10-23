@@ -167,12 +167,26 @@
               </div>
               <button type="button" class="active" id="cal-view-month">Month</button>
               <button type="button" id="cal-view-week">Week</button>
+              <button type="button" id="cal-view-day">Day</button>
             </div>
             <div class="calendar-weekdays" id="calendar-weekdays">
               <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
             </div>
             <div class="month-grid" id="month-grid"></div>
             <div class="week-calendar-view" id="week-calendar-view" hidden></div>
+
+            <!-- Interactive Day Schedule & Hourly Time Slots -->
+            <div class="cal-day-timeline-card" id="cal-day-timeline-card">
+              <div class="cal-day-timeline-head">
+                <div>
+                  <p class="eyebrow" id="cal-timeline-eyebrow" style="margin-bottom:2px;">DAY TIMELINE</p>
+                  <h3 id="cal-timeline-date-title">Friday, Oct 23, 2026</h3>
+                  <span id="cal-timeline-posts-count">2 posts scheduled</span>
+                </div>
+                <button type="button" class="button secondary small" id="btn-add-post-timeline" style="font-size:11px; padding:6px 12px; font-weight:700;">＋ Add Post</button>
+              </div>
+              <div class="hourly-slots-list" id="hourly-slots-list"></div>
+            </div>
           </article>
         </section>
 
@@ -526,50 +540,58 @@
                   <button type="button" class="button secondary small" id="btn-download-all-invoices">Download All (.zip)</button>
                 </div>
 
-                <table class="invoices-table" aria-label="Billing Invoices">
-                  <thead>
-                    <tr>
-                      <th>Invoice ID</th>
-                      <th>Billing Date</th>
-                      <th>Plan Description</th>
-                      <th>Amount</th>
-                      <th>Status</th>
-                      <th style="text-align:right;">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><strong>#TIDE-2026-102</strong></td>
-                      <td>Oct 23, 2026</td>
-                      <td>Studio Pro Monthly (Unlimited)</td>
-                      <td><strong>$99.00 USD</strong></td>
-                      <td><span class="invoice-badge-paid">✓ Paid</span></td>
-                      <td style="text-align:right;">
-                        <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="102" style="font-size:11px; padding:5px 10px;">Download Receipt</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><strong>#TIDE-2026-091</strong></td>
-                      <td>Sep 23, 2026</td>
-                      <td>Studio Pro Monthly (Unlimited)</td>
-                      <td><strong>$99.00 USD</strong></td>
-                      <td><span class="invoice-badge-paid">✓ Paid</span></td>
-                      <td style="text-align:right;">
-                        <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="091" style="font-size:11px; padding:5px 10px;">Download Receipt</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><strong>#TIDE-2026-080</strong></td>
-                      <td>Aug 23, 2026</td>
-                      <td>Studio Pro Monthly (Unlimited)</td>
-                      <td><strong>$99.00 USD</strong></td>
-                      <td><span class="invoice-badge-paid">✓ Paid</span></td>
-                      <td style="text-align:right;">
-                        <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="080" style="font-size:11px; padding:5px 10px;">Download Receipt</button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="invoices-cards-list" aria-label="Billing Invoices">
+                  <div class="invoice-mobile-card">
+                    <div class="invoice-mobile-top">
+                      <div>
+                        <strong>#TIDE-2026-102</strong>
+                        <p>Studio Pro Monthly (Unlimited)</p>
+                      </div>
+                      <div class="invoice-mobile-amount">
+                        <strong>$99.00 USD</strong>
+                        <div><span class="invoice-badge-paid">✓ Paid</span></div>
+                      </div>
+                    </div>
+                    <div class="invoice-mobile-foot">
+                      <span>Oct 23, 2026</span>
+                      <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="102">Download Receipt ↗</button>
+                    </div>
+                  </div>
+
+                  <div class="invoice-mobile-card">
+                    <div class="invoice-mobile-top">
+                      <div>
+                        <strong>#TIDE-2026-091</strong>
+                        <p>Studio Pro Monthly (Unlimited)</p>
+                      </div>
+                      <div class="invoice-mobile-amount">
+                        <strong>$99.00 USD</strong>
+                        <div><span class="invoice-badge-paid">✓ Paid</span></div>
+                      </div>
+                    </div>
+                    <div class="invoice-mobile-foot">
+                      <span>Sep 23, 2026</span>
+                      <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="091">Download Receipt ↗</button>
+                    </div>
+                  </div>
+
+                  <div class="invoice-mobile-card">
+                    <div class="invoice-mobile-top">
+                      <div>
+                        <strong>#TIDE-2026-080</strong>
+                        <p>Studio Pro Monthly (Unlimited)</p>
+                      </div>
+                      <div class="invoice-mobile-amount">
+                        <strong>$99.00 USD</strong>
+                        <div><span class="invoice-badge-paid">✓ Paid</span></div>
+                      </div>
+                    </div>
+                    <div class="invoice-mobile-foot">
+                      <span>Aug 23, 2026</span>
+                      <button type="button" class="button secondary small btn-download-single-invoice" data-invoice="080">Download Receipt ↗</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
