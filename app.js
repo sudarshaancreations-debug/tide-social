@@ -122,11 +122,9 @@ function updateBadges() {
   const unreadInbox = threadsList.filter(t => !t.handled).length;
   
   const apprBadge = document.getElementById('approvals-badge');
-  const chipApprBadge = document.getElementById('chip-approvals-badge');
   const overApprBadge = document.getElementById('overview-approval-badge');
   const apprFilter = document.getElementById('approvals-filter-count');
   if (apprBadge) apprBadge.textContent = remainingApprovals;
-  if (chipApprBadge) chipApprBadge.textContent = remainingApprovals;
   if (overApprBadge) {
     overApprBadge.textContent = remainingApprovals;
     if (remainingApprovals === 0) {
@@ -138,12 +136,10 @@ function updateBadges() {
   if (apprFilter) apprFilter.textContent = `${remainingApprovals} awaiting review`;
 
   const inboxBadge = document.getElementById('inbox-badge');
-  const tabInboxBadge = document.getElementById('tab-inbox-badge');
   const overInboxBadge = document.getElementById('overview-inbox-badge');
   const inboxUnread = document.getElementById('inbox-unread-count');
   const inboxSummaryNew = document.getElementById('inbox-summary-new');
   if (inboxBadge) inboxBadge.textContent = unreadInbox;
-  if (tabInboxBadge) tabInboxBadge.textContent = unreadInbox;
   if (overInboxBadge) overInboxBadge.textContent = `${unreadInbox} new`;
   if (inboxUnread) inboxUnread.textContent = `${unreadInbox} unread`;
   if (inboxSummaryNew) inboxSummaryNew.textContent = unreadInbox;
@@ -157,17 +153,13 @@ function updateBadges() {
 
 function showView(name) {
   document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === `view-${name}`));
-  document.querySelectorAll('.nav-item, .tab-item, .chip-nav-btn').forEach(item => {
-    item.classList.toggle('active', item.dataset.view === name);
-  });
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === name));
   const view = document.querySelector(`#view-${name}`);
   const titleEl = document.querySelector('#page-title');
-  const mobileTitle = document.querySelector('#mobile-page-title');
   if (titleEl && view) titleEl.textContent = view.dataset.title || 'Tide Social';
-  if (mobileTitle && view) mobileTitle.textContent = view.dataset.title || 'Tide';
-  const scrollContainer = document.querySelector('.mobile-scroll-container');
-  if (scrollContainer) scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
-  else window.scrollTo({ top: 0, behavior: 'smooth' });
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) sidebar.classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function openModal(id) {
@@ -2219,40 +2211,6 @@ document.getElementById("btn-switch-workspace-hero")?.addEventListener("click", 
 document.getElementById("btn-open-full-profile")?.addEventListener("click", () => {
   closeModal(document.getElementById("profile-modal"));
   showView("profile");
-});
-
-// Mobile Device Frame Mode Toggle
-document.getElementById('btn-mode-phone')?.addEventListener('click', () => {
-  document.getElementById('btn-mode-phone')?.classList.add('active');
-  document.getElementById('btn-mode-fluid')?.classList.remove('active');
-  document.getElementById('mobile-device-shell')?.classList.remove('full-mode');
-  toast('Switched to iPhone 16 Pro mockup frame');
-});
-
-document.getElementById('btn-mode-fluid')?.addEventListener('click', () => {
-  document.getElementById('btn-mode-fluid')?.classList.add('active');
-  document.getElementById('btn-mode-phone')?.classList.remove('active');
-  document.getElementById('mobile-device-shell')?.classList.add('full-mode');
-  toast('Switched to Full Screen Mobile view');
-});
-
-// Update live iOS clock
-function updateIOSClock() {
-  const clockEl = document.getElementById('ios-live-clock');
-  if (!clockEl) return;
-  const now = new Date();
-  let hours = now.getHours();
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  clockEl.textContent = `${hours}:${minutes}`;
-}
-setInterval(updateIOSClock, 10000);
-updateIOSClock();
-
-// Workspace switch updates in mobile header
-document.getElementById('btn-workspace-switch')?.addEventListener('click', () => {
-  const ws = document.getElementById('profile-workspace-select')?.value;
-  const headerWs = document.getElementById('mobile-header-ws-name');
-  if (headerWs && ws) headerWs.textContent = ws;
 });
 
 // Initial Render
