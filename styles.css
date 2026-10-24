@@ -2232,46 +2232,361 @@ main {
   margin-bottom: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.03);
 }
+/* Interactive Playable Video Reel Player */
 .reel-preview {
-  height: 120px;
-  background: linear-gradient(135deg, #1f201c 45%, #ff765d 100%);
+  height: 210px;
+  background: #141512;
   color: #ffffff;
-  display: flex;
-  align-items: flex-end;
-  padding: 14px 16px;
   position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  border-bottom: 1px solid var(--line);
 }
-.reel-kicker {
-  font: 800 13px var(--font-display);
-  line-height: 1.25;
-  color: #ffffff;
-  max-width: 78%;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-}
-.play {
+
+.reel-canvas {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 38px;
-  height: 38px;
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.reel-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.8) 100%);
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.reel-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.reel-live-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  padding: 3px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #c8f35c;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.reel-live-badge.playing {
+  color: #ff5238;
+}
+
+.reel-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reel-sound-btn, .reel-expand-btn {
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: grid;
   place-items: center;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+.reel-sound-btn:hover, .reel-expand-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.08);
+}
+
+.reel-center-play {
+  align-self: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.reel-center-play:hover {
+  transform: scale(1.12);
+  background: rgba(255, 255, 255, 0.95);
+}
+.reel-center-play .play-icon {
+  font-size: 18px;
+  color: #ffffff;
+  margin-left: 2px;
+}
+.reel-center-play:hover .play-icon {
+  color: #171814;
+}
+.reel-preview.is-playing .reel-center-play {
+  opacity: 0;
+  pointer-events: none;
+}
+.reel-preview.is-playing:hover .reel-center-play {
+  opacity: 0.85;
+  pointer-events: auto;
+}
+
+.reel-captions-box {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.reel-caption-text {
+  font: 800 12px/1.3 var(--font-display);
+  color: #ffffff;
+  display: block;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.reel-controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.reel-mini-play-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.reel-scrubber {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.reel-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--coral);
+  transition: width 0.1s linear;
+}
+
+.reel-time {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Fullscreen Reel Modal Styles */
+.reel-modal-card {
+  max-width: 380px !important;
+  width: 100% !important;
+  padding: 0 !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  background: #000000 !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6) !important;
+}
+
+.reel-modal-viewport {
+  position: relative;
+  width: 100%;
+  height: 580px;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.reel-modal-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.reel-modal-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 30%, transparent 60%, rgba(0,0,0,0.85) 100%);
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.reel-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reel-modal-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reel-modal-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--lemon);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 13px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #ffffff;
+}
+
+.reel-modal-author strong {
   font-size: 13px;
   color: #ffffff;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  display: block;
 }
-.reel-preview small {
-  margin-left: auto;
+
+.reel-modal-author small {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.reel-modal-center-captions {
+  align-self: center;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.reel-modal-center-captions h2 {
+  font: 900 24px/1.2 var(--font-display);
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.reel-modal-actions {
+  position: absolute;
+  right: 14px;
+  bottom: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 5;
+}
+
+.reel-action-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.reel-action-btn .action-icon {
+  font-size: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+  transition: transform 0.15s ease;
+}
+.reel-action-btn:active .action-icon {
+  transform: scale(1.3);
+}
+
+.reel-action-btn small {
   font-size: 11px;
   font-weight: 700;
-  background: rgba(0,0,0,0.55);
-  padding: 2px 7px;
-  border-radius: 4px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.reel-spinning-disc {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  animation: spin 3s linear infinite;
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.reel-modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.reel-modal-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
+}
+
+.reel-modal-cta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reel-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 10;
+  color: #ffffff !important;
+  background: rgba(0,0,0,0.6) !important;
+  border-radius: 50% !important;
+  width: 30px !important;
+  height: 30px !important;
+  font-size: 18px !important;
+  display: grid !important;
+  place-items: center !important;
 }
 .approval-copy {
   padding: 12px 14px;

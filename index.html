@@ -968,6 +968,67 @@
     </div>
   </div>
 
+  <!-- Interactive Fullscreen Reel Player Modal -->
+  <div class="modal" id="reel-modal" role="dialog" aria-modal="true" aria-labelledby="reel-modal-title" hidden>
+    <div class="modal-card reel-modal-card">
+      <button class="modal-close reel-close" data-close aria-label="Close reel player">×</button>
+      <div class="reel-modal-viewport">
+        <canvas class="reel-modal-canvas" id="reel-modal-canvas"></canvas>
+        <div class="reel-modal-overlay">
+          <!-- Top info -->
+          <div class="reel-modal-header">
+            <div class="reel-modal-author">
+              <div class="reel-modal-avatar">AK</div>
+              <div>
+                <strong>@acmestudio</strong>
+                <small>Original audio · 18s</small>
+              </div>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="reel-sound-btn" id="btn-modal-reel-sound" title="Toggle sound">🔇</button>
+            </div>
+          </div>
+
+          <!-- Center kinetic captions -->
+          <div class="reel-modal-center-captions" id="reel-modal-captions">
+            <h2 id="reel-modal-caption-text">YOUR BRAND DOESN’T NEED MORE CONTENT.</h2>
+          </div>
+
+          <!-- Right side actions -->
+          <div class="reel-modal-actions">
+            <button class="reel-action-btn" id="btn-reel-like" type="button" title="Like">
+              <span class="action-icon" id="reel-like-heart">♡</span>
+              <small id="reel-like-count">14.2K</small>
+            </button>
+            <button class="reel-action-btn" type="button" title="Comments">
+              <span class="action-icon">💬</span>
+              <small>382</small>
+            </button>
+            <button class="reel-action-btn" type="button" title="Share">
+              <span class="action-icon">↗</span>
+              <small>1.2K</small>
+            </button>
+            <div class="reel-spinning-disc" id="reel-disc">🎵</div>
+          </div>
+
+          <!-- Bottom controls and approval buttons -->
+          <div class="reel-modal-footer">
+            <div class="reel-scrubber" id="reel-modal-scrubber">
+              <div class="reel-progress-fill" id="reel-modal-progress"></div>
+            </div>
+            <div class="reel-modal-meta">
+              <span id="reel-modal-time">00:00 / 00:18</span>
+              <div class="reel-modal-cta">
+                <button type="button" class="button secondary small" id="btn-modal-reel-change">Change</button>
+                <button type="button" class="button primary small" id="btn-modal-reel-approve">Approve ✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Change Request Modal -->
   <div class="modal" id="change-modal" role="dialog" aria-modal="true" aria-labelledby="change-title" hidden>
     <div class="modal-card small-modal">

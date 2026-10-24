@@ -632,6 +632,322 @@ function renderDayTimeline(dateStr) {
     });
   });
 }
+// ============================================================
+// INTERACTIVE PLAYABLE VIDEO REEL PLAYER ENGINE
+// ============================================================
+class TideReelPlayer {
+  constructor(canvas, options = {}) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.duration = options.duration || 18;
+    this.currentTime = 0;
+    this.isPlaying = false;
+    this.isMuted = true;
+    this.audioCtx = null;
+    this.nextNoteTime = 0;
+    this.step = 0;
+    this.onUpdate = options.onUpdate || (() => {});
+    this.captions = options.captions || [
+      { start: 0, end: 4, text: "YOUR BRAND DOESN’T NEED MORE CONTENT." },
+      { start: 4, end: 8, text: "IT NEEDS A SYSTEM TO REPURPOSE." },
+      { start: 8, end: 12, text: "CAPTURE ONCE · REACH 4 PLATFORMS." },
+      { start: 12, end: 15, text: "SAVE 21+ HOURS WITH TIDE." },
+      { start: 15, end: 18, text: "READY TO PUBLISH · APPROVE NOW!" }
+    ];
+
+    // Floating particles (always moving gently even when paused so nothing is still)
+    this.particles = [];
+    for (let i = 0; i < 28; i++) {
+      this.particles.push({
+        x: Math.random(),
+        y: Math.random(),
+        radius: Math.random() * 2.5 + 1,
+        vy: -(Math.random() * 0.0012 + 0.0004),
+        vx: (Math.random() - 0.5) * 0.0006,
+        alpha: Math.random() * 0.6 + 0.25,
+        color: i % 3 === 0 ? '#ff745b' : (i % 3 === 1 ? '#c8f35c' : '#ffffff')
+      });
+    }
+
+    this.lastTimestamp = performance.now();
+    this.renderLoop = this.renderLoop.bind(this);
+    requestAnimationFrame(this.renderLoop);
+  }
+
+  initAudio() {
+    if (!this.audioCtx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.audioCtx = new AudioCtx();
+    }
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume();
+    }
+  }
+
+  playAudioTick() {
+    if (this.isMuted || !this.audioCtx || this.audioCtx.state !== 'running') return;
+    const now = this.audioCtx.currentTime;
+    if (now >= this.nextNoteTime) {
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      const isKick = (this.step % 4 === 0);
+      if (isKick) {
+        osc.frequency.setValueAtTime(130, now);
+        osc.frequency.exponentialRampToValueAtTime(32, now + 0.12);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      } else {
+        const notes = [220, 261.6, 293.6, 329.6];
+        const freq = notes[(this.step / 2 | 0) % notes.length];
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      }
+      osc.start(now);
+      osc.stop(now + 0.15);
+
+      this.step++;
+      this.nextNoteTime = now + 0.24;
+    }
+  }
+
+  play() {
+    this.initAudio();
+    this.isPlaying = true;
+    this.lastTimestamp = performance.now();
+    if (this.currentTime >= this.duration) {
+      this.currentTime = 0;
+    }
+    this.onUpdate(this);
+  }
+
+  pause() {
+    this.isPlaying = false;
+    this.onUpdate(this);
+  }
+
+  togglePlay() {
+    if (this.isPlaying) this.pause();
+    else this.play();
+  }
+
+  seek(seconds) {
+    this.currentTime = Math.max(0, Math.min(this.duration, seconds));
+    this.onUpdate(this);
+  }
+
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    if (!this.isMuted) this.initAudio();
+    this.onUpdate(this);
+    return this.isMuted;
+  }
+
+  getActiveCaption() {
+    const item = this.captions.find(c => this.currentTime >= c.start && this.currentTime < c.end);
+    return item ? item.text : this.captions[0].text;
+  }
+
+  renderLoop(now) {
+    const delta = (now - this.lastTimestamp) / 1000;
+    this.lastTimestamp = now;
+
+    if (this.isPlaying) {
+      this.currentTime += delta;
+      if (this.currentTime >= this.duration) {
+        this.currentTime = 0;
+      }
+      this.playAudioTick();
+      this.onUpdate(this);
+    }
+
+    this.draw();
+    requestAnimationFrame(this.renderLoop);
+  }
+
+  draw() {
+    const { canvas, ctx } = this;
+    if (!canvas) return;
+
+    const width = canvas.clientWidth || 360;
+    const height = canvas.clientHeight || 200;
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    // 1. Moving dynamic gradient background
+    const t = this.currentTime;
+    const gAngle = t * 0.4;
+    const cx = width / 2;
+    const cy = height / 2;
+    const grad = ctx.createRadialGradient(
+      cx + Math.cos(gAngle) * (width * 0.35),
+      cy + Math.sin(gAngle) * (height * 0.35),
+      10,
+      cx,
+      cy,
+      Math.max(width, height) * 0.8
+    );
+    grad.addColorStop(0, '#361d28');
+    grad.addColorStop(0.4, '#1e1c18');
+    grad.addColorStop(0.85, '#121310');
+    grad.addColorStop(1, '#090a08');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+
+    // 2. Secondary accent light flare
+    const flareGrad = ctx.createRadialGradient(
+      width * 0.8 + Math.sin(t * 1.2) * 40,
+      height * 0.3 + Math.cos(t * 0.9) * 30,
+      5,
+      width * 0.8,
+      height * 0.3,
+      120
+    );
+    flareGrad.addColorStop(0, 'rgba(255, 82, 56, 0.45)');
+    flareGrad.addColorStop(0.5, 'rgba(200, 243, 92, 0.2)');
+    flareGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = flareGrad;
+    ctx.fillRect(0, 0, width, height);
+
+    // 3. Floating particles (always moving gently even when paused so nothing is still!)
+    for (const p of this.particles) {
+      p.y += p.vy;
+      p.x += p.vx + Math.sin(t * 2 + p.radius) * 0.0003;
+      if (p.y < 0) p.y = 1;
+      if (p.x < 0) p.x = 1;
+      if (p.x > 1) p.x = 0;
+
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.arc(p.x * width, p.y * height, p.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // 4. Equalizer dancing waveform bars
+    const barCount = 14;
+    const barWidth = 3;
+    const barGap = 3;
+    const startX = width - (barCount * (barWidth + barGap)) - 14;
+    const startY = height - 34;
+
+    for (let i = 0; i < barCount; i++) {
+      const freq = Math.sin(t * 8 + i * 0.8) * 0.5 + 0.5;
+      const pulse = this.isPlaying ? (Math.sin(t * 14 + i * 1.5) * 0.5 + 0.5) : 0.15;
+      const bH = 4 + (freq * pulse * 22);
+      ctx.fillStyle = i % 2 === 0 ? '#ff745b' : '#c8f35c';
+      ctx.beginPath();
+      ctx.roundRect(startX + i * (barWidth + barGap), startY - bH, barWidth, bH, 2);
+      ctx.fill();
+    }
+  }
+}
+
+// Global modal player instance
+let fullscreenReelPlayer = null;
+
+function openFullscreenReel(item) {
+  const modal = document.getElementById("reel-modal");
+  const canvas = document.getElementById("reel-modal-canvas");
+  if (!modal || !canvas) return;
+
+  const captionEl = document.getElementById("reel-modal-caption-text");
+  const timeEl = document.getElementById("reel-modal-time");
+  const progressEl = document.getElementById("reel-modal-progress");
+  const scrubberEl = document.getElementById("reel-modal-scrubber");
+  const soundBtn = document.getElementById("btn-modal-reel-sound");
+  const likeBtn = document.getElementById("btn-reel-like");
+  const likeCount = document.getElementById("reel-like-count");
+  const likeHeart = document.getElementById("reel-like-heart");
+
+  if (captionEl) captionEl.textContent = item.kicker || "YOUR BRAND DOESN’T NEED MORE CONTENT.";
+
+  if (fullscreenReelPlayer) {
+    fullscreenReelPlayer.pause();
+  }
+
+  fullscreenReelPlayer = new TideReelPlayer(canvas, {
+    duration: 18,
+    captions: [
+      { start: 0, end: 4, text: item.kicker || "YOUR BRAND DOESN’T NEED MORE CONTENT." },
+      { start: 4, end: 8, text: "IT NEEDS A SYSTEM TO REPURPOSE." },
+      { start: 8, end: 12, text: "CAPTURE ONCE · REACH 4 PLATFORMS." },
+      { start: 12, end: 15, text: "SAVE 21+ HOURS WITH TIDE." },
+      { start: 15, end: 18, text: "READY TO PUBLISH · APPROVE NOW!" }
+    ],
+    onUpdate: (p) => {
+      const cur = p.currentTime;
+      const dur = p.duration;
+      const pct = Math.min(100, (cur / dur) * 100);
+      if (progressEl) progressEl.style.width = `${pct}%`;
+      const curSec = String(Math.floor(cur)).padStart(2, "0");
+      const durSec = String(Math.floor(dur)).padStart(2, "0");
+      if (timeEl) timeEl.textContent = `00:${curSec} / 00:${durSec}`;
+      if (captionEl) captionEl.textContent = p.getActiveCaption();
+    }
+  });
+
+  fullscreenReelPlayer.play();
+
+  if (soundBtn) {
+    soundBtn.onclick = (e) => {
+      e.stopPropagation();
+      const isMuted = fullscreenReelPlayer.toggleMute();
+      soundBtn.textContent = isMuted ? "🔇" : "🔊";
+    };
+  }
+
+  if (scrubberEl) {
+    scrubberEl.onclick = (e) => {
+      e.stopPropagation();
+      const rect = scrubberEl.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+      fullscreenReelPlayer.seek(ratio * fullscreenReelPlayer.duration);
+    };
+  }
+
+  canvas.onclick = () => {
+    fullscreenReelPlayer.togglePlay();
+  };
+
+  let likes = 14200;
+  let liked = false;
+  if (likeBtn) {
+    likeBtn.onclick = (e) => {
+      e.stopPropagation();
+      liked = !liked;
+      likes += liked ? 1 : -1;
+      if (likeCount) likeCount.textContent = (likes / 1000).toFixed(1) + "K";
+      if (likeHeart) {
+        likeHeart.textContent = liked ? "♥" : "♡";
+        likeHeart.style.color = liked ? "#ff5238" : "#ffffff";
+      }
+      toast(liked ? "Liked this Reel!" : "Unliked");
+    };
+  }
+
+  document.getElementById("btn-modal-reel-approve")?.addEventListener("click", () => {
+    closeModal(modal);
+    document.getElementById("approve-featured-btn")?.click();
+  });
+
+  document.getElementById("btn-modal-reel-change")?.addEventListener("click", () => {
+    closeModal(modal);
+    activeChangeCardId = item.id;
+    openModal("change-modal");
+  });
+
+  openModal("reel-modal");
+}
+
 function renderApprovals() {
   const board = document.getElementById('approval-board');
   if (!board) return;
@@ -647,7 +963,10 @@ function renderApprovals() {
 
   board.innerHTML = approvalsList.map((item) => `
     <article class="board-card" data-appr-id="${item.id}">
-      <div class="board-art">${item.kicker}</div>
+      <div class="board-art playable-board-art" data-id="${item.id}" style="cursor: pointer; position: relative;">
+        <span class="board-kicker-text">${item.kicker}</span>
+        <span class="board-play-badge" style="position: absolute; right: 10px; bottom: 10px; background: rgba(0,0,0,0.65); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #fff;">▶ Play Reel (00:18)</span>
+      </div>
       <div class="board-body">
         <span class="platform ${item.cls || platformClass(item.platform)}">${item.mark || platformMark(item.platform)}</span>
         <h3>${item.title}</h3>
@@ -660,6 +979,14 @@ function renderApprovals() {
       </div>
     </article>
   `).join('');
+
+  board.querySelectorAll('.playable-board-art').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      const item = approvalsList.find(a => a.id === id);
+      if (item) openFullscreenReel(item);
+    });
+  });
 }
 
 function renderOverviewApprovals() {
@@ -696,7 +1023,31 @@ function renderOverviewApprovals() {
 
   let html = `
     <div class="approval-card" id="overview-featured-approval" data-id="${first.id}">
-      <div class="reel-preview"><span class="reel-kicker">${escapeHtml(first.kicker || "YOUR BRAND")}</span><span class="play">▶</span><small>00:18</small></div>
+      <div class="reel-preview" id="featured-reel-player" data-duration="18">
+        <canvas class="reel-canvas" id="featured-reel-canvas"></canvas>
+        <div class="reel-overlay" id="featured-reel-overlay">
+          <div class="reel-top-bar">
+            <span class="reel-live-badge" id="reel-status-badge">● DRAFT REEL</span>
+            <div class="reel-top-actions">
+              <button type="button" class="reel-sound-btn" id="btn-reel-sound" title="Toggle Sound">🔇</button>
+              <button type="button" class="reel-expand-btn" id="btn-reel-expand" title="Watch Fullscreen">⛶</button>
+            </div>
+          </div>
+          <div class="reel-center-play" id="btn-reel-play-center" title="Play Reel">
+            <span class="play-icon" id="featured-play-icon">▶</span>
+          </div>
+          <div class="reel-captions-box">
+            <span class="reel-caption-text" id="reel-caption-text">${escapeHtml(first.kicker || "YOUR BRAND DOESN’T NEED MORE CONTENT.")}</span>
+          </div>
+          <div class="reel-controls-bar">
+            <button type="button" class="reel-mini-play-btn" id="btn-reel-mini-play" title="Play/Pause">▶</button>
+            <div class="reel-scrubber" id="reel-scrubber" title="Click or drag to scrub">
+              <div class="reel-progress-fill" id="reel-progress-fill"></div>
+            </div>
+            <span class="reel-time" id="reel-time-display">00:00 / 00:18</span>
+          </div>
+        </div>
+      </div>
       <div class="approval-copy">
         <span class="platform ${first.cls || platformClass(first.platform)}">${first.mark || platformMark(first.platform)}</span>
         <strong>${escapeHtml(first.title)}</strong>
@@ -726,6 +1077,105 @@ function renderOverviewApprovals() {
 
   container.innerHTML = html;
 
+  // Initialize Featured Inline Reel Player
+  const canvas = document.getElementById("featured-reel-canvas");
+  const playerWrap = document.getElementById("featured-reel-player");
+  const playCenter = document.getElementById("btn-reel-play-center");
+  const playIcon = document.getElementById("featured-play-icon");
+  const miniPlay = document.getElementById("btn-reel-mini-play");
+  const soundBtn = document.getElementById("btn-reel-sound");
+  const expandBtn = document.getElementById("btn-reel-expand");
+  const progressFill = document.getElementById("reel-progress-fill");
+  const scrubber = document.getElementById("reel-scrubber");
+  const timeDisplay = document.getElementById("reel-time-display");
+  const captionText = document.getElementById("reel-caption-text");
+  const statusBadge = document.getElementById("reel-status-badge");
+
+  if (canvas) {
+    if (window.activeFeaturedReelPlayer) {
+      window.activeFeaturedReelPlayer.pause();
+    }
+
+    const reelPlayer = new TideReelPlayer(canvas, {
+      duration: 18,
+      captions: [
+        { start: 0, end: 4, text: first.kicker || "YOUR BRAND DOESN’T NEED MORE CONTENT." },
+        { start: 4, end: 8, text: "IT NEEDS A SYSTEM TO REPURPOSE." },
+        { start: 8, end: 12, text: "CAPTURE ONCE · REACH 4 PLATFORMS." },
+        { start: 12, end: 15, text: "SAVE 21+ HOURS EVERY WEEK." },
+        { start: 15, end: 18, text: "APPROVED FOR AUTOMATED PUBLISHING." }
+      ],
+      onUpdate: (p) => {
+        const cur = p.currentTime;
+        const dur = p.duration;
+        const pct = Math.min(100, (cur / dur) * 100);
+        if (progressFill) progressFill.style.width = `${pct}%`;
+        
+        const curSec = String(Math.floor(cur)).padStart(2, "0");
+        const durSec = String(Math.floor(dur)).padStart(2, "0");
+        if (timeDisplay) timeDisplay.textContent = `00:${curSec} / 00:${durSec}`;
+
+        if (captionText) captionText.textContent = p.getActiveCaption();
+
+        if (p.isPlaying) {
+          playerWrap?.classList.add("is-playing");
+          if (playIcon) playIcon.textContent = "⏸";
+          if (miniPlay) miniPlay.textContent = "⏸";
+          if (statusBadge) {
+            statusBadge.textContent = "● PLAYING REEL";
+            statusBadge.classList.add("playing");
+          }
+        } else {
+          playerWrap?.classList.remove("is-playing");
+          if (playIcon) playIcon.textContent = "▶";
+          if (miniPlay) miniPlay.textContent = "▶";
+          if (statusBadge) {
+            statusBadge.textContent = "● DRAFT REEL";
+            statusBadge.classList.remove("playing");
+          }
+        }
+      }
+    });
+
+    window.activeFeaturedReelPlayer = reelPlayer;
+
+    playCenter?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      reelPlayer.togglePlay();
+    });
+
+    miniPlay?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      reelPlayer.togglePlay();
+    });
+
+    soundBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isMuted = reelPlayer.toggleMute();
+      soundBtn.textContent = isMuted ? "🔇" : "🔊";
+      soundBtn.title = isMuted ? "Unmute Sound" : "Mute Sound";
+    });
+
+    scrubber?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const rect = scrubber.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+      reelPlayer.seek(ratio * reelPlayer.duration);
+    });
+
+    expandBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      reelPlayer.pause();
+      openFullscreenReel(first);
+    });
+
+    playerWrap?.addEventListener("click", (e) => {
+      if (e.target.closest("button") || e.target.closest(".reel-scrubber")) return;
+      reelPlayer.togglePlay();
+    });
+  }
+
   document.getElementById("approve-featured-btn")?.addEventListener("click", function () {
     const id = this.dataset.id;
     const item = approvalsList.find(a => a.id === id);
@@ -741,7 +1191,7 @@ function renderOverviewApprovals() {
       });
       write("tide-posts", scheduled);
       renderWeek();
-  renderCalendar();
+      renderCalendar();
     }
     approvalsList = approvalsList.filter(a => a.id !== id);
     write("tide-approvals", approvalsList);
