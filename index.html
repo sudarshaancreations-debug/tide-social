@@ -498,11 +498,20 @@
                   <div class="plan-feature-item"><span>✓</span> Full Analytics Suite</div>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-                  <span style="font-size:12px; color:#a2a59a;">Renews automatically on Nov 23, 2026 • Mastercard ending in 4242</span>
-                  <div style="display:flex; gap:10px;">
-                    <button type="button" class="button secondary small" id="btn-change-plan" style="background:#fff; color:var(--ink);">Change Plan</button>
-                    <button type="button" class="button primary small" id="btn-manage-subscription" style="background:var(--lime); color:var(--ink); border-color:var(--lime);">Stripe Billing Portal ↗</button>
+                <div class="billing-subscription-actions">
+                  <div class="billing-renewal-info">
+                    <span class="iap-provider-icon"></span>
+                    <span class="iap-provider-icon gpay-tag">G</span>
+                    <span id="billing-plan-renewal-text">Billed via Apple App Store &amp; Google Play Billing • Renews Nov 23, 2026</span>
+                  </div>
+                  <div class="billing-iap-buttons">
+                    <button type="button" class="button small btn-iap-native btn-pay-apple" id="btn-pay-apple" title="Purchase or renew via Apple Pay (StoreKit)">
+                      <span class="apple-logo"></span> Pay
+                    </button>
+                    <button type="button" class="button small btn-iap-native btn-pay-google" id="btn-pay-google" title="Purchase or renew via Google Pay (Play Billing)">
+                      <span class="gpay-logo">G</span>Pay
+                    </button>
+                    <button type="button" class="button secondary small btn-iap-manage" id="btn-open-iap-modal" style="background:rgba(255,255,255,0.12); color:#ffffff; border-color:rgba(255,255,255,0.25);">Manage Tier ↗</button>
                   </div>
                 </div>
               </div>
@@ -1401,6 +1410,94 @@
 
       <!-- Printable Report Container -->
       <div id="printable-report-container" class="printable-report-container" hidden></div>
+    </div>
+  </div>
+
+  <!-- Native Mobile In-App Purchase Modal (Apple Pay / StoreKit & Google Play Billing) -->
+  <div class="modal" id="iap-checkout-modal" role="dialog" aria-modal="true" aria-labelledby="iap-modal-title" hidden>
+    <div class="modal-card iap-modal-card">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <div class="modal-header-badge">📱 MOBILE IN-APP PURCHASE (IAP)</div>
+      <h2 id="iap-modal-title">Select Plan &amp; Native Pay</h2>
+      <p class="modal-subcopy">Direct StoreKit &amp; Google Play sandbox checkout. Test subscription renewal and tier switching with one tap.</p>
+
+      <!-- Plan Options Grid -->
+      <div class="iap-plans-grid">
+        <label class="iap-plan-option" data-tier="creator">
+          <input type="radio" name="iap_plan_select" value="creator" data-price="29" data-name="Creator">
+          <div class="iap-plan-body">
+            <div class="iap-plan-header">
+              <strong>Creator</strong>
+              <span class="iap-plan-price">$29<small>/mo</small></span>
+            </div>
+            <p>5 channels • 10 queued posts • Basic AI pipeline</p>
+          </div>
+        </label>
+
+        <label class="iap-plan-option active" data-tier="pro">
+          <input type="radio" name="iap_plan_select" value="pro" data-price="99" data-name="Studio Pro" checked>
+          <div class="iap-plan-body">
+            <div class="iap-plan-badge">CURRENT PLAN</div>
+            <div class="iap-plan-header">
+              <strong>Studio Pro</strong>
+              <span class="iap-plan-price">$99<small>/mo</small></span>
+            </div>
+            <p>Unlimited channels • 25 queued posts • Multi-Agent MCP</p>
+          </div>
+        </label>
+
+        <label class="iap-plan-option" data-tier="agency">
+          <input type="radio" name="iap_plan_select" value="agency" data-price="249" data-name="Agency Enterprise">
+          <div class="iap-plan-body">
+            <div class="iap-plan-header">
+              <strong>Agency Enterprise</strong>
+              <span class="iap-plan-price">$249<small>/mo</small></span>
+            </div>
+            <p>Unlimited everything • Custom AI clone • Dedicated IP</p>
+          </div>
+        </label>
+      </div>
+
+      <!-- Checkout Summary Card -->
+      <div class="iap-summary-card">
+        <div class="iap-summary-row">
+          <span id="iap-summary-tier-name">Studio Pro (Monthly Subscription)</span>
+          <strong id="iap-summary-tier-price">$99.00 / mo</strong>
+        </div>
+        <div class="iap-summary-row subtext">
+          <span>In-App Mobile Store Taxes</span>
+          <span>$0.00 (Store handled)</span>
+        </div>
+        <div class="iap-summary-divider"></div>
+        <div class="iap-summary-row total">
+          <span>Total Due Today</span>
+          <strong id="iap-summary-total">$99.00 USD</strong>
+        </div>
+      </div>
+
+      <!-- Native Direct Mobile Payment Buttons -->
+      <div class="iap-direct-pay-actions">
+        <button type="button" class="btn-native-checkout btn-apple-checkout" id="btn-modal-apple-pay" title="Complete purchase with Apple Pay">
+          <div class="btn-native-left">
+            <span class="apple-icon"></span>
+            <span class="apple-text">Pay with <strong>Apple Pay</strong></span>
+          </div>
+          <span class="storekit-badge">iOS StoreKit 2</span>
+        </button>
+
+        <button type="button" class="btn-native-checkout btn-google-checkout" id="btn-modal-google-pay" title="Complete purchase with Google Pay">
+          <div class="btn-native-left">
+            <span class="google-g">G</span>
+            <span class="google-text">Pay with <strong>GPay</strong></span>
+          </div>
+          <span class="play-badge">Android Play Billing</span>
+        </button>
+      </div>
+
+      <!-- Biometric & In-App Security Note -->
+      <div class="iap-security-footnote">
+        <span>🔒 Verified with Apple StoreKit &amp; Google Play Billing v7.0. Zero third-party web redirects.</span>
+      </div>
     </div>
   </div>
 

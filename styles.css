@@ -4334,3 +4334,354 @@ button, .button {
   color: #ffffff !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
 }
+
+/* =====================================================================
+   Apple Pay & Google Pay (StoreKit & Google Play Billing) Native System
+   ===================================================================== */
+.billing-subscription-actions {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-top: 4px !important;
+}
+
+.billing-renewal-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 12px !important;
+  color: #a2a59a !important;
+}
+
+.iap-provider-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+
+.iap-provider-icon.gpay-tag {
+  background: #ffffff !important;
+  color: #1a73e8 !important;
+  font-family: system-ui, -apple-system, sans-serif !important;
+}
+
+.billing-iap-buttons {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.btn-iap-native {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 14px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+  transition: transform 0.12s ease, opacity 0.12s ease !important;
+}
+
+.btn-iap-native:active {
+  transform: scale(0.97) !important;
+}
+
+.btn-pay-apple {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+.btn-pay-apple:hover {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+.btn-pay-apple .apple-logo {
+  font-size: 14px !important;
+  line-height: 1 !important;
+  margin-top: -1px !important;
+}
+
+.btn-pay-google {
+  background: #ffffff !important;
+  color: #1f1f1f !important;
+  border: 1px solid #dcdad0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-pay-google:hover {
+  background: #f8f9fa !important;
+}
+
+.btn-pay-google .gpay-logo {
+  font-weight: 900 !important;
+  color: #1a73e8 !important;
+  margin-right: 1px !important;
+}
+
+.btn-iap-manage {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+/* In-App Purchase Modal Styling */
+.iap-modal-card {
+  max-width: 520px !important;
+  width: 95% !important;
+  padding: 24px !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  box-sizing: border-box !important;
+}
+
+.iap-plans-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  margin: 16px 0 !important;
+}
+
+.iap-plan-option {
+  position: relative !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 14px 16px !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 12px !important;
+  background: #faf9f5 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.iap-plan-option:hover {
+  border-color: #b0af9f !important;
+  background: #f5f3ec !important;
+}
+
+.iap-plan-option.active {
+  border-color: var(--ink) !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.iap-plan-option input[type="radio"] {
+  margin-top: 3px !important;
+  accent-color: var(--ink) !important;
+  cursor: pointer !important;
+}
+
+.iap-plan-body {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.iap-plan-badge {
+  display: inline-block !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  padding: 2px 7px !important;
+  border-radius: 999px !important;
+  background: var(--lime) !important;
+  color: var(--ink) !important;
+  margin-bottom: 4px !important;
+}
+
+.iap-plan-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: baseline !important;
+  margin-bottom: 4px !important;
+}
+
+.iap-plan-header strong {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+}
+
+.iap-plan-price {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+}
+
+.iap-plan-price small {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--muted) !important;
+}
+
+.iap-plan-body p {
+  font-size: 11.5px !important;
+  color: var(--muted) !important;
+  margin: 0 !important;
+  line-height: 1.35 !important;
+}
+
+.iap-summary-card {
+  background: #f4f2e9 !important;
+  border-radius: 10px !important;
+  padding: 12px 14px !important;
+  margin-bottom: 16px !important;
+  border: 1px solid var(--line) !important;
+}
+
+.iap-summary-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 12.5px !important;
+  color: var(--ink) !important;
+}
+
+.iap-summary-row.subtext {
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  margin-top: 4px !important;
+}
+
+.iap-summary-divider {
+  height: 1px !important;
+  background: var(--line) !important;
+  margin: 8px 0 !important;
+}
+
+.iap-summary-row.total {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+.iap-summary-row.total strong {
+  font-size: 16px !important;
+  color: var(--ink) !important;
+}
+
+.iap-direct-pay-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+.btn-native-checkout {
+  width: 100% !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 16px !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+}
+
+.btn-native-checkout:active {
+  transform: scale(0.985) !important;
+}
+
+.btn-native-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.btn-apple-checkout {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #1f1f1f !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+}
+
+.btn-apple-checkout:hover {
+  background: #141414 !important;
+}
+
+.btn-apple-checkout .apple-icon {
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+.storekit-badge {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 2px 7px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+  letter-spacing: 0.03em !important;
+}
+
+.btn-google-checkout {
+  background: #ffffff !important;
+  color: #1f1f1f !important;
+  border: 1px solid #dadce0 !important;
+  box-shadow: 0 2px 5px rgba(60, 64, 67, 0.12) !important;
+}
+
+.btn-google-checkout:hover {
+  background: #f8f9fa !important;
+}
+
+.btn-google-checkout .google-g {
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  color: #1a73e8 !important;
+}
+
+.play-badge {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 2px 7px !important;
+  border-radius: 999px !important;
+  background: #e8f0fe !important;
+  color: #1967d2 !important;
+  letter-spacing: 0.03em !important;
+}
+
+.iap-security-footnote {
+  text-align: center !important;
+  font-size: 10.5px !important;
+  color: var(--muted) !important;
+  margin-top: 6px !important;
+  line-height: 1.3 !important;
+}
+
+@media (max-width: 600px) {
+  .billing-subscription-actions {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .billing-iap-buttons {
+    width: 100% !important;
+  }
+  .btn-iap-native {
+    flex: 1 !important;
+  }
+}

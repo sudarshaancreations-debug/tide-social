@@ -2955,10 +2955,11 @@ TOTAL AMOUNT PAID                                        $99.00
 
 PAYMENT DETAILS:
 ----------------------------------------------------------------
-Payment Gateway : Stripe Payments Europe Ltd.
-Card Network    : Mastercard ending in 4242
-Authorization   : AUTH_8949219412
-Stripe Charge ID: ch_3P7a92klq01b92019401
+Payment Method  : Apple In-App Purchase (StoreKit 2) / Google Play Billing
+Store Order ID  : GPA.3392-8819-2019-48192 / APPL_SUB_982194
+Platform License: Mobile Multi-Platform Unified Pro
+Receipt Status  : Verified In-App Purchase (Active Mobile Subscription)
+Signature (JWS) : eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.storekit_prod_verified
 
 Thank you for your business! Need support? help@tide.social
 ================================================================`;
@@ -2986,12 +2987,95 @@ document.getElementById("btn-download-all-invoices")?.addEventListener("click", 
   downloadInvoiceReceipt("ALL-ARCHIVE", "2026 YTD", "$297.00");
 });
 
-document.getElementById("btn-manage-subscription")?.addEventListener("click", () => {
-  toast("Redirecting to Stripe Billing Customer Portal...");
+// =====================================================================
+// Native Mobile In-App Purchases (Apple Pay StoreKit & Google Play)
+// =====================================================================
+let activeIAPTier = {
+  tier: "pro",
+  name: "Studio Pro",
+  price: "$99.00",
+  cycle: "Monthly",
+  renews: "Nov 23, 2026",
+  provider: "Apple App Store & Google Play"
+};
+
+function simulateMobilePurchase(provider) {
+  const selectedRadio = document.querySelector('input[name="iap_plan_select"]:checked');
+  const planName = selectedRadio ? selectedRadio.dataset.name : activeIAPTier.name;
+  const planPriceNum = selectedRadio ? selectedRadio.dataset.price : "99";
+  const planPrice = `$${planPriceNum}.00`;
+
+  if (provider === "apple") {
+    toast(` Apple Pay: Face ID authenticated! Subscribed to ${planName} (${planPrice}/mo) via Apple App Store.`);
+  } else if (provider === "google") {
+    toast(`GPay: 1-Tap Google Play Billing approved! Subscribed to ${planName} (${planPrice}/mo) via Google Play.`);
+  }
+
+  activeIAPTier.name = planName;
+  activeIAPTier.price = planPrice;
+  activeIAPTier.provider = provider === "apple" ? "Apple App Store (StoreKit)" : "Google Play Billing";
+
+  const renewalText = document.getElementById("billing-plan-renewal-text");
+  if (renewalText) {
+    renewalText.textContent = `Billed via ${activeIAPTier.provider} • Renews Nov 23, 2026`;
+  }
+
+  const planBannerH3 = document.querySelector(".plan-banner-card h3");
+  if (planBannerH3) {
+    planBannerH3.textContent = `${planName} Subscription`;
+  }
+
+  const planPriceTag = document.querySelector(".plan-price-tag");
+  if (planPriceTag) {
+    planPriceTag.innerHTML = `$${planPriceNum}<small>/month</small>`;
+  }
+
+  const iapModal = document.getElementById("iap-checkout-modal");
+  if (iapModal && !iapModal.hidden) {
+    closeModal(iapModal);
+  }
+}
+
+// Plan option change handler in IAP Modal
+document.querySelectorAll('input[name="iap_plan_select"]').forEach(radio => {
+  radio.addEventListener("change", (e) => {
+    document.querySelectorAll(".iap-plan-option").forEach(opt => opt.classList.remove("active"));
+    const parentLabel = e.target.closest(".iap-plan-option");
+    if (parentLabel) parentLabel.classList.add("active");
+
+    const name = e.target.dataset.name || "Studio Pro";
+    const price = e.target.dataset.price || "99";
+
+    const tierNameEl = document.getElementById("iap-summary-tier-name");
+    const tierPriceEl = document.getElementById("iap-summary-tier-price");
+    const totalEl = document.getElementById("iap-summary-total");
+
+    if (tierNameEl) tierNameEl.textContent = `${name} (Monthly Subscription)`;
+    if (tierPriceEl) tierPriceEl.textContent = `$${price}.00 / mo`;
+    if (totalEl) totalEl.textContent = `$${price}.00 USD`;
+  });
 });
 
-document.getElementById("btn-change-plan")?.addEventListener("click", () => {
-  toast("Current tier is Studio Pro (Highest tier with unlimited channels).");
+// Direct Billing Card Buttons
+document.getElementById("btn-pay-apple")?.addEventListener("click", () => {
+  simulateMobilePurchase("apple");
+});
+
+document.getElementById("btn-pay-google")?.addEventListener("click", () => {
+  simulateMobilePurchase("google");
+});
+
+document.getElementById("btn-open-iap-modal")?.addEventListener("click", () => {
+  openModal("iap-checkout-modal");
+});
+
+// Modal Checkout Buttons
+document.getElementById("btn-modal-apple-pay")?.addEventListener("click", () => {
+  simulateMobilePurchase("apple");
+});
+
+document.getElementById("btn-modal-google-pay")?.addEventListener("click", () => {
+  simulateMobilePurchase("google");
 });
 
 // Team Invite Modal Trigger & Submit
