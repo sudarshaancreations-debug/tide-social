@@ -169,7 +169,18 @@ function openModal(id) {
   if (!modal) return;
   modal.hidden = false;
   document.body.style.overflow = 'hidden';
-  modal.querySelector('button:not(.modal-close), input, textarea, select')?.focus();
+  const card = modal.querySelector('.modal-card, .composer-card, .policy-card, .small-modal, .account-modal-card, .iap-modal-card');
+  if (card) {
+    card.scrollTop = 0;
+  }
+  const focusable = modal.querySelector('button:not(.modal-close), input:not([type="radio"]):not([type="checkbox"]), textarea, select');
+  if (focusable) {
+    try {
+      focusable.focus({ preventScroll: true });
+    } catch (e) {
+      focusable.focus();
+    }
+  }
 }
 
 function closeModal(modal) {

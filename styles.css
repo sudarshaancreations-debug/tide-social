@@ -2063,7 +2063,7 @@ main {
   margin-bottom: 6px;
   color: var(--ink);
 }
-.modal-card input, .modal-card select, .modal-card textarea {
+.modal-card input:not([type="checkbox"]):not([type="radio"]), .modal-card select, .modal-card textarea {
   width: 100%;
   border: 1px solid var(--line);
   background: #ffffff;
@@ -4447,10 +4447,10 @@ button, .button {
 
 /* In-App Purchase Modal Styling */
 .iap-modal-card {
-  max-width: 520px !important;
-  width: 95% !important;
-  padding: 24px !important;
-  border-radius: 16px !important;
+  max-width: 480px !important;
+  width: 100% !important;
+  padding: 24px 20px !important;
+  border-radius: 20px !important;
   background: #ffffff !important;
   color: var(--ink) !important;
   box-sizing: border-box !important;
@@ -4461,11 +4461,14 @@ button, .button {
   flex-direction: column !important;
   gap: 10px !important;
   margin: 16px 0 !important;
+  width: 100% !important;
 }
 
+.modal-card label.iap-plan-option,
 .iap-plan-option {
   position: relative !important;
   display: flex !important;
+  flex-direction: row !important;
   align-items: flex-start !important;
   gap: 12px !important;
   padding: 14px 16px !important;
@@ -4474,32 +4477,86 @@ button, .button {
   background: #faf9f5 !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  margin: 0 !important;
+  font-weight: normal !important;
+  font-size: 13px !important;
 }
 
+.modal-card label.iap-plan-option:hover,
 .iap-plan-option:hover {
   border-color: #b0af9f !important;
   background: #f5f3ec !important;
 }
 
+.modal-card label.iap-plan-option.active,
 .iap-plan-option.active {
   border-color: var(--ink) !important;
   background: #ffffff !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
 }
 
-.iap-plan-option input[type="radio"] {
-  margin-top: 3px !important;
-  accent-color: var(--ink) !important;
+.modal-card input[type="radio"].iap-plan-radio,
+.modal-card .iap-plan-option input[type="radio"],
+.iap-plan-option input[type="radio"],
+input[type="radio"].iap-plan-radio {
+  all: unset !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 18px !important;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  height: 18px !important;
+  min-height: 18px !important;
+  max-height: 18px !important;
+  margin: 2px 0 0 0 !important;
+  padding: 0 !important;
+  border: 2px solid #b0af9f !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  box-sizing: border-box !important;
   cursor: pointer !important;
+  position: relative !important;
+}
+
+.modal-card input[type="radio"].iap-plan-radio:checked,
+.modal-card .iap-plan-option input[type="radio"]:checked,
+.iap-plan-option input[type="radio"]:checked,
+input[type="radio"].iap-plan-radio:checked {
+  border-color: var(--ink) !important;
+  background: var(--ink) !important;
+}
+
+.modal-card input[type="radio"].iap-plan-radio:checked::after,
+.modal-card .iap-plan-option input[type="radio"]:checked::after,
+.iap-plan-option input[type="radio"]:checked::after,
+input[type="radio"].iap-plan-radio:checked::after {
+  content: "" !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: var(--lime) !important;
+  display: block !important;
 }
 
 .iap-plan-body {
-  flex: 1 !important;
+  flex: 1 1 auto !important;
   min-width: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
 }
 
 .iap-plan-badge {
   display: inline-block !important;
+  align-self: flex-start !important;
   font-size: 10px !important;
   font-weight: 800 !important;
   letter-spacing: 0.05em !important;
@@ -4513,20 +4570,24 @@ button, .button {
 .iap-plan-header {
   display: flex !important;
   justify-content: space-between !important;
-  align-items: baseline !important;
-  margin-bottom: 4px !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-bottom: 2px !important;
+  gap: 8px !important;
 }
 
 .iap-plan-header strong {
   font-size: 14px !important;
   font-weight: 800 !important;
   color: var(--ink) !important;
+  white-space: nowrap !important;
 }
 
 .iap-plan-price {
   font-size: 16px !important;
   font-weight: 800 !important;
   color: var(--ink) !important;
+  white-space: nowrap !important;
 }
 
 .iap-plan-price small {
@@ -4683,5 +4744,38 @@ button, .button {
   }
   .btn-iap-native {
     flex: 1 !important;
+  }
+}
+
+/* Desktop Modal Centering: Centers modals in viewport to prevent clipped headers */
+@media (min-width: 640px) {
+  .modal {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px !important;
+  }
+  .modal-card,
+  .composer-card,
+  .policy-card,
+  .small-modal,
+  .account-modal-card,
+  .iap-modal-card,
+  .pdf-modal-card,
+  .dm-modal-card {
+    border-radius: 20px !important;
+    max-height: 88vh !important;
+    margin: auto !important;
+    animation: desktopModalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+}
+
+@keyframes desktopModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
