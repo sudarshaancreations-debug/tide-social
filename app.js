@@ -276,21 +276,33 @@ function renderWeek() {
     `;
   }).join("");
 
+  const scrollDayToCenter = (targetEl) => {
+    if (!weekGrid || !targetEl) return;
+    const offset = targetEl.offsetLeft - (weekGrid.clientWidth / 2) + (targetEl.clientWidth / 2);
+    weekGrid.scrollTo({ left: Math.max(0, offset), behavior: "smooth" });
+  };
+
   weekGrid.querySelectorAll(".day").forEach(d => {
     d.addEventListener("click", () => {
       overviewSelectedDate = d.dataset.date;
       renderWeek();
       renderCalendar();
-      d.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     });
   });
 
-  // Smooth scroll active day into view on initial load or date change
+  // Center active day strictly inside weekGrid container (NEVER scrolling window or main)
   setTimeout(() => {
     const activeEl = weekGrid.querySelector(".day.active") || weekGrid.querySelector(".day.today");
     if (activeEl) {
-      activeEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      scrollDayToCenter(activeEl);
     }
+    // Hard lock page containers so they cannot be displaced horizontally
+    document.documentElement.scrollLeft = 0;
+    document.body.scrollLeft = 0;
+    const mainEl = document.getElementById("main");
+    if (mainEl) mainEl.scrollLeft = 0;
+    const appEl = document.getElementById("mobile-app");
+    if (appEl) appEl.scrollLeft = 0;
   }, 40);
 
   // Chevron arrow scrolling buttons
