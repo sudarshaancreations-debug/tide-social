@@ -4761,7 +4761,8 @@ input[type="radio"].iap-plan-radio:checked::after {
   .account-modal-card,
   .iap-modal-card,
   .pdf-modal-card,
-  .dm-modal-card {
+  .dm-modal-card,
+  .danger-modal-card {
     border-radius: 20px !important;
     max-height: 88vh !important;
     margin: auto !important;
@@ -4778,4 +4779,108 @@ input[type="radio"].iap-plan-radio:checked::after {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
+}
+
+/* =====================================================================
+   Danger Zone & Account Deletion (GDPR & App Store Guideline 5.1.1)
+   ===================================================================== */
+.danger-zone-card {
+  border: 1.5px solid rgba(191, 61, 53, 0.32) !important;
+  background: #fffdfd !important;
+  margin-top: 24px !important;
+}
+
+.danger-eyebrow {
+  color: var(--danger) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.danger-zone-action-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 14px !important;
+  margin-top: 14px !important;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(191, 61, 53, 0.15) !important;
+}
+
+.danger-info-text strong {
+  display: block !important;
+  font-size: 13px !important;
+  color: var(--ink) !important;
+}
+
+.danger-info-text p {
+  font-size: 11.5px !important;
+  color: var(--muted) !important;
+  margin: 3px 0 0 !important;
+}
+
+.button.danger,
+button.danger {
+  background: var(--danger) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--danger) !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.button.danger:hover,
+button.danger:hover {
+  background: #a6312a !important;
+  color: #ffffff !important;
+}
+
+.button-link-danger {
+  background: none !important;
+  border: none !important;
+  color: var(--danger) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  text-decoration: underline !important;
+}
+
+.button-link-danger:hover {
+  color: #a6312a !important;
+}
+
+.danger-modal-card {
+  max-width: 440px !important;
+  border-top: 4px solid var(--danger) !important;
+}
+
+.danger-icon-badge {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: #fee8e6 !important;
+  color: var(--danger) !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 22px !important;
+  margin-bottom: 12px !important;
+}
+
+.danger-summary-box {
+  background: #fff5f4 !important;
+  border: 1px solid rgba(191, 61, 53, 0.22) !important;
+  border-radius: 10px !important;
+  padding: 12px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  margin: 10px 0 !important;
+}
+
+.danger-summary-item {
+  font-size: 11.5px !important;
+  color: #82221b !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
 }

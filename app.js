@@ -3661,6 +3661,81 @@ document.getElementById("btn-print-download-pdf")?.addEventListener("click", () 
   }, 250);
 });
 
+// =====================================================================
+// Delete Account & Workspace Handlers (GDPR & Apple StoreKit 5.1.1)
+// =====================================================================
+const deleteTriggers = [
+  document.getElementById("btn-open-delete-account"),
+  document.getElementById("btn-quick-delete-acc"),
+  document.getElementById("btn-modal-delete-acc")
+];
+
+deleteTriggers.forEach(btn => {
+  btn?.addEventListener("click", () => {
+    const input = document.getElementById("delete-confirm-input");
+    const confirmBtn = document.getElementById("btn-confirm-delete-account");
+    if (input) input.value = "";
+    if (confirmBtn) {
+      confirmBtn.disabled = true;
+      confirmBtn.style.opacity = "0.5";
+      confirmBtn.style.cursor = "not-allowed";
+    }
+    const profileModal = document.getElementById("profile-modal");
+    if (profileModal && !profileModal.hidden) {
+      closeModal(profileModal);
+    }
+    openModal("delete-account-modal");
+  });
+});
+
+const deleteInput = document.getElementById("delete-confirm-input");
+const confirmDeleteBtn = document.getElementById("btn-confirm-delete-account");
+
+deleteInput?.addEventListener("input", (e) => {
+  const val = e.target.value.trim();
+  if (val === "DELETE") {
+    confirmDeleteBtn.disabled = false;
+    confirmDeleteBtn.style.opacity = "1";
+    confirmDeleteBtn.style.cursor = "pointer";
+  } else {
+    confirmDeleteBtn.disabled = true;
+    confirmDeleteBtn.style.opacity = "0.5";
+    confirmDeleteBtn.style.cursor = "not-allowed";
+  }
+});
+
+confirmDeleteBtn?.addEventListener("click", () => {
+  if (deleteInput?.value.trim() !== "DELETE") return;
+
+  confirmDeleteBtn.textContent = "Deleting...";
+  confirmDeleteBtn.disabled = true;
+
+  setTimeout(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+
+    const deleteModal = document.getElementById("delete-account-modal");
+    if (deleteModal) closeModal(deleteModal);
+
+    toast("⚠️ Account and workspace @acmestudio permanently deleted. State wiped.");
+
+    const nameEl = document.getElementById("profile-header-name");
+    if (nameEl) nameEl.textContent = "Guest Creator";
+
+    const titleEl = document.getElementById("profile-header-title");
+    if (titleEl) titleEl.textContent = "New Workspace";
+
+    const avatarEl = document.getElementById("profile-display-avatar");
+    if (avatarEl) avatarEl.textContent = "GC";
+
+    showView("home");
+
+    confirmDeleteBtn.textContent = "Delete Permanently";
+    confirmDeleteBtn.disabled = true;
+    confirmDeleteBtn.style.opacity = "0.5";
+  }, 600);
+});
+
 // Initial Render
 setupPlatforms();
 renderWeek();

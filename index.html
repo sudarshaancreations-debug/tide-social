@@ -402,9 +402,12 @@
                     </div>
                   </div>
 
-                  <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:16px;">
-                    <button type="button" class="button secondary" id="btn-reset-profile">Reset Form</button>
-                    <button type="submit" class="button primary" id="btn-save-profile-bottom">Save Profile Changes</button>
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:16px;">
+                    <button type="button" class="button-link-danger" id="btn-quick-delete-acc" style="background:none; border:none; color:var(--danger); font-size:12px; font-weight:700; cursor:pointer; padding:0; text-decoration:underline;">Delete Account &amp; Workspace</button>
+                    <div style="display:flex; gap:10px;">
+                      <button type="button" class="button secondary" id="btn-reset-profile">Reset Form</button>
+                      <button type="submit" class="button primary" id="btn-save-profile-bottom">Save Profile Changes</button>
+                    </div>
                   </div>
                 </form>
               </article>
@@ -775,6 +778,25 @@
                   <input type="checkbox" class="toggle-input" checked>
                 </div>
               </div>
+
+              <!-- Danger Zone: Permanent Account Deletion -->
+              <div class="profile-card danger-zone-card">
+                <div class="profile-card-head">
+                  <div>
+                    <p class="eyebrow danger-eyebrow">DANGER ZONE</p>
+                    <h3 style="color:var(--danger); margin:4px 0 2px;">Delete Workspace &amp; Account</h3>
+                    <p>Permanently remove your account, revoke API credentials, erase all scheduled queues, and unlink social networks.</p>
+                  </div>
+                </div>
+
+                <div class="danger-zone-action-row">
+                  <div class="danger-info-text">
+                    <strong>Irreversible Deletion (GDPR &amp; Apple StoreKit Guideline 5.1.1 compliant)</strong>
+                    <p>All posts, drafts, analytics history, and AI voice embeddings will be wiped immediately.</p>
+                  </div>
+                  <button type="button" class="button danger small" id="btn-open-delete-account">Delete Account...</button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -966,6 +988,7 @@
         <button class="button primary" id="btn-workspace-switch" style="flex:1;" type="button">Switch</button>
       </div>
       <button class="button secondary full" id="btn-open-full-profile" type="button" style="margin-top:10px;">Open Full Profile &amp; Team Page →</button>
+      <button class="button secondary full btn-delete-account-trigger" id="btn-modal-delete-acc" type="button" style="margin-top:8px; color:var(--danger); border-color:rgba(191,61,53,0.3); background:#fff7f6;">Delete Account...</button>
     </div>
   </div>
 
@@ -1497,6 +1520,38 @@
       <!-- Biometric & In-App Security Note -->
       <div class="iap-security-footnote">
         <span>🔒 Verified with Apple StoreKit &amp; Google Play Billing v7.0. Zero third-party web redirects.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Account Confirmation Modal (GDPR / StoreKit 5.1.1) -->
+  <div class="modal" id="delete-account-modal" role="dialog" aria-modal="true" aria-labelledby="delete-account-title" hidden>
+    <div class="modal-card small-modal danger-modal-card">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <div class="danger-icon-badge">⚠️</div>
+      <p class="eyebrow" style="color:var(--danger);">PERMANENT ACCOUNT ACTION</p>
+      <h2 id="delete-account-title" style="color:var(--danger); margin-bottom:6px;">Delete Account &amp; Workspace?</h2>
+      <p style="font-size:12px; color:var(--muted); line-height:1.45; margin-bottom:12px;">
+        You are about to permanently delete <strong>Arjun Kapoor (@acmestudio)</strong>. This action is irreversible.
+      </p>
+
+      <div class="danger-summary-box">
+        <div class="danger-summary-item">✕ Disconnect 4 social accounts (Instagram, LinkedIn, TikTok, YouTube)</div>
+        <div class="danger-summary-item">✕ Cancel active Studio Pro subscription ($99/mo)</div>
+        <div class="danger-summary-item">✕ Permanently wipe 18 scheduled posts, calendar items &amp; drafts</div>
+        <div class="danger-summary-item">✕ Revoke all AI agent MCP tokens and brand voice embeddings</div>
+      </div>
+
+      <div style="margin: 16px 0 12px;">
+        <label for="delete-confirm-input" style="font-size:11px; font-weight:700; color:var(--ink); display:block; margin-bottom:6px;">
+          Type <span style="color:var(--danger); font-weight:800; letter-spacing:0.05em;">DELETE</span> below to confirm:
+        </label>
+        <input type="text" id="delete-confirm-input" placeholder="Type DELETE to confirm" autocomplete="off" style="border:1.5px solid var(--line); border-radius:8px; padding:10px 12px; width:100%; box-sizing:border-box; font-weight:700;">
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:16px;">
+        <button type="button" class="button secondary" style="flex:1;" data-close>Cancel</button>
+        <button type="button" class="button danger" id="btn-confirm-delete-account" style="flex:1; background:var(--danger); color:#ffffff; border-color:var(--danger); opacity:0.5; cursor:not-allowed;" disabled>Delete Permanently</button>
       </div>
     </div>
   </div>
