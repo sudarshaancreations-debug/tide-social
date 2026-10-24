@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background rounded squircle / icon canvas -->
+  <rect width="64" height="64" rx="16" fill="#171814"/>
+  <!-- Tide 3-Wave Ascending Logo Mark -->
+  <g transform="rotate(-9 32 32)">
+    <!-- 1st Bar: Coral -->
+    <rect x="14" y="27" width="9" height="23" rx="4.5" fill="#ff745b"/>
+    <!-- 2nd Bar: Lime -->
+    <rect x="27.5" y="14" width="9" height="36" rx="4.5" fill="#c8f35c"/>
+    <!-- 3rd Bar: Ocean Blue -->
+    <rect x="41" y="21" width="9" height="29" rx="4.5" fill="#9ed8ff"/>
+  </g>
+</svg>
