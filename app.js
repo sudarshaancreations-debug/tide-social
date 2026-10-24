@@ -655,6 +655,28 @@ class TideReelPlayer {
       { start: 15, end: 18, text: "READY TO PUBLISH · APPROVE NOW!" }
     ];
 
+    // Video support for user-uploaded videos or customizable clips
+    this.videoUrl = options.videoUrl || null;
+    this.video = null;
+    if (this.videoUrl) {
+      this.video = document.createElement('video');
+      this.video.src = this.videoUrl;
+      this.video.playsInline = true;
+      this.video.crossOrigin = 'anonymous';
+      this.video.loop = true;
+      this.video.muted = this.isMuted;
+      this.video.onloadedmetadata = () => {
+        if (this.video.duration && isFinite(this.video.duration)) {
+          this.duration = Math.round(this.video.duration);
+        }
+        this.onUpdate(this);
+      };
+      this.video.ontimeupdate = () => {
+        this.currentTime = this.video.currentTime;
+        this.onUpdate(this);
+      };
+    }
+
     // Floating particles (always moving gently even when paused so nothing is still)
     this.particles = [];
     for (let i = 0; i < 28; i++) {
@@ -675,6 +697,7 @@ class TideReelPlayer {
   }
 
   initAudio() {
+    if (this.video) return;
     if (!this.audioCtx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (AudioCtx) this.audioCtx = new AudioCtx();
@@ -685,6 +708,7 @@ class TideReelPlayer {
   }
 
   playAudioTick() {
+    if (this.video) return;
     if (this.isMuted || !this.audioCtx || this.audioCtx.state !== 'running') return;
     const now = this.audioCtx.currentTime;
     if (now >= this.nextNoteTime) {
@@ -722,11 +746,18 @@ class TideReelPlayer {
     if (this.currentTime >= this.duration) {
       this.currentTime = 0;
     }
+    if (this.video) {
+      this.video.muted = this.isMuted;
+      this.video.play().catch(() => {});
+    }
     this.onUpdate(this);
   }
 
   pause() {
     this.isPlaying = false;
+    if (this.video) {
+      this.video.pause();
+    }
     this.onUpdate(this);
   }
 
@@ -737,12 +768,19 @@ class TideReelPlayer {
 
   seek(seconds) {
     this.currentTime = Math.max(0, Math.min(this.duration, seconds));
+    if (this.video) {
+      this.video.currentTime = this.currentTime;
+    }
     this.onUpdate(this);
   }
 
   toggleMute() {
     this.isMuted = !this.isMuted;
-    if (!this.isMuted) this.initAudio();
+    if (this.video) {
+      this.video.muted = this.isMuted;
+    } else if (!this.isMuted) {
+      this.initAudio();
+    }
     this.onUpdate(this);
     return this.isMuted;
   }
@@ -780,45 +818,64 @@ class TideReelPlayer {
       canvas.height = height;
     }
 
-    // 1. Moving dynamic gradient background
-    const t = this.currentTime;
-    const gAngle = t * 0.4;
-    const cx = width / 2;
-    const cy = height / 2;
-    const grad = ctx.createRadialGradient(
-      cx + Math.cos(gAngle) * (width * 0.35),
-      cy + Math.sin(gAngle) * (height * 0.35),
-      10,
-      cx,
-      cy,
-      Math.max(width, height) * 0.8
-    );
-    grad.addColorStop(0, '#361d28');
-    grad.addColorStop(0.4, '#1e1c18');
-    grad.addColorStop(0.85, '#121310');
-    grad.addColorStop(1, '#090a08');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, width, height);
+    if (this.video && this.video.readyState >= 2) {
+      // Draw uploaded video scaled to cover
+      const vRatio = this.video.videoWidth / this.video.videoHeight;
+      const cRatio = width / height;
+      let dw, dh, dx, dy;
+      if (cRatio > vRatio) {
+        dw = width;
+        dh = width / vRatio;
+        dx = 0;
+        dy = (height - dh) / 2;
+      } else {
+        dh = height;
+        dw = height * vRatio;
+        dx = (width - dw) / 2;
+        dy = 0;
+      }
+      ctx.drawImage(this.video, dx, dy, dw, dh);
+    } else {
+      // 1. Moving dynamic gradient background
+      const t = this.currentTime;
+      const gAngle = t * 0.4;
+      const cx = width / 2;
+      const cy = height / 2;
+      const grad = ctx.createRadialGradient(
+        cx + Math.cos(gAngle) * (width * 0.35),
+        cy + Math.sin(gAngle) * (height * 0.35),
+        10,
+        cx,
+        cy,
+        Math.max(width, height) * 0.8
+      );
+      grad.addColorStop(0, '#361d28');
+      grad.addColorStop(0.4, '#1e1c18');
+      grad.addColorStop(0.85, '#121310');
+      grad.addColorStop(1, '#090a08');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
 
-    // 2. Secondary accent light flare
-    const flareGrad = ctx.createRadialGradient(
-      width * 0.8 + Math.sin(t * 1.2) * 40,
-      height * 0.3 + Math.cos(t * 0.9) * 30,
-      5,
-      width * 0.8,
-      height * 0.3,
-      120
-    );
-    flareGrad.addColorStop(0, 'rgba(255, 82, 56, 0.45)');
-    flareGrad.addColorStop(0.5, 'rgba(200, 243, 92, 0.2)');
-    flareGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = flareGrad;
-    ctx.fillRect(0, 0, width, height);
+      // 2. Secondary accent light flare
+      const flareGrad = ctx.createRadialGradient(
+        width * 0.8 + Math.sin(t * 1.2) * 40,
+        height * 0.3 + Math.cos(t * 0.9) * 30,
+        5,
+        width * 0.8,
+        height * 0.3,
+        120
+      );
+      flareGrad.addColorStop(0, 'rgba(255, 82, 56, 0.45)');
+      flareGrad.addColorStop(0.5, 'rgba(200, 243, 92, 0.2)');
+      flareGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = flareGrad;
+      ctx.fillRect(0, 0, width, height);
+    }
 
     // 3. Floating particles (always moving gently even when paused so nothing is still!)
     for (const p of this.particles) {
       p.y += p.vy;
-      p.x += p.vx + Math.sin(t * 2 + p.radius) * 0.0003;
+      p.x += p.vx + Math.sin(this.currentTime * 2 + p.radius) * 0.0003;
       if (p.y < 0) p.y = 1;
       if (p.x < 0) p.x = 1;
       if (p.x > 1) p.x = 0;
@@ -839,8 +896,8 @@ class TideReelPlayer {
     const startY = height - 34;
 
     for (let i = 0; i < barCount; i++) {
-      const freq = Math.sin(t * 8 + i * 0.8) * 0.5 + 0.5;
-      const pulse = this.isPlaying ? (Math.sin(t * 14 + i * 1.5) * 0.5 + 0.5) : 0.15;
+      const freq = Math.sin(this.currentTime * 8 + i * 0.8) * 0.5 + 0.5;
+      const pulse = this.isPlaying ? (Math.sin(this.currentTime * 14 + i * 1.5) * 0.5 + 0.5) : 0.15;
       const bH = 4 + (freq * pulse * 22);
       ctx.fillStyle = i % 2 === 0 ? '#ff745b' : '#c8f35c';
       ctx.beginPath();
@@ -875,6 +932,7 @@ function openFullscreenReel(item) {
 
   fullscreenReelPlayer = new TideReelPlayer(canvas, {
     duration: 18,
+    videoUrl: item.videoUrl || null,
     captions: [
       { start: 0, end: 4, text: item.kicker || "YOUR BRAND DOESN’T NEED MORE CONTENT." },
       { start: 4, end: 8, text: "IT NEEDS A SYSTEM TO REPURPOSE." },
@@ -1057,6 +1115,7 @@ function renderOverviewApprovals() {
       <div class="approval-actions">
         <button class="approve" id="approve-featured-btn" data-id="${first.id}" aria-label="Approve reel">✓ Approve</button>
         <button class="change" id="change-featured-btn" data-id="${first.id}" aria-label="Request change">Change</button>
+        <button class="replace-video-btn" id="btn-replace-reel-video" data-id="${first.id}" type="button">📹 Change Video</button>
         <button class="storyboard-btn" id="btn-open-storyboard" type="button">🎬 Storyboard</button>
       </div>
     </div>
@@ -1098,6 +1157,7 @@ function renderOverviewApprovals() {
 
     const reelPlayer = new TideReelPlayer(canvas, {
       duration: 18,
+      videoUrl: first.videoUrl || null,
       captions: [
         { start: 0, end: 4, text: first.kicker || "YOUR BRAND DOESN’T NEED MORE CONTENT." },
         { start: 4, end: 8, text: "IT NEEDS A SYSTEM TO REPURPOSE." },
@@ -1175,6 +1235,24 @@ function renderOverviewApprovals() {
       reelPlayer.togglePlay();
     });
   }
+
+  document.getElementById("btn-replace-reel-video")?.addEventListener("click", () => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "video/*";
+    fileInput.onchange = (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const videoUrl = URL.createObjectURL(file);
+      first.videoUrl = videoUrl;
+      first.customVideoName = file.name;
+      write("tide-approvals", approvalsList);
+      renderOverviewApprovals();
+      renderApprovals();
+      toast(`Custom video "${file.name}" loaded for this post! 🎬`);
+    };
+    fileInput.click();
+  });
 
   document.getElementById("approve-featured-btn")?.addEventListener("click", function () {
     const id = this.dataset.id;
@@ -1744,6 +1822,43 @@ document.getElementById('composer-form')?.addEventListener('submit', event => {
   renderCalendar();
   closeModal(document.getElementById('composer-modal'));
   toast(`Post scheduled for ${result.post.date} at ${result.post.time}!`);
+});
+
+document.getElementById('btn-composer-save-draft')?.addEventListener('click', () => {
+  const form = document.getElementById('composer-form');
+  if (!form) return;
+  const formData = new FormData(form);
+  const channels = [...form.querySelectorAll('input[type="checkbox"]:checked')].map(input => input.value);
+  const copy = formData.get('copy') || '';
+  if (!copy.trim()) return toast('Please enter some post copy first.');
+
+  const platform = channels[0] || 'Instagram';
+  const newApproval = {
+    id: 'appr-' + Date.now(),
+    kicker: copy.slice(0, 42).toUpperCase() || 'NEW DRAFT POST',
+    type: `${platform} reel`,
+    title: copy.slice(0, 60),
+    platform: platform,
+    cls: platformClass(platform),
+    mark: platformMark(platform),
+    revision: null,
+    videoUrl: uploadedMediaFile && uploadedMediaFile.type.startsWith('video/') ? URL.createObjectURL(uploadedMediaFile) : null
+  };
+
+  approvalsList.unshift(newApproval);
+  write('tide-approvals', approvalsList);
+  write('tide-draft', '');
+  if (composerCopy) composerCopy.value = '';
+  uploadedMediaFile = null;
+  if (mediaPreview) {
+    mediaPreview.hidden = true;
+    mediaPreview.innerHTML = '';
+  }
+  renderOverviewApprovals();
+  renderApprovals();
+  updateBadges();
+  closeModal(document.getElementById('composer-modal'));
+  toast('Draft sent to approvals! It is now the active video on your home feed. 🚀');
 });
 
 // AI Creative Studio Prompts
