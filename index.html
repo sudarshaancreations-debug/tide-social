@@ -207,7 +207,18 @@
         </section>
 
         <section class="view" id="view-inbox" data-title="Unified inbox">
-          <div class="section-intro inbox-intro"><div><p class="eyebrow">COMMUNITY</p><h2>Every conversation, one place.</h2><p>AI drafts replies in your voice. You choose when it may send automatically.</p></div><div class="inbox-filters"><button type="button" class="button secondary small" id="btn-open-comment-to-dm" style="font-size:11px; padding:6px 12px; font-weight:700; border-color:var(--coral); color:var(--coral); background:#fff;">⚡ Comment-to-DM Rules</button><button type="button" class="filter-pill" id="inbox-filter-btn">Channel: All ⌄</button><span class="filter-pill unread-pill" id="inbox-unread-count">12 unread</span></div></div>
+          <div class="section-intro inbox-intro">
+            <div>
+              <p class="eyebrow">COMMUNITY</p>
+              <h2>Every conversation, one place.</h2>
+              <p>AI drafts replies in your voice. You choose when it may send automatically.</p>
+            </div>
+            <div class="inbox-filters">
+              <button type="button" class="inbox-pill-btn rule-btn" id="btn-open-comment-to-dm">⚡ Comment-to-DM Rules</button>
+              <button type="button" class="inbox-pill-btn filter-btn" id="inbox-filter-btn">Channel: All ⌄</button>
+              <span class="inbox-unread-pill" id="inbox-unread-count">4 unread</span>
+            </div>
+          </div>
           <div class="inbox-summary" aria-label="Inbox summary"><article><span>↗</span><div><strong id="inbox-summary-new">12</strong><small>New messages</small></div></article><article><span>✦</span><div><strong>4</strong><small>AI drafts ready</small></div></article><article><span>◎</span><div><strong>3</strong><small>High-intent leads</small></div></article><article><span>✓</span><div><strong>86%</strong><small>Replied in 1 hour</small></div></article></div>
           <article class="panel inbox-workspace"><div class="thread-column"><div class="thread-toolbar"><label for="thread-search">Inbox</label><div><input id="thread-search" type="search" placeholder="Search conversations" aria-label="Search conversations"><button type="button" id="thread-filter-toggle" aria-label="Filter conversations">≡</button></div></div><div class="thread-list" id="thread-list"></div></div><div class="conversation" id="active-conversation"></div></article>
         </section>
@@ -301,11 +312,12 @@
                 </div>
               </div>
 
-              <div class="profile-card">
-                <div class="profile-card-head">
+              <article class="panel profile-card">
+                <div class="panel-head">
                   <div>
-                    <h3>Personal Information</h3>
-                    <p>Update your public identity, contact details, and locale preferences.</p>
+                    <p class="eyebrow">YOUR ACCOUNT</p>
+                    <h2>Personal Information</h2>
+                    <p class="subcopy" style="font-size:12px; color:var(--muted); margin:3px 0 0;">Update your public identity, contact details, and locale preferences.</p>
                   </div>
                   <span class="meta-chip plan-pro">● Active Account</span>
                 </div>
@@ -384,7 +396,7 @@
                     <button type="submit" class="button primary" id="btn-save-profile-bottom">Save Profile Changes</button>
                   </div>
                 </form>
-              </div>
+              </article>
             </div>
 
             <!-- Tab 2: Team & Permissions -->

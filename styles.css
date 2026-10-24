@@ -3947,3 +3947,227 @@ button, .button {
     box-shadow: none;
   }
 }
+
+
+/* ============================================================
+   PIXEL-PERFECT UI CORRECTIONS (INBOX ALIGNMENT, ROUND AVATARS, PROFILE PANEL)
+   ============================================================ */
+
+/* 1. Alignment fix for Unified Inbox filters */
+.inbox-intro {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.inbox-filters {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.inbox-pill-btn,
+.inbox-unread-pill {
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 14px !important;
+  border-radius: 18px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.inbox-pill-btn.rule-btn {
+  background: #ffffff !important;
+  color: var(--coral) !important;
+  border: 1.5px solid var(--coral) !important;
+}
+.inbox-pill-btn.rule-btn:hover {
+  background: #fff5f3 !important;
+}
+.inbox-pill-btn.filter-btn {
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+}
+.inbox-pill-btn.filter-btn:hover {
+  background: #f7f5ee !important;
+  border-color: var(--ink) !important;
+}
+.inbox-unread-pill {
+  background: var(--ink) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--ink) !important;
+  font-weight: 700 !important;
+}
+
+/* 2. Round Avatar Design (JM, SL, TK & all avatars must be round circles) */
+.avatar,
+.thread-avatar,
+.inbox-panel .message .avatar,
+.bubble-row .avatar,
+.conversation-foot .avatar,
+.message .avatar {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+.avatar.person-a,
+.thread-avatar.coral {
+  background: #f6c0b2 !important;
+  color: #5a2810 !important;
+  border-radius: 50% !important;
+}
+.avatar.person-b,
+.thread-avatar.blue {
+  background: #b7dcf6 !important;
+  color: #173f60 !important;
+  border-radius: 50% !important;
+}
+.avatar.person-c,
+.thread-avatar.lime {
+  background: #d2ee8b !important;
+  color: #324e10 !important;
+  border-radius: 50% !important;
+}
+
+/* 3. Personal Information Card: Cohesive Tide Social Design & Zero Overflow */
+.profile-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+.panel.profile-card {
+  background: #ffffff !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  padding: 20px !important;
+  margin-bottom: 16px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-shadow: 0 2px 10px rgba(23, 24, 20, 0.03) !important;
+  overflow: hidden !important;
+}
+.panel.profile-card .panel-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 18px !important;
+  padding-bottom: 14px !important;
+  border-bottom: 1px solid var(--line) !important;
+  gap: 12px !important;
+}
+.panel.profile-card .panel-head h2 {
+  font: 800 17px var(--font-display) !important;
+  color: var(--ink) !important;
+  margin: 2px 0 0 !important;
+  letter-spacing: -0.3px !important;
+}
+.panel.profile-card .panel-head .subcopy {
+  font-size: 12px !important;
+  color: var(--muted) !important;
+  margin: 3px 0 0 !important;
+}
+
+/* Form fields: full width on mobile so text never overflows outside the box */
+.form-grid-2 {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 14px !important;
+}
+@media (min-width: 640px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+  }
+}
+.form-field {
+  min-width: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  margin-bottom: 14px !important;
+}
+.form-field:last-child {
+  margin-bottom: 0 !important;
+}
+.field-label {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+.field-label .req {
+  color: var(--coral) !important;
+  font-weight: 800 !important;
+}
+.field-label small {
+  font-size: 11px !important;
+  color: var(--green) !important;
+  font-weight: 700 !important;
+}
+.field-input,
+.field-select,
+.field-textarea {
+  min-width: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: #fbfaf6 !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  font-size: 13px !important;
+  color: var(--ink) !important;
+  font-family: inherit !important;
+  transition: all 0.15s ease !important;
+  line-height: 1.4 !important;
+}
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+  background: #ffffff !important;
+  border-color: var(--ink) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(17, 20, 23, 0.08) !important;
+}
+.field-helper {
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  margin-top: 4px !important;
+  line-height: 1.35 !important;
+}
