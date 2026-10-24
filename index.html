@@ -158,27 +158,38 @@
           </div>
           <article class="panel full-calendar">
             <div class="calendar-toolbar">
-              <button type="button" id="cal-prev" aria-label="Previous month">←</button>
-              <strong id="cal-month-title">October 2026</strong>
-              <button type="button" id="cal-next" aria-label="Next month">→</button>
-              <button type="button" class="button secondary small" id="cal-today-btn" style="padding:6px 12px; font-size:11px; margin-left:4px;">Today</button>
-              <span></span>
-              <div class="cal-filter-group" style="display:flex; align-items:center; gap:6px; margin-right:8px;">
-                <label for="cal-platform-filter" style="font-size:11px; font-weight:700; color:var(--muted); margin:0;">Filter:</label>
-                <select id="cal-platform-filter" aria-label="Filter posts by platform" style="padding:6px 10px; font-size:11px; border:1px solid var(--line); border-radius:6px; background:#fff;">
-                  <option value="All">All platforms</option>
-                  <option value="Instagram">Instagram</option>
-                  <option value="LinkedIn">LinkedIn</option>
-                  <option value="TikTok">TikTok</option>
-                  <option value="Facebook">Facebook</option>
-                  <option value="Threads">Threads</option>
-                  <option value="X">X (Twitter)</option>
-                  <option value="YouTube">YouTube</option>
-                </select>
+              <!-- Row 1: Month Stepper & Today Button -->
+              <div class="cal-nav-row">
+                <div class="cal-month-stepper">
+                  <button type="button" id="cal-prev" class="cal-step-btn" aria-label="Previous month">←</button>
+                  <strong id="cal-month-title">October 2026</strong>
+                  <button type="button" id="cal-next" class="cal-step-btn" aria-label="Next month">→</button>
+                </div>
+                <button type="button" class="cal-today-btn" id="cal-today-btn">Today</button>
               </div>
-              <button type="button" class="active" id="cal-view-month">Month</button>
-              <button type="button" id="cal-view-week">Week</button>
-              <button type="button" id="cal-view-day">Day</button>
+
+              <!-- Row 2: Platform Filter & View Switcher -->
+              <div class="cal-filter-row">
+                <div class="cal-platform-filter-wrap">
+                  <label for="cal-platform-filter">Filter:</label>
+                  <select id="cal-platform-filter" aria-label="Filter posts by platform">
+                    <option value="All">All platforms</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Threads">Threads</option>
+                    <option value="X">X (Twitter)</option>
+                    <option value="YouTube">YouTube</option>
+                  </select>
+                </div>
+
+                <div class="cal-view-segmented" role="tablist" aria-label="Calendar view selector">
+                  <button type="button" class="active" id="cal-view-month">Month</button>
+                  <button type="button" id="cal-view-week">Week</button>
+                  <button type="button" id="cal-view-day">Day</button>
+                </div>
+              </div>
             </div>
             <div class="calendar-weekdays" id="calendar-weekdays">
               <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>

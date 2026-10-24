@@ -4171,3 +4171,166 @@ button, .button {
   margin-top: 4px !important;
   line-height: 1.35 !important;
 }
+
+
+/* ============================================================
+   PIXEL-PERFECT CALENDAR TOOLBAR ALIGNMENT (TWO STRUCTURED ROWS)
+   ============================================================ */
+.calendar-toolbar {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  margin-bottom: 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: #ffffff !important;
+}
+
+/* Row 1: Month Stepper & Today Button */
+.cal-nav-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  gap: 8px !important;
+}
+
+.cal-month-stepper {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.cal-step-btn {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transition: all 0.15s ease !important;
+}
+.cal-step-btn:hover {
+  background: #f7f5ee !important;
+  border-color: var(--ink) !important;
+}
+
+#cal-month-title {
+  font: 800 16px var(--font-display) !important;
+  color: var(--ink) !important;
+  margin: 0 4px !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.2px !important;
+  line-height: 1 !important;
+}
+
+.cal-today-btn {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 14px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  transition: all 0.15s ease !important;
+}
+.cal-today-btn:hover {
+  background: #f7f5ee !important;
+  border-color: var(--ink) !important;
+}
+
+/* Row 2: Platform Filter & View Switcher */
+.cal-filter-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.cal-platform-filter-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.cal-platform-filter-wrap label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--muted) !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+.cal-platform-filter-wrap select {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 10px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+.cal-view-segmented {
+  display: inline-flex !important;
+  align-items: center !important;
+  background: #f4f2e9 !important;
+  padding: 3px !important;
+  border-radius: 9px !important;
+  border: 1px solid var(--line) !important;
+  height: 34px !important;
+  box-sizing: border-box !important;
+  gap: 2px !important;
+}
+.cal-view-segmented button {
+  height: 26px !important;
+  min-height: 26px !important;
+  padding: 0 12px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s ease !important;
+}
+.cal-view-segmented button:hover {
+  color: var(--ink) !important;
+}
+.cal-view-segmented button.active {
+  background: var(--ink) !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+}
