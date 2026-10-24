@@ -960,14 +960,23 @@ document.getElementById('sidebar-profile-btn')?.addEventListener('click', () => 
   showView('profile');
 });
 
+document.getElementById('mobile-ws-btn')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  openModal('profile-modal');
+});
+
 document.getElementById('btn-workspace-switch')?.addEventListener('click', () => {
   const ws = document.getElementById('profile-workspace-select')?.value;
-  const label = document.getElementById('header-workspace-label');
-  if (label && ws) label.textContent = ws.toUpperCase();
-  const mobileWs = document.getElementById('mobile-header-ws-name');
-  if (mobileWs && ws) mobileWs.textContent = ws;
-  closeModal(document.getElementById('profile-modal'));
-  toast(`Switched workspace to ${ws}`);
+  if (ws) {
+    const label = document.getElementById('header-workspace-label');
+    if (label) label.textContent = ws.toUpperCase();
+    const mobileWs = document.getElementById('mobile-header-ws-name');
+    if (mobileWs) mobileWs.textContent = ws;
+    const coverTag = document.getElementById('profile-cover-tag');
+    if (coverTag) coverTag.textContent = `⚡ ${ws.toUpperCase()} • STUDIO PRO TIER`;
+    closeModal(document.getElementById('profile-modal'));
+    toast(`Switched workspace to ${ws}`);
+  }
 });
 
 // Notifications
