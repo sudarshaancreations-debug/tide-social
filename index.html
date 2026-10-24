@@ -241,7 +241,81 @@
         <section class="view" id="view-analytics" data-title="Analytics">
           <div class="section-intro"><div><p class="eyebrow">ANSWERS, NOT CHARTS</p><h2>Know what to make next.</h2><p>Cross-channel reporting with post-level revenue, tags, exports, and explanations.</p></div><div style="display:flex; gap:6px;"><button class="button secondary" id="btn-export-report">Export .csv</button><button class="button primary" id="btn-export-pdf" type="button" style="font-size:12px; font-weight:700;">📄 Client PDF</button></div></div>
           <div class="analytics-grid"><article class="panel big-number"><p>Audience growth</p><strong id="metric-aud-growth">+12,842</strong><small>↑ 24% in 30 days</small></article><article class="panel big-number"><p>Attributed leads</p><strong id="metric-leads-count">318</strong><small>↑ 41 from last period</small></article><article class="panel big-number"><p>Best format</p><strong>Reels</strong><small>3.2× average reach</small></article></div>
-          <article class="panel table-panel"><div class="panel-head"><h2>Top content</h2><div style="display:flex; gap:8px;"><button class="text-button" id="btn-customize-columns">Customize columns</button><button class="text-button" id="btn-refresh-analytics">Refresh data</button></div></div><table id="analytics-table"><thead><tr><th>Post</th><th>Channel</th><th>Reach</th><th>Engagement</th><th>Leads</th></tr></thead><tbody><tr><td><strong>The content system that gave us Fridays back</strong><small>Oct 18 · Educational</small></td><td><span class="platform ig">IG</span></td><td>84,210</td><td>11.8%</td><td>126</td></tr><tr><td><strong>Stop measuring consistency like this</strong><small>Oct 14 · Contrarian</small></td><td><span class="platform li">in</span></td><td>42,662</td><td>9.4%</td><td>88</td></tr><tr><td><strong>Behind our weekly planning ritual</strong><small>Oct 10 · BTS</small></td><td><span class="platform tk">♪</span></td><td>37,901</td><td>8.9%</td><td>47</td></tr><tr><td><strong>How to build an audience without burnout</strong><small>Oct 06 · Framework</small></td><td><span class="platform th">@</span></td><td>29,140</td><td>7.4%</td><td>38</td></tr></tbody></table></article>
+          <article class="panel table-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Top content</h2>
+                <p style="font-size:11px; color:var(--muted); margin:2px 0 0;">Highest performing posts across reach, engagement, and leads.</p>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="text-button" id="btn-customize-columns">Customize</button>
+                <button class="text-button" id="btn-refresh-analytics">Refresh</button>
+              </div>
+            </div>
+            <div class="analytics-table-wrap">
+              <table id="analytics-table">
+                <thead>
+                  <tr>
+                    <th class="col-post">Post</th>
+                    <th class="col-channel">Channel</th>
+                    <th class="col-reach">Reach</th>
+                    <th class="col-eng">Engagement</th>
+                    <th class="col-leads">Leads</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="col-post">
+                      <div class="table-post-cell">
+                        <strong class="post-title">The content system that gave us Fridays back</strong>
+                        <span class="post-meta">Oct 18 · Educational</span>
+                      </div>
+                    </td>
+                    <td class="col-channel"><span class="platform ig">IG</span></td>
+                    <td class="col-reach">84,210</td>
+                    <td class="col-eng">11.8%</td>
+                    <td class="col-leads">126</td>
+                  </tr>
+                  <tr>
+                    <td class="col-post">
+                      <div class="table-post-cell">
+                        <strong class="post-title">Stop measuring consistency like this</strong>
+                        <span class="post-meta">Oct 14 · Contrarian</span>
+                      </div>
+                    </td>
+                    <td class="col-channel"><span class="platform li">in</span></td>
+                    <td class="col-reach">42,662</td>
+                    <td class="col-eng">9.4%</td>
+                    <td class="col-leads">88</td>
+                  </tr>
+                  <tr>
+                    <td class="col-post">
+                      <div class="table-post-cell">
+                        <strong class="post-title">Behind our weekly planning ritual</strong>
+                        <span class="post-meta">Oct 10 · BTS</span>
+                      </div>
+                    </td>
+                    <td class="col-channel"><span class="platform tk">♪</span></td>
+                    <td class="col-reach">37,901</td>
+                    <td class="col-eng">8.9%</td>
+                    <td class="col-leads">47</td>
+                  </tr>
+                  <tr>
+                    <td class="col-post">
+                      <div class="table-post-cell">
+                        <strong class="post-title">How to build an audience without burnout</strong>
+                        <span class="post-meta">Oct 06 · Framework</span>
+                      </div>
+                    </td>
+                    <td class="col-channel"><span class="platform th">@</span></td>
+                    <td class="col-reach">29,140</td>
+                    <td class="col-eng">7.4%</td>
+                    <td class="col-leads">38</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
         </section>
 
         <section class="view" id="view-brand" data-title="Brand brain">

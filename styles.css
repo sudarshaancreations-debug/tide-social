@@ -5074,3 +5074,124 @@ button.danger:hover {
   font-weight: 600 !important;
   line-height: 1.3 !important;
 }
+
+/* =====================================================================
+   Top Content Analytics Table Responsive System
+   ===================================================================== */
+.table-panel {
+  padding: 18px 16px !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.analytics-table-wrap {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  margin-top: 12px !important;
+  box-sizing: border-box !important;
+}
+
+#analytics-table {
+  width: 100% !important;
+  min-width: 460px !important;
+  border-collapse: collapse !important;
+  text-align: left !important;
+  font-size: 12px !important;
+  box-sizing: border-box !important;
+}
+
+#analytics-table thead th {
+  background: #f7f6f0 !important;
+  padding: 10px 12px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 1px solid var(--line) !important;
+  white-space: nowrap !important;
+}
+
+#analytics-table tbody td {
+  padding: 12px !important;
+  border-bottom: 1px solid #f0eee6 !important;
+  vertical-align: middle !important;
+  color: var(--ink) !important;
+  font-size: 12.5px !important;
+}
+
+#analytics-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+#analytics-table tbody tr:hover {
+  background: #faf9f5 !important;
+}
+
+/* Post Cell: Title & Meta distinctly separated with clean vertical rhythm */
+.table-post-cell {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  min-width: 180px !important;
+  max-width: 240px !important;
+}
+
+.table-post-cell .post-title,
+#analytics-table td strong {
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+}
+
+.table-post-cell .post-meta,
+#analytics-table td small {
+  display: block !important;
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+/* Channel Platform Icon Badge */
+#analytics-table .platform {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+}
+
+#analytics-table .platform.ig { background: #e1306c !important; }
+#analytics-table .platform.li { background: #0077b5 !important; }
+#analytics-table .platform.tk { background: #000000 !important; color: #fff !important; }
+#analytics-table .platform.th { background: #171814 !important; color: #fff !important; }
+
+/* Numeric Columns aligned cleanly */
+#analytics-table th.col-reach,
+#analytics-table td.col-reach,
+#analytics-table th.col-eng,
+#analytics-table td.col-eng,
+#analytics-table th.col-leads,
+#analytics-table td.col-leads {
+  white-space: nowrap !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+#analytics-table td.col-reach { color: var(--ink) !important; }
+#analytics-table td.col-eng { color: #1e8e5a !important; }
+#analytics-table td.col-leads { color: #2563eb !important; }
