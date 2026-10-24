@@ -233,6 +233,16 @@ function openPostDetails(postId) {
   if (dateInput) dateInput.value = post.date || "2026-10-23";
   if (timeInput) timeInput.value = post.time || "10:00";
 
+  const fcWrap = document.getElementById("post-detail-first-comment-wrap");
+  if (fcWrap) {
+    if (post.firstComment) {
+      fcWrap.hidden = false;
+      fcWrap.innerHTML = `💬 <strong>Scheduled First Comment:</strong><br><span style="color:#2a3036; margin-top:2px; display:inline-block;">${escapeHtml(post.firstComment)}</span>`;
+    } else {
+      fcWrap.hidden = true;
+    }
+  }
+
   openModal("post-details-modal");
 }
 
@@ -1081,6 +1091,8 @@ function renderOverviewApprovals() {
 
   let html = `
     <div class="approval-card" id="overview-featured-approval" data-id="${first.id}">
+      <div class="swipe-overlay-badge swipe-approve-badge" id="swipe-approve-badge">APPROVE ✓</div>
+      <div class="swipe-overlay-badge swipe-change-badge" id="swipe-change-badge">CHANGE ✍</div>
       <div class="reel-preview" id="featured-reel-player" data-duration="18">
         <canvas class="reel-canvas" id="featured-reel-canvas"></canvas>
         <div class="reel-overlay" id="featured-reel-overlay">
@@ -1117,6 +1129,8 @@ function renderOverviewApprovals() {
         <button class="change" id="change-featured-btn" data-id="${first.id}" aria-label="Request change">Change</button>
         <button class="storyboard-btn" id="btn-open-storyboard" type="button">🎬 Storyboard</button>
       </div>
+      ${first.firstComment ? `<div style="margin-top:8px; padding:6px 10px; background:#f4fbf6; border-radius:6px; font-size:11px; border-left:2px solid #1e9e5d; color:var(--ink);">💬 <strong>Scheduled first comment:</strong> "${escapeHtml(first.firstComment)}"</div>` : ""}
+      <div class="swipe-hint-bar"><span>⇄ Swipe right to approve · left to revise</span></div>
     </div>
   `;
 
@@ -1235,8 +1249,7 @@ function renderOverviewApprovals() {
     });
   }
 
-  document.getElementById("approve-featured-btn")?.addEventListener("click", function () {
-    const id = this.dataset.id;
+  const approveFeaturedDraft = (id) => {
     const item = approvalsList.find(a => a.id === id);
     if (item) {
       scheduled.unshift({
@@ -1246,7 +1259,8 @@ function renderOverviewApprovals() {
         title: item.title,
         meta: item.platform + " · Approved",
         cls: item.cls,
-        copy: item.kicker
+        copy: item.kicker,
+        firstComment: item.firstComment || null
       });
       write("tide-posts", scheduled);
       renderWeek();
@@ -1257,7 +1271,11 @@ function renderOverviewApprovals() {
     renderOverviewApprovals();
     renderApprovals();
     updateBadges();
-    toast("Draft approved and added to your publishing queue!");
+    toast("Draft approved and added to your publishing queue! ✓");
+  };
+
+  document.getElementById("approve-featured-btn")?.addEventListener("click", function () {
+    approveFeaturedDraft(this.dataset.id);
   });
 
   document.getElementById("change-featured-btn")?.addEventListener("click", function () {
@@ -1269,6 +1287,98 @@ function renderOverviewApprovals() {
     renderStoryboard(first.title || "Brand Content");
     openModal("storyboard-modal");
   });
+
+  // Mobile Swipe-to-Approve Touch & Drag Physics (Ootto Feature)
+  const swipeCard = document.getElementById("overview-featured-approval");
+  const swipeApproveBadge = document.getElementById("swipe-approve-badge");
+  const swipeChangeBadge = document.getElementById("swipe-change-badge");
+  if (swipeCard) {
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let swiping = false;
+
+    const handleStart = (e) => {
+      if (e.target.closest("button") || e.target.closest(".reel-scrubber") || e.target.closest("input")) return;
+      swiping = true;
+      const pt = e.touches ? e.touches[0] : e;
+      startX = pt.clientX;
+      startY = pt.clientY;
+      currentX = startX;
+      swipeCard.style.transition = "none";
+    };
+
+    const handleMove = (e) => {
+      if (!swiping) return;
+      const pt = e.touches ? e.touches[0] : e;
+      const diffX = pt.clientX - startX;
+      const diffY = pt.clientY - startY;
+
+      // Allow natural vertical scroll if gesture is mostly vertical
+      if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffX) < 18) return;
+
+      currentX = pt.clientX;
+      const rot = diffX * 0.04;
+      swipeCard.style.transform = `translateX(${diffX}px) rotate(${rot}deg)`;
+
+      if (diffX > 20) {
+        if (swipeApproveBadge) {
+          swipeApproveBadge.style.opacity = Math.min(1, (diffX - 20) / 60);
+          swipeApproveBadge.style.transform = `scale(${Math.min(1.15, 0.9 + (diffX / 200))})`;
+        }
+        if (swipeChangeBadge) swipeChangeBadge.style.opacity = 0;
+      } else if (diffX < -20) {
+        if (swipeChangeBadge) {
+          swipeChangeBadge.style.opacity = Math.min(1, (-diffX - 20) / 60);
+          swipeChangeBadge.style.transform = `scale(${Math.min(1.15, 0.9 + (-diffX / 200))})`;
+        }
+        if (swipeApproveBadge) swipeApproveBadge.style.opacity = 0;
+      } else {
+        if (swipeApproveBadge) swipeApproveBadge.style.opacity = 0;
+        if (swipeChangeBadge) swipeChangeBadge.style.opacity = 0;
+      }
+    };
+
+    const handleEnd = () => {
+      if (!swiping) return;
+      swiping = false;
+      const diffX = currentX - startX;
+      swipeCard.style.transition = "transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+
+      if (diffX >= 80) {
+        // Swiped Right -> Approve!
+        swipeCard.style.transform = "translateX(500px) rotate(20deg)";
+        if (swipeApproveBadge) swipeApproveBadge.style.opacity = 1;
+        setTimeout(() => {
+          approveFeaturedDraft(first.id);
+        }, 180);
+      } else if (diffX <= -80) {
+        // Swiped Left -> Change/Revise!
+        swipeCard.style.transform = "translateX(-500px) rotate(-20deg)";
+        if (swipeChangeBadge) swipeChangeBadge.style.opacity = 1;
+        setTimeout(() => {
+          swipeCard.style.transform = "translateX(0) rotate(0)";
+          if (swipeChangeBadge) swipeChangeBadge.style.opacity = 0;
+          activeChangeCardId = first.id;
+          openModal("change-modal");
+        }, 180);
+      } else {
+        // Spring back to center
+        swipeCard.style.transform = "translateX(0) rotate(0)";
+        if (swipeApproveBadge) swipeApproveBadge.style.opacity = 0;
+        if (swipeChangeBadge) swipeChangeBadge.style.opacity = 0;
+      }
+    };
+
+    swipeCard.addEventListener("touchstart", handleStart, { passive: true });
+    swipeCard.addEventListener("touchmove", handleMove, { passive: true });
+    swipeCard.addEventListener("touchend", handleEnd);
+    swipeCard.addEventListener("touchcancel", handleEnd);
+
+    swipeCard.addEventListener("mousedown", handleStart);
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleEnd);
+  }
 
   document.getElementById("approve-mini-btn")?.addEventListener("click", function () {
     const id = this.dataset.id;
@@ -1780,6 +1890,7 @@ document.getElementById('composer-form')?.addEventListener('submit', event => {
   const copy = form.get('copy');
   const date = form.get('date');
   const time = form.get('time');
+  const firstComment = form.get('first_comment') || '';
 
   const result = createPost(copy, channels, date, time);
   if (!result.valid) return toast(result.error);
@@ -1788,12 +1899,19 @@ document.getElementById('composer-form')?.addEventListener('submit', event => {
     ...result.post,
     title: result.post.copy.slice(0, 48),
     meta: channels.join(' · '),
-    cls: platformClass(channels[0])
+    cls: platformClass(channels[0]),
+    firstComment: firstComment.trim() || null
   });
 
   write('tide-posts', scheduled);
   write('tide-draft', '');
   if (composerCopy) composerCopy.value = '';
+  const fcText = document.getElementById('composer-first-comment');
+  if (fcText) fcText.value = '';
+  const fcToggle = document.getElementById('toggle-first-comment');
+  if (fcToggle) fcToggle.checked = false;
+  const fcCont = document.getElementById('first-comment-container');
+  if (fcCont) fcCont.hidden = true;
   uploadedMediaFile = null;
   if (mediaPreview) {
     mediaPreview.hidden = true;
@@ -1811,6 +1929,7 @@ document.getElementById('btn-composer-save-draft')?.addEventListener('click', ()
   const formData = new FormData(form);
   const channels = [...form.querySelectorAll('input[type="checkbox"]:checked')].map(input => input.value);
   const copy = formData.get('copy') || '';
+  const firstComment = formData.get('first_comment') || '';
   if (!copy.trim()) return toast('Please enter some post copy first.');
 
   const platform = channels[0] || 'Instagram';
@@ -1823,6 +1942,7 @@ document.getElementById('btn-composer-save-draft')?.addEventListener('click', ()
     cls: platformClass(platform),
     mark: platformMark(platform),
     revision: null,
+    firstComment: firstComment.trim() || null,
     videoUrl: uploadedMediaFile && uploadedMediaFile.type.startsWith('video/') ? URL.createObjectURL(uploadedMediaFile) : null
   };
 
@@ -1830,6 +1950,12 @@ document.getElementById('btn-composer-save-draft')?.addEventListener('click', ()
   write('tide-approvals', approvalsList);
   write('tide-draft', '');
   if (composerCopy) composerCopy.value = '';
+  const fcText = document.getElementById('composer-first-comment');
+  if (fcText) fcText.value = '';
+  const fcToggle = document.getElementById('toggle-first-comment');
+  if (fcToggle) fcToggle.checked = false;
+  const fcCont = document.getElementById('first-comment-container');
+  if (fcCont) fcCont.hidden = true;
   uploadedMediaFile = null;
   if (mediaPreview) {
     mediaPreview.hidden = true;
@@ -2967,6 +3093,479 @@ document.getElementById("btn-open-full-profile")?.addEventListener("click", () =
   showView("profile");
 });
 
+// ============================================================
+// 1. SCHEDULED FIRST COMMENT CONTROLS (Buffer Feature)
+// ============================================================
+const toggleFc = document.getElementById("toggle-first-comment");
+const fcContainer = document.getElementById("first-comment-container");
+const fcInput = document.getElementById("composer-first-comment");
+const fcCharCount = document.getElementById("fc-char-count");
+
+toggleFc?.addEventListener("change", function () {
+  if (fcContainer) fcContainer.hidden = !this.checked;
+  if (this.checked && fcInput) fcInput.focus();
+});
+
+fcInput?.addEventListener("input", function () {
+  if (fcCharCount) fcCharCount.textContent = `${this.value.length} / 500`;
+});
+
+document.querySelectorAll(".fc-tag-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const tag = btn.dataset.tag;
+    if (!fcInput) return;
+    if (fcInput.value && !fcInput.value.endsWith(" ")) fcInput.value += " ";
+    fcInput.value += tag + " ";
+    if (fcCharCount) fcCharCount.textContent = `${fcInput.value.length} / 500`;
+    if (toggleFc && !toggleFc.checked) {
+      toggleFc.checked = true;
+      if (fcContainer) fcContainer.hidden = false;
+    }
+  });
+});
+
+// ============================================================
+// 2. COMMENT-TO-DM RULE ENGINE (Ootto.ai Feature)
+// ============================================================
+let dmRules = read("tide-comment-to-dm-rules", [
+  {
+    id: "rule-1",
+    keyword: "GUIDE",
+    platform: "TikTok",
+    message: "Here is the complete Short-Form Content Guide you requested: https://tide.page/@acmestudio/guide 📘 Let me know your thoughts!",
+    enabled: true,
+    sentCount: 42
+  },
+  {
+    id: "rule-2",
+    keyword: "TEMPLATE",
+    platform: "Instagram",
+    message: "Hey Jules! Here is the Notion Content Operating System template: https://tide.page/@acmestudio/template 🚀 Enjoy!",
+    enabled: true,
+    sentCount: 29
+  },
+  {
+    id: "rule-3",
+    keyword: "GROW",
+    platform: "Instagram",
+    message: "Thanks for watching! Here is your exclusive 2026 Growth Blueprint download: https://tide.page/@acmestudio/growth 📈",
+    enabled: true,
+    sentCount: 68
+  }
+]);
+
+function renderCommentToDMRules() {
+  const listEl = document.getElementById("dm-rules-list");
+  const countEl = document.getElementById("dm-rules-count");
+  if (countEl) countEl.textContent = dmRules.length;
+  if (!listEl) return;
+
+  if (dmRules.length === 0) {
+    listEl.innerHTML = `<div style="text-align:center; padding:18px; color:var(--muted); font-size:12px;">No automated trigger rules yet. Create one above to start converting comments into DMs!</div>`;
+    return;
+  }
+
+  listEl.innerHTML = dmRules.map(rule => `
+    <div class="dm-rule-card" data-id="${rule.id}">
+      <div class="dm-rule-info">
+        <span class="dm-keyword-pill">Keyword: "${escapeHtml(rule.keyword)}"</span>
+        <span class="platform ${platformClass(rule.platform)}" style="margin-left:6px; font-size:10px;">${rule.platform}</span>
+        <p>${escapeHtml(rule.message)}</p>
+        <div class="dm-rule-meta">
+          <span>⚡ <strong>${rule.sentCount}</strong> automated DMs sent</span>
+          <span>Status: <b style="color:${rule.enabled ? '#1e9e5d' : '#888'}">${rule.enabled ? 'Active' : 'Paused'}</b></span>
+        </div>
+      </div>
+      <div class="dm-rule-actions">
+        <label class="dm-toggle-switch" title="Toggle rule active state">
+          <input type="checkbox" class="dm-rule-toggle" data-id="${rule.id}" ${rule.enabled ? 'checked' : ''}>
+          <span class="dm-toggle-slider"></span>
+        </label>
+        <button type="button" class="dm-btn-delete" data-id="${rule.id}" title="Delete rule">🗑</button>
+      </div>
+    </div>
+  `).join("");
+
+  listEl.querySelectorAll(".dm-rule-toggle").forEach(toggle => {
+    toggle.addEventListener("change", function () {
+      const id = this.dataset.id;
+      const rule = dmRules.find(r => r.id === id);
+      if (rule) {
+        rule.enabled = this.checked;
+        write("tide-comment-to-dm-rules", dmRules);
+        renderCommentToDMRules();
+        toast(`Trigger rule for "${rule.keyword}" is now ${rule.enabled ? 'Active ⚡' : 'Paused'}`);
+      }
+    });
+  });
+
+  listEl.querySelectorAll(".dm-btn-delete").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const id = this.dataset.id;
+      dmRules = dmRules.filter(r => r.id !== id);
+      write("tide-comment-to-dm-rules", dmRules);
+      renderCommentToDMRules();
+      toast("Trigger rule deleted.");
+    });
+  });
+}
+
+document.getElementById("btn-open-comment-to-dm")?.addEventListener("click", () => {
+  renderCommentToDMRules();
+  openModal("comment-to-dm-modal");
+});
+
+document.getElementById("dm-rule-form")?.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const kwInput = document.getElementById("dm-rule-keyword");
+  const platInput = document.getElementById("dm-rule-platform");
+  const msgInput = document.getElementById("dm-rule-message");
+
+  const keyword = kwInput?.value.trim().toUpperCase();
+  const platform = platInput?.value || "All";
+  const message = msgInput?.value.trim();
+
+  if (!keyword || !message) return;
+
+  const newRule = {
+    id: "rule-" + Date.now(),
+    keyword,
+    platform,
+    message,
+    enabled: true,
+    sentCount: 0
+  };
+
+  dmRules.unshift(newRule);
+  write("tide-comment-to-dm-rules", dmRules);
+  renderCommentToDMRules();
+  this.reset();
+  toast(`⚡ Comment-to-DM rule created for keyword "${keyword}"!`);
+});
+
+// Simulator tester for Comment-to-DM
+document.getElementById("btn-test-dm-trigger")?.addEventListener("click", () => {
+  const input = document.getElementById("sim-comment-input");
+  const resBox = document.getElementById("sim-result-box");
+  const commentText = (input?.value || "").toUpperCase();
+
+  const matched = dmRules.find(r => r.enabled && commentText.includes(r.keyword.toUpperCase()));
+
+  if (!resBox) return;
+  resBox.hidden = false;
+
+  if (matched) {
+    matched.sentCount++;
+    write("tide-comment-to-dm-rules", dmRules);
+    renderCommentToDMRules();
+
+    resBox.innerHTML = `
+      <b style="color:#1e9e5d;">✓ TRIGGER MATCHED!</b> Keyword: <code>"${matched.keyword}"</code><br>
+      <strong>Automated DM Dispatched:</strong><br>
+      <span style="color:var(--muted); font-style:italic;">"${escapeHtml(matched.message)}"</span><br>
+      <small style="color:#1e9e5d; font-weight:700;">Sent via ${matched.platform} Direct Message in 180ms ⚡</small>
+    `;
+    toast(`Automated DM dispatched for "${matched.keyword}"!`);
+  } else {
+    resBox.innerHTML = `
+      <b style="color:#b73229;">✕ No active trigger matched</b> for comment text "${escapeHtml(input?.value || "")}".<br>
+      <small>Make sure the comment contains one of your active keywords (e.g. ${dmRules.map(r => `"${r.keyword}"`).join(", ")}).</small>
+    `;
+  }
+});
+
+// ============================================================
+// 3. START PAGE / LINK-IN-BIO BUILDER (Buffer Feature)
+// ============================================================
+let startPageData = read("tide-start-page", {
+  title: "Acme Studio",
+  bio: "Turn one thought into every format. Creator playbooks, weekly breakdowns, and creative tools.",
+  theme: "clean-ink",
+  avatar: "AK",
+  handle: "@acmestudio",
+  socials: { ig: true, tk: true, li: true, yt: true },
+  links: [
+    { id: "lnk-1", title: "🎙️ Watch The Full Podcast", url: "https://youtube.com/@acmestudio", highlight: true },
+    { id: "lnk-2", title: "📥 Download Creator Playbook (Free)", url: "https://tide.page/@acmestudio/playbook", highlight: false },
+    { id: "lnk-3", title: "⚡ Book 1:1 Strategy Session", url: "https://cal.com/acmestudio", highlight: false },
+    { id: "lnk-4", title: "💌 Join 18K Growth Readers", url: "https://acmestudio.substack.com", highlight: false }
+  ]
+});
+
+function renderStartPage() {
+  const titleInput = document.getElementById("sp-input-title");
+  const bioInput = document.getElementById("sp-input-bio");
+  const previewTitle = document.getElementById("bio-title-preview");
+  const previewBio = document.getElementById("bio-tagline-preview");
+  const previewAvatar = document.getElementById("bio-avatar-preview");
+  const phoneScreen = document.getElementById("phone-screen");
+  const linksList = document.getElementById("sp-links-list");
+
+  if (titleInput && !titleInput.dataset.bound) {
+    titleInput.value = startPageData.title;
+    titleInput.dataset.bound = "true";
+    titleInput.addEventListener("input", function () {
+      startPageData.title = this.value;
+      if (previewTitle) previewTitle.textContent = this.value || "Your Brand";
+      write("tide-start-page", startPageData);
+    });
+  }
+
+  if (bioInput && !bioInput.dataset.bound) {
+    bioInput.value = startPageData.bio;
+    bioInput.dataset.bound = "true";
+    bioInput.addEventListener("input", function () {
+      startPageData.bio = this.value;
+      if (previewBio) previewBio.textContent = this.value;
+      write("tide-start-page", startPageData);
+    });
+  }
+
+  if (previewTitle) previewTitle.textContent = startPageData.title;
+  if (previewBio) previewBio.textContent = startPageData.bio;
+  if (previewAvatar) previewAvatar.textContent = startPageData.avatar;
+
+  if (phoneScreen) {
+    phoneScreen.className = `phone-screen theme-${startPageData.theme}`;
+  }
+
+  document.querySelectorAll(".sp-theme-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.theme === startPageData.theme);
+  });
+
+  if (linksList) {
+    linksList.innerHTML = startPageData.links.map(lnk => `
+      <div class="sp-link-item" data-id="${lnk.id}">
+        <input type="text" class="sp-link-title" value="${escapeHtml(lnk.title)}" placeholder="Button title" data-id="${lnk.id}">
+        <input type="text" class="sp-link-url" value="${escapeHtml(lnk.url)}" placeholder="https://..." data-id="${lnk.id}">
+        <button type="button" class="sp-link-del" data-id="${lnk.id}" title="Remove link">×</button>
+      </div>
+    `).join("");
+
+    linksList.querySelectorAll(".sp-link-title").forEach(input => {
+      input.addEventListener("input", function () {
+        const lnk = startPageData.links.find(l => l.id === this.dataset.id);
+        if (lnk) {
+          lnk.title = this.value;
+          write("tide-start-page", startPageData);
+          renderBioLinksPreview();
+        }
+      });
+    });
+
+    linksList.querySelectorAll(".sp-link-url").forEach(input => {
+      input.addEventListener("input", function () {
+        const lnk = startPageData.links.find(l => l.id === this.dataset.id);
+        if (lnk) {
+          lnk.url = this.value;
+          write("tide-start-page", startPageData);
+        }
+      });
+    });
+
+    linksList.querySelectorAll(".sp-link-del").forEach(btn => {
+      btn.addEventListener("click", function () {
+        startPageData.links = startPageData.links.filter(l => l.id !== this.dataset.id);
+        write("tide-start-page", startPageData);
+        renderStartPage();
+      });
+    });
+  }
+
+  renderBioLinksPreview();
+}
+
+function renderBioLinksPreview() {
+  const previewLinks = document.getElementById("bio-links-stack");
+  if (!previewLinks) return;
+  previewLinks.innerHTML = startPageData.links.map(lnk => `
+    <a class="bio-btn" href="${escapeHtml(lnk.url)}" target="_blank" rel="noopener">
+      <span>${escapeHtml(lnk.title)}</span>
+      <span style="font-size:12px; opacity:0.7;">→</span>
+    </a>
+  `).join("");
+}
+
+document.querySelectorAll(".sp-theme-btn").forEach(btn => {
+  btn.addEventListener("click", function () {
+    startPageData.theme = this.dataset.theme;
+    write("tide-start-page", startPageData);
+    renderStartPage();
+    toast(`Applied theme! 🎨`);
+  });
+});
+
+document.getElementById("btn-add-sp-link")?.addEventListener("click", () => {
+  startPageData.links.push({
+    id: "lnk-" + Date.now(),
+    title: "✨ New Featured Link",
+    url: "https://tide.page/@acmestudio",
+    highlight: false
+  });
+  write("tide-start-page", startPageData);
+  renderStartPage();
+  toast("New link added to your Start Page!");
+});
+
+document.getElementById("btn-copy-startpage-url")?.addEventListener("click", () => {
+  const url = "https://tide.page/@acmestudio";
+  navigator.clipboard?.writeText(url).catch(() => {});
+  toast(`Copied bio link "${url}" to clipboard! Ready to paste in Instagram bio.`);
+});
+
+document.getElementById("btn-share-startpage")?.addEventListener("click", () => {
+  toast("Start Page is published and live at https://tide.page/@acmestudio 🚀");
+});
+
+["ig", "tk", "li", "yt"].forEach(key => {
+  document.getElementById(`sp-social-${key}`)?.addEventListener("change", function () {
+    startPageData.socials[key] = this.checked;
+    write("tide-start-page", startPageData);
+    const socBox = document.getElementById("bio-social-icons");
+    if (socBox) {
+      socBox.innerHTML = `
+        ${startPageData.socials.ig ? '<span class="bio-soc-btn" title="Instagram">📸</span>' : ''}
+        ${startPageData.socials.tk ? '<span class="bio-soc-btn" title="TikTok">♪</span>' : ''}
+        ${startPageData.socials.li ? '<span class="bio-soc-btn" title="LinkedIn">in</span>' : ''}
+        ${startPageData.socials.yt ? '<span class="bio-soc-btn" title="YouTube">▶</span>' : ''}
+      `;
+    }
+  });
+});
+
+// ============================================================
+// 4. CLIENT-READY WHITE-LABEL PDF REPORT (Buffer Feature)
+// ============================================================
+document.getElementById("btn-export-pdf")?.addEventListener("click", () => {
+  generateClientPDFDocument();
+  openModal("pdf-report-modal");
+});
+
+function generateClientPDFDocument() {
+  const container = document.getElementById("printable-report-container");
+  const clientName = document.getElementById("pdf-client-name")?.value || "Acme Studio & Partners";
+  const period = document.getElementById("pdf-report-period")?.value || "30";
+  const notes = document.getElementById("pdf-executive-notes")?.value || "";
+  const incKpis = document.getElementById("pdf-opt-kpis")?.checked !== false;
+  const incTable = document.getElementById("pdf-opt-table")?.checked !== false;
+  const incWhitelabel = document.getElementById("pdf-opt-whitelabel")?.checked !== false;
+
+  if (!container) return;
+  container.hidden = false;
+
+  const todayStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+  container.innerHTML = `
+    <div class="pdf-doc-header">
+      <div>
+        <div class="pdf-brand-mark">🌊 ${escapeHtml(clientName)}</div>
+        <p style="margin:4px 0 0; font-size:12px; color:#555;">Social Growth &amp; Content Performance Review</p>
+      </div>
+      <div class="pdf-doc-meta">
+        <strong>CONFIDENTIAL EXECUTIVE REPORT</strong><br>
+        <span>Period: Last ${period} Days</span><br>
+        <span>Generated: ${todayStr}</span>
+      </div>
+    </div>
+
+    ${notes ? `
+      <div class="pdf-notes-callout">
+        <strong>Strategic Executive Summary:</strong><br>
+        ${escapeHtml(notes)}
+      </div>
+    ` : ""}
+
+    ${incKpis ? `
+      <div class="pdf-kpi-grid">
+        <div class="pdf-kpi-card">
+          <p>30-Day Reach</p>
+          <strong>284.7K</strong>
+          <small>↑ 18.4% vs last period</small>
+        </div>
+        <div class="pdf-kpi-card">
+          <p>Avg Engagement</p>
+          <strong>8.6%</strong>
+          <small>↑ 2.1% benchmark</small>
+        </div>
+        <div class="pdf-kpi-card">
+          <p>Posts Published</p>
+          <strong>48</strong>
+          <small>4 channels · 100% SLA</small>
+        </div>
+        <div class="pdf-kpi-card">
+          <p>Attributed Leads</p>
+          <strong>318</strong>
+          <small>↑ 41 qualified leads</small>
+        </div>
+      </div>
+    ` : ""}
+
+    ${incTable ? `
+      <h4 style="margin:20px 0 6px; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">Top Performing Published Content</h4>
+      <table class="pdf-table">
+        <thead>
+          <tr>
+            <th>Post Title &amp; Angle</th>
+            <th>Channel</th>
+            <th>Impressions</th>
+            <th>Engagement</th>
+            <th>Leads</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>The content system that gave us Fridays back</strong><br><small style="color:#777;">Oct 18 · Educational Breakdown</small></td>
+            <td>Instagram</td>
+            <td>84,210</td>
+            <td>11.8%</td>
+            <td>126</td>
+          </tr>
+          <tr>
+            <td><strong>Stop measuring consistency like this</strong><br><small style="color:#777;">Oct 14 · Contrarian Angle</small></td>
+            <td>LinkedIn</td>
+            <td>42,662</td>
+            <td>9.4%</td>
+            <td>88</td>
+          </tr>
+          <tr>
+            <td><strong>Behind our weekly planning ritual</strong><br><small style="color:#777;">Oct 10 · Behind The Scenes</small></td>
+            <td>TikTok</td>
+            <td>37,901</td>
+            <td>8.9%</td>
+            <td>47</td>
+          </tr>
+          <tr>
+            <td><strong>How to build an audience without burnout</strong><br><small style="color:#777;">Oct 06 · Tactical Framework</small></td>
+            <td>Threads</td>
+            <td>29,140</td>
+            <td>7.4%</td>
+            <td>38</td>
+          </tr>
+        </tbody>
+      </table>
+    ` : ""}
+
+    ${incWhitelabel ? `
+      <div style="margin-top:28px; padding-top:12px; border-top:1px solid #e5e5e5; display:flex; justify-content:space-between; align-items:center; font-size:10px; color:#888;">
+        <span>Prepared by Acme Studio using Tide Social White-Label Engine</span>
+        <span>Verified Accurate · 2026 Social Analytics API</span>
+      </div>
+    ` : ""}
+  `;
+}
+
+document.getElementById("btn-preview-pdf-doc")?.addEventListener("click", () => {
+  generateClientPDFDocument();
+  toast("Report preview updated!");
+});
+
+document.getElementById("btn-print-download-pdf")?.addEventListener("click", () => {
+  generateClientPDFDocument();
+  setTimeout(() => {
+    window.print();
+  }, 250);
+});
+
 // Initial Render
 setupPlatforms();
 renderWeek();
@@ -2979,4 +3578,6 @@ renderConcepts("");
 renderBrand();
 renderProfile();
 renderTeam();
+renderCommentToDMRules();
+renderStartPage();
 updateBadges();

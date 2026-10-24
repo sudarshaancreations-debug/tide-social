@@ -53,6 +53,7 @@
       <button class="quick-chip" data-view="brand">Brand Brain</button>
       <button class="quick-chip" data-view="accounts">Channels</button>
       <button class="quick-chip" data-view="analytics">Analytics</button>
+      <button class="quick-chip" data-view="startpage">Start Page 🌐</button>
     </nav>
 
     <main id="main" tabindex="-1">
@@ -206,13 +207,13 @@
         </section>
 
         <section class="view" id="view-inbox" data-title="Unified inbox">
-          <div class="section-intro inbox-intro"><div><p class="eyebrow">COMMUNITY</p><h2>Every conversation, one place.</h2><p>AI drafts replies in your voice. You choose when it may send automatically.</p></div><div class="inbox-filters"><button type="button" class="filter-pill" id="inbox-filter-btn">Channel: All ⌄</button><span class="filter-pill unread-pill" id="inbox-unread-count">12 unread</span></div></div>
+          <div class="section-intro inbox-intro"><div><p class="eyebrow">COMMUNITY</p><h2>Every conversation, one place.</h2><p>AI drafts replies in your voice. You choose when it may send automatically.</p></div><div class="inbox-filters"><button type="button" class="button secondary small" id="btn-open-comment-to-dm" style="font-size:11px; padding:6px 12px; font-weight:700; border-color:var(--coral); color:var(--coral); background:#fff;">⚡ Comment-to-DM Rules</button><button type="button" class="filter-pill" id="inbox-filter-btn">Channel: All ⌄</button><span class="filter-pill unread-pill" id="inbox-unread-count">12 unread</span></div></div>
           <div class="inbox-summary" aria-label="Inbox summary"><article><span>↗</span><div><strong id="inbox-summary-new">12</strong><small>New messages</small></div></article><article><span>✦</span><div><strong>4</strong><small>AI drafts ready</small></div></article><article><span>◎</span><div><strong>3</strong><small>High-intent leads</small></div></article><article><span>✓</span><div><strong>86%</strong><small>Replied in 1 hour</small></div></article></div>
           <article class="panel inbox-workspace"><div class="thread-column"><div class="thread-toolbar"><label for="thread-search">Inbox</label><div><input id="thread-search" type="search" placeholder="Search conversations" aria-label="Search conversations"><button type="button" id="thread-filter-toggle" aria-label="Filter conversations">≡</button></div></div><div class="thread-list" id="thread-list"></div></div><div class="conversation" id="active-conversation"></div></article>
         </section>
 
         <section class="view" id="view-analytics" data-title="Analytics">
-          <div class="section-intro"><div><p class="eyebrow">ANSWERS, NOT CHARTS</p><h2>Know what to make next.</h2><p>Cross-channel reporting with post-level revenue, tags, exports, and explanations.</p></div><button class="button secondary" id="btn-export-report">Export report (.csv)</button></div>
+          <div class="section-intro"><div><p class="eyebrow">ANSWERS, NOT CHARTS</p><h2>Know what to make next.</h2><p>Cross-channel reporting with post-level revenue, tags, exports, and explanations.</p></div><div style="display:flex; gap:6px;"><button class="button secondary" id="btn-export-report">Export .csv</button><button class="button primary" id="btn-export-pdf" type="button" style="font-size:12px; font-weight:700;">📄 Client PDF</button></div></div>
           <div class="analytics-grid"><article class="panel big-number"><p>Audience growth</p><strong id="metric-aud-growth">+12,842</strong><small>↑ 24% in 30 days</small></article><article class="panel big-number"><p>Attributed leads</p><strong id="metric-leads-count">318</strong><small>↑ 41 from last period</small></article><article class="panel big-number"><p>Best format</p><strong>Reels</strong><small>3.2× average reach</small></article></div>
           <article class="panel table-panel"><div class="panel-head"><h2>Top content</h2><div style="display:flex; gap:8px;"><button class="text-button" id="btn-customize-columns">Customize columns</button><button class="text-button" id="btn-refresh-analytics">Refresh data</button></div></div><table id="analytics-table"><thead><tr><th>Post</th><th>Channel</th><th>Reach</th><th>Engagement</th><th>Leads</th></tr></thead><tbody><tr><td><strong>The content system that gave us Fridays back</strong><small>Oct 18 · Educational</small></td><td><span class="platform ig">IG</span></td><td>84,210</td><td>11.8%</td><td>126</td></tr><tr><td><strong>Stop measuring consistency like this</strong><small>Oct 14 · Contrarian</small></td><td><span class="platform li">in</span></td><td>42,662</td><td>9.4%</td><td>88</td></tr><tr><td><strong>Behind our weekly planning ritual</strong><small>Oct 10 · BTS</small></td><td><span class="platform tk">♪</span></td><td>37,901</td><td>8.9%</td><td>47</td></tr><tr><td><strong>How to build an audience without burnout</strong><small>Oct 06 · Framework</small></td><td><span class="platform th">@</span></td><td>29,140</td><td>7.4%</td><td>38</td></tr></tbody></table></article>
         </section>
@@ -745,6 +746,104 @@
             </div>
           </div>
         </section>
+
+        <!-- Start Page Builder (Buffer Feature) -->
+        <section class="view" id="view-startpage" data-title="Start Page · Link in Bio">
+          <div class="section-intro">
+            <div>
+              <p class="eyebrow">LINK-IN-BIO OPERATING SYSTEM</p>
+              <h2>Start Page Builder</h2>
+              <p>Build a micro-landing page for your Instagram, TikTok, and LinkedIn bios. Convert social views into subscribers, customers, and leads.</p>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="button secondary small" id="btn-copy-startpage-url" type="button">🔗 Copy Link</button>
+              <button class="button primary small" id="btn-share-startpage" type="button">Share Page ↗</button>
+            </div>
+          </div>
+
+          <div class="startpage-layout">
+            <!-- Left / Top: Builder Controls -->
+            <div class="startpage-editor panel">
+              <div class="sp-section">
+                <h3>Bio &amp; Appearance</h3>
+                <label>Page Title
+                  <input type="text" id="sp-input-title" value="Acme Studio" placeholder="Your brand or creator name">
+                </label>
+                <label>Bio Tagline
+                  <textarea id="sp-input-bio" rows="2" placeholder="Tell visitors who you are and what you make...">Turn one thought into every format. Creator playbooks, weekly breakdowns, and creative tools.</textarea>
+                </label>
+                <label>Theme Style
+                  <div class="sp-theme-picker" id="sp-theme-picker">
+                    <button type="button" class="sp-theme-btn active" data-theme="clean-ink">
+                      <span class="theme-swatch swatch-ink"></span>
+                      <span>Clean Ink</span>
+                    </button>
+                    <button type="button" class="sp-theme-btn" data-theme="sunset-coral">
+                      <span class="theme-swatch swatch-coral"></span>
+                      <span>Sunset Coral</span>
+                    </button>
+                    <button type="button" class="sp-theme-btn" data-theme="mint-garden">
+                      <span class="theme-swatch swatch-mint"></span>
+                      <span>Emerald Mint</span>
+                    </button>
+                    <button type="button" class="sp-theme-btn" data-theme="midnight-dark">
+                      <span class="theme-swatch swatch-dark"></span>
+                      <span>Midnight Dark</span>
+                    </button>
+                  </div>
+                </label>
+              </div>
+
+              <div class="sp-section">
+                <div class="sp-section-head">
+                  <h3>Your Links</h3>
+                  <button type="button" class="button secondary small" id="btn-add-sp-link" style="font-size:11px; padding:4px 10px;">＋ Add Link</button>
+                </div>
+                <div class="sp-links-list" id="sp-links-list"></div>
+              </div>
+
+              <div class="sp-section">
+                <h3>Connected Social Handles</h3>
+                <div class="sp-social-grid">
+                  <label><input type="checkbox" id="sp-social-ig" checked> <span>Instagram (@acmestudio)</span></label>
+                  <label><input type="checkbox" id="sp-social-tk" checked> <span>TikTok (@acme.studio)</span></label>
+                  <label><input type="checkbox" id="sp-social-li" checked> <span>LinkedIn (ACME Studio)</span></label>
+                  <label><input type="checkbox" id="sp-social-yt" checked> <span>YouTube (@acmestudio)</span></label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right / Bottom: Live Phone Mockup Preview -->
+            <div class="startpage-preview-wrap panel">
+              <div class="sp-preview-header">
+                <span>📱 LIVE BIO PREVIEW</span>
+                <span class="sp-url-pill" id="sp-url-pill">tide.page/@acmestudio</span>
+              </div>
+              <div class="phone-frame" id="phone-frame">
+                <div class="phone-screen theme-clean-ink" id="phone-screen">
+                  <div class="bio-avatar-ring">
+                    <div class="bio-avatar" id="bio-avatar-preview">AK</div>
+                  </div>
+                  <h2 class="bio-title" id="bio-title-preview">Acme Studio</h2>
+                  <p class="bio-tagline" id="bio-tagline-preview">Turn one thought into every format. Creator playbooks, weekly breakdowns, and creative tools.</p>
+                  
+                  <div class="bio-social-icons" id="bio-social-icons">
+                    <span class="bio-soc-btn" title="Instagram">📸</span>
+                    <span class="bio-soc-btn" title="TikTok">♪</span>
+                    <span class="bio-soc-btn" title="LinkedIn">in</span>
+                    <span class="bio-soc-btn" title="YouTube">▶</span>
+                  </div>
+
+                  <div class="bio-links-stack" id="bio-links-stack"></div>
+
+                  <div class="bio-brand-footer">
+                    <span>⚡ Powered by Tide Start Page</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer class="mobile-footer">
@@ -923,6 +1022,28 @@
     </div>
     <div id="media-preview-container" class="media-preview-box" hidden></div>
 
+    <!-- Scheduled First Comment (Buffer Feature) -->
+    <div class="composer-first-comment-card">
+      <div class="composer-first-comment-head">
+        <label for="toggle-first-comment" class="fc-checkbox-label">
+          <input type="checkbox" id="toggle-first-comment">
+          <span>💬 Schedule First Comment</span>
+        </label>
+        <span class="fc-badge-auto">Auto-publish on live</span>
+      </div>
+      <div id="first-comment-container" class="first-comment-container" hidden>
+        <textarea id="composer-first-comment" name="first_comment" placeholder="e.g. Save this for later! Resources & links: https://tide.page/@acmestudio #contentstrategy #creatoreconomy" maxlength="500"></textarea>
+        <div class="fc-footer">
+          <div class="fc-tags">
+            <button type="button" class="fc-tag-btn" data-tag="#creatorgrowth">#creatorgrowth</button>
+            <button type="button" class="fc-tag-btn" data-tag="#contentstrategy">#contentstrategy</button>
+            <button type="button" class="fc-tag-btn" data-tag="#buildinpublic">#buildinpublic</button>
+          </div>
+          <span class="fc-char-count" id="fc-char-count">0 / 500</span>
+        </div>
+      </div>
+    </div>
+
     <div class="form-row"><label>Date<input name="date" type="date" value="2026-10-26" required></label><label>Time<input name="time" type="time" value="10:30" required></label></div><div class="composer-actions"><button class="button secondary" type="button" id="btn-composer-save-draft">Send for approval</button><button class="button primary" type="submit">Schedule post →</button></div></form></div>
   </div>
 
@@ -1071,6 +1192,7 @@
       </div>
       <h2 id="post-details-title" style="font-size:20px; line-height:1.3; margin:4px 0 12px;">Scheduled Post</h2>
       <div id="post-detail-copy-wrap" style="background:#fbfaf6; border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:14px; font-size:13px; line-height:1.5; white-space:pre-wrap; max-height:200px; overflow-y:auto;"></div>
+      <div id="post-detail-first-comment-wrap" style="background:#f4fbf6; border:1px solid #bfe9ca; border-radius:8px; padding:10px 12px; margin-bottom:14px; font-size:12px; color:var(--ink);" hidden></div>
       
       <div class="form-row" style="margin-bottom:14px;">
         <label>Scheduled Date
@@ -1163,6 +1285,101 @@
 
   <!-- Cookie Settings Modal -->
   <div class="modal" id="cookie-modal" role="dialog" aria-modal="true" aria-labelledby="cookie-title" hidden><div class="modal-card small-modal"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">COOKIE SETTINGS</p><h2 id="cookie-title">Choose what Tide may store</h2><div class="cookie-option"><div><strong>Necessary</strong><p>Authentication, security, consent and core product state.</p></div><input type="checkbox" id="cookie-necessary" checked disabled aria-label="Necessary cookies always enabled"></div><div class="cookie-option"><div><strong>Product analytics</strong><p>Anonymous usage patterns that help us improve flows.</p></div><input id="analytics-cookie" type="checkbox" aria-label="Allow product analytics"></div><div class="cookie-option"><div><strong>Marketing &amp; Embeds</strong><p>Social media embeds and preview rendering cookies.</p></div><input id="marketing-cookie" type="checkbox" aria-label="Allow marketing cookies"></div><button class="button primary full" id="cookie-save">Save choices</button></div></div>
+
+  <!-- Comment-to-DM Automation Modal (Ootto.ai Feature) -->
+  <div class="modal" id="comment-to-dm-modal" role="dialog" aria-modal="true" aria-labelledby="comment-to-dm-title" hidden>
+    <div class="modal-card dm-modal-card">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <div class="modal-header-badge">⚡ OOTTO AUTOMATION</div>
+      <h2 id="comment-to-dm-title">Comment-to-DM Automation</h2>
+      <p class="modal-subcopy">Turn engaged commenters into leads automatically. The moment someone comments a trigger keyword, Tide sends them a personalized direct message.</p>
+
+      <!-- New Rule Form -->
+      <form id="dm-rule-form" class="dm-rule-form">
+        <div class="form-row">
+          <label>Trigger Keyword
+            <input type="text" id="dm-rule-keyword" placeholder="e.g. GROW, GUIDE, SCALE" required>
+          </label>
+          <label>Platform
+            <select id="dm-rule-platform">
+              <option value="All">All Platforms</option>
+              <option value="Instagram">Instagram</option>
+              <option value="TikTok">TikTok</option>
+              <option value="LinkedIn">LinkedIn</option>
+            </select>
+          </label>
+        </div>
+        <label>Automated DM Response
+          <textarea id="dm-rule-message" rows="2" placeholder="e.g. Hey! Thanks for commenting. Here is your free blueprint: https://tide.page/@acmestudio/blueprint 🚀" required></textarea>
+        </label>
+        <button type="submit" class="button primary full" style="margin-top:6px;">＋ Create Trigger Rule</button>
+      </form>
+
+      <!-- Active Rules List -->
+      <div class="dm-rules-container">
+        <div class="dm-rules-header">
+          <h3>Active Trigger Rules (<span id="dm-rules-count">3</span>)</h3>
+          <span class="dm-stat-badge">⚡ Instant Auto-Dispatch</span>
+        </div>
+        <div id="dm-rules-list" class="dm-rules-list"></div>
+      </div>
+
+      <!-- Quick Simulator Box -->
+      <div class="dm-simulator-box">
+        <div class="sim-header">
+          <span>🧪 Live Rule Simulator</span>
+          <small>Test how your keyword trigger responds in real time</small>
+        </div>
+        <div class="sim-controls">
+          <input type="text" id="sim-comment-input" placeholder="Type a comment, e.g. Send me the GUIDE" value="Can I get the GUIDE?">
+          <button type="button" class="button secondary small" id="btn-test-dm-trigger">Test Trigger ⚡</button>
+        </div>
+        <div id="sim-result-box" class="sim-result-box" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- White-Label Client PDF Report Modal (Buffer Feature) -->
+  <div class="modal" id="pdf-report-modal" role="dialog" aria-modal="true" aria-labelledby="pdf-report-title" hidden>
+    <div class="modal-card pdf-modal-card">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <div class="modal-header-badge">📄 BUFFER WHITE-LABEL REPORT</div>
+      <h2 id="pdf-report-title">Client-Ready PDF Report</h2>
+      <p class="modal-subcopy">Generate a presentation-grade, branded performance report ready to send to clients or stakeholders.</p>
+
+      <form id="pdf-config-form" class="pdf-config-form">
+        <div class="form-row">
+          <label>Client / Agency Name
+            <input type="text" id="pdf-client-name" value="Acme Studio &amp; Partners" required>
+          </label>
+          <label>Reporting Period
+            <select id="pdf-report-period">
+              <option value="30">Last 30 Days (October 2026)</option>
+              <option value="7">Last 7 Days</option>
+              <option value="90">Quarter-to-Date (Q4 2026)</option>
+            </select>
+          </label>
+        </div>
+        <label>Executive Summary / Strategic Notes
+          <textarea id="pdf-executive-notes" rows="3">Organic social reach expanded +24% month-over-month driven by high-retention short-form educational reels. Top post generated 84,210 impressions and 126 attributed leads. Publishing frequency reached 100% SLA on Instagram and LinkedIn.</textarea>
+        </label>
+        
+        <div class="pdf-options-row">
+          <label><input type="checkbox" id="pdf-opt-kpis" checked> Include KPI Summary Cards</label>
+          <label><input type="checkbox" id="pdf-opt-table" checked> Include Top Content Breakdown</label>
+          <label><input type="checkbox" id="pdf-opt-whitelabel" checked> Include White-Label Agency Stamp</label>
+        </div>
+
+        <div class="pdf-action-buttons">
+          <button type="button" class="button secondary" id="btn-preview-pdf-doc">Preview Document</button>
+          <button type="button" class="button primary" id="btn-print-download-pdf">🖨️ Print / Save PDF</button>
+        </div>
+      </form>
+
+      <!-- Printable Report Container -->
+      <div id="printable-report-container" class="printable-report-container" hidden></div>
+    </div>
+  </div>
 
   <script src="core.js"></script>
   <script src="app.js"></script>
