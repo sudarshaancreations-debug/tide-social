@@ -1115,7 +1115,6 @@ function renderOverviewApprovals() {
       <div class="approval-actions">
         <button class="approve" id="approve-featured-btn" data-id="${first.id}" aria-label="Approve reel">✓ Approve</button>
         <button class="change" id="change-featured-btn" data-id="${first.id}" aria-label="Request change">Change</button>
-        <button class="replace-video-btn" id="btn-replace-reel-video" data-id="${first.id}" type="button">📹 Change Video</button>
         <button class="storyboard-btn" id="btn-open-storyboard" type="button">🎬 Storyboard</button>
       </div>
     </div>
@@ -1235,24 +1234,6 @@ function renderOverviewApprovals() {
       reelPlayer.togglePlay();
     });
   }
-
-  document.getElementById("btn-replace-reel-video")?.addEventListener("click", () => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "video/*";
-    fileInput.onchange = (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      const videoUrl = URL.createObjectURL(file);
-      first.videoUrl = videoUrl;
-      first.customVideoName = file.name;
-      write("tide-approvals", approvalsList);
-      renderOverviewApprovals();
-      renderApprovals();
-      toast(`Custom video "${file.name}" loaded for this post! 🎬`);
-    };
-    fileInput.click();
-  });
 
   document.getElementById("approve-featured-btn")?.addEventListener("click", function () {
     const id = this.dataset.id;

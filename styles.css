@@ -2648,20 +2648,6 @@ main {
   color: var(--ink);
   border: 1px solid var(--line);
 }
-.approval-actions .replace-video-btn {
-  flex: 1 1 100%;
-  height: 36px;
-  background: #f7f5ee;
-  border: 1px solid var(--line);
-  color: var(--ink);
-  font-weight: 700;
-  font-size: 11px;
-  transition: all 0.15s ease;
-}
-.approval-actions .replace-video-btn:hover {
-  background: #eae7db;
-  border-color: var(--ink);
-}
 .approval-actions .storyboard-btn {
   flex: 1 1 100%;
   height: 34px;
