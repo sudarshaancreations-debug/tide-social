@@ -3557,44 +3557,126 @@ button, .button {
 }
 
 /* 4. Start Page Builder (Buffer Feature) */
-.startpage-layout {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 16px;
-  margin-top: 16px;
-}
-@media (max-width: 800px) {
-  .startpage-layout {
-    grid-template-columns: 1fr;
-  }
-}
-.startpage-editor {
+/* Start Page Mode Switcher */
+.sp-mode-switcher-wrap {
+  margin: 10px 0 16px;
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  justify-content: center;
+  width: 100%;
 }
+
+.sp-mode-switcher {
+  display: inline-flex;
+  background: #edeae0;
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+  width: 100%;
+  max-width: 440px;
+  box-sizing: border-box;
+}
+
+.sp-mode-btn {
+  flex: 1;
+  height: 38px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sp-mode-btn.active {
+  background: #ffffff;
+  color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.startpage-layout {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  gap: 16px !important;
+  margin-top: 0 !important;
+}
+
+.startpage-editor {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 .sp-section h3 {
   font-size: 14px;
   margin: 0 0 10px 0;
-  font-weight: 700;
+  font-weight: 800;
+  color: var(--ink);
 }
+
 .sp-section-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
+
+.sp-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  margin-bottom: 12px !important;
+  width: 100% !important;
+}
+
+.sp-field label {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  display: block !important;
+  margin: 0 !important;
+}
+
+.sp-field input[type="text"],
+.sp-field textarea {
+  width: 100% !important;
+  border: 1px solid var(--line) !important;
+  background: #ffffff !important;
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+  font-size: 13px !important;
+  color: var(--ink) !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+.sp-field textarea {
+  resize: vertical !important;
+  min-height: 60px !important;
+  line-height: 1.4 !important;
+}
+
 .sp-theme-picker {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-top: 6px;
+  margin-top: 2px;
+  width: 100%;
 }
+
 .sp-theme-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   border: 1px solid var(--line);
   background: #ffffff;
   border-radius: 8px;
@@ -3602,18 +3684,22 @@ button, .button {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  box-sizing: border-box;
 }
+
 .sp-theme-btn.active {
   border-color: var(--ink);
   background: #f7f5ee;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
+
 .theme-swatch {
   width: 14px;
   height: 14px;
   border-radius: 50%;
   display: inline-block;
   border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 .swatch-ink { background: #111417; }
 .swatch-coral { background: #ff765d; }
@@ -3623,38 +3709,116 @@ button, .button {
 .sp-links-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  width: 100%;
 }
+
 .sp-link-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  background: #fcfbf8;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  padding: 10px 12px !important;
+  background: #faf9f5 !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
 }
-.sp-link-item input {
-  font-size: 12px;
-  padding: 5px 8px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: #fff;
+
+.sp-link-item-top {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
 }
-.sp-link-title { flex: 1.2; font-weight: 600; }
-.sp-link-url { flex: 1.4; color: var(--muted); }
+
+.sp-drag-handle {
+  color: #a0a098 !important;
+  font-size: 13px !important;
+  cursor: grab !important;
+  user-select: none !important;
+}
+
+.sp-link-title {
+  flex: 1 !important;
+  min-width: 0 !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 6px !important;
+  padding: 7px 10px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  background: #ffffff !important;
+  box-sizing: border-box !important;
+  color: var(--ink) !important;
+}
+
 .sp-link-del {
-  border: none;
-  background: none;
-  color: #b73229;
-  font-size: 16px;
-  cursor: pointer;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  border: none !important;
+  background: #fee8e6 !important;
+  color: var(--danger) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  display: grid !important;
+  place-items: center !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
 }
+
+.sp-link-del:hover {
+  background: var(--danger) !important;
+  color: #ffffff !important;
+}
+
+.sp-link-item-bottom {
+  width: 100% !important;
+}
+
+.sp-link-url {
+  width: 100% !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 6px !important;
+  padding: 6px 10px !important;
+  font-size: 11.5px !important;
+  color: var(--muted) !important;
+  background: #ffffff !important;
+  box-sizing: border-box !important;
+}
+
 .sp-social-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   font-size: 12px;
+  width: 100%;
+}
+
+.sp-social-checkbox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 10px !important;
+  background: #ffffff !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.sp-social-checkbox input {
+  margin: 0 !important;
+  accent-color: var(--ink) !important;
+  cursor: pointer !important;
+}
+
+.sp-editor-footer-actions {
+  margin-top: 6px;
+  width: 100%;
 }
 
 /* Phone Mockup Frame */
@@ -3663,8 +3827,12 @@ button, .button {
   flex-direction: column;
   align-items: center;
   background: #f5f3ec;
-  padding: 20px;
+  padding: 16px 14px 24px;
+  border-radius: var(--radius-md);
+  width: 100%;
+  box-sizing: border-box;
 }
+
 .sp-preview-header {
   width: 100%;
   display: flex;
@@ -3672,35 +3840,57 @@ button, .button {
   align-items: center;
   font-size: 11px;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  gap: 6px;
 }
+
 .sp-url-pill {
   background: #ffffff;
   border: 1px solid var(--line);
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 12px;
   color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
 }
+
+.phone-frame-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
 .phone-frame {
-  width: 290px;
-  min-height: 520px;
-  background: #111417;
-  border-radius: 36px;
-  padding: 10px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18), 0 0 0 4px #d8d3c5;
-  box-sizing: border-box;
+  width: 300px !important;
+  max-width: 100% !important;
+  min-height: 520px !important;
+  background: #111417 !important;
+  border-radius: 38px !important;
+  padding: 10px !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2), 0 0 0 3px #cfcbbe !important;
+  box-sizing: border-box !important;
+  position: relative !important;
 }
+
+.phone-notch {
+  width: 76px !important;
+  height: 16px !important;
+  border-radius: 8px !important;
+  background: #000000 !important;
+  margin: 2px auto 8px !important;
+}
+
 .phone-screen {
-  width: 100%;
-  min-height: 500px;
-  border-radius: 28px;
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  box-sizing: border-box;
-  transition: all 0.25s ease;
+  width: 100% !important;
+  min-height: 480px !important;
+  border-radius: 28px !important;
+  padding: 16px 14px 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 /* Themes for Phone Screen */

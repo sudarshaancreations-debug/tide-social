@@ -3431,9 +3431,14 @@ function renderStartPage() {
   if (linksList) {
     linksList.innerHTML = startPageData.links.map(lnk => `
       <div class="sp-link-item" data-id="${lnk.id}">
-        <input type="text" class="sp-link-title" value="${escapeHtml(lnk.title)}" placeholder="Button title" data-id="${lnk.id}">
-        <input type="text" class="sp-link-url" value="${escapeHtml(lnk.url)}" placeholder="https://..." data-id="${lnk.id}">
-        <button type="button" class="sp-link-del" data-id="${lnk.id}" title="Remove link">×</button>
+        <div class="sp-link-item-top">
+          <span class="sp-drag-handle" title="Reorder link">⋮⋮</span>
+          <input type="text" class="sp-link-title" value="${escapeHtml(lnk.title)}" placeholder="Button title (e.g. 🎙️ Watch The Podcast)" data-id="${lnk.id}">
+          <button type="button" class="sp-link-del" data-id="${lnk.id}" title="Remove link">×</button>
+        </div>
+        <div class="sp-link-item-bottom">
+          <input type="text" class="sp-link-url" value="${escapeHtml(lnk.url)}" placeholder="Destination URL (https://...)" data-id="${lnk.id}">
+        </div>
       </div>
     `).join("");
 
@@ -3526,6 +3531,38 @@ document.getElementById("btn-share-startpage")?.addEventListener("click", () => 
       `;
     }
   });
+});
+
+// Start Page Mode Switching (Customize vs Preview)
+function setStartPageMode(mode) {
+  const isPreview = mode === "preview";
+  const editorPane = document.getElementById("startpage-editor-pane");
+  const previewPane = document.getElementById("startpage-preview-pane");
+
+  if (editorPane) editorPane.hidden = isPreview;
+  if (previewPane) previewPane.hidden = !isPreview;
+
+  document.querySelectorAll(".sp-mode-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.spMode === mode);
+  });
+
+  if (isPreview) {
+    renderBioLinksPreview();
+  }
+}
+
+document.querySelectorAll(".sp-mode-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    setStartPageMode(btn.dataset.spMode);
+  });
+});
+
+document.getElementById("btn-switch-to-preview")?.addEventListener("click", () => {
+  setStartPageMode("preview");
+});
+
+document.getElementById("btn-back-to-editor")?.addEventListener("click", () => {
+  setStartPageMode("editor");
 });
 
 // ============================================================

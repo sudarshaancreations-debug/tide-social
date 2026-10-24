@@ -819,18 +819,36 @@
             </div>
           </div>
 
+          <!-- Segmented Tab Switcher: Editor vs Live Smartphone Preview -->
+          <div class="sp-mode-switcher-wrap">
+            <div class="sp-mode-switcher">
+              <button type="button" class="sp-mode-btn active" id="sp-tab-editor" data-sp-mode="editor">
+                <span>✏️</span> Customize Page
+              </button>
+              <button type="button" class="sp-mode-btn" id="sp-tab-preview" data-sp-mode="preview">
+                <span>📱</span> Live Phone Preview
+              </button>
+            </div>
+          </div>
+
           <div class="startpage-layout">
-            <!-- Left / Top: Builder Controls -->
-            <div class="startpage-editor panel">
+            <!-- Builder Controls Pane -->
+            <div class="startpage-editor panel" id="startpage-editor-pane">
               <div class="sp-section">
                 <h3>Bio &amp; Appearance</h3>
-                <label>Page Title
+                
+                <div class="sp-field">
+                  <label for="sp-input-title">Page / Brand Title</label>
                   <input type="text" id="sp-input-title" value="Acme Studio" placeholder="Your brand or creator name">
-                </label>
-                <label>Bio Tagline
+                </div>
+
+                <div class="sp-field">
+                  <label for="sp-input-bio">Bio Tagline &amp; Pitch</label>
                   <textarea id="sp-input-bio" rows="2" placeholder="Tell visitors who you are and what you make...">Turn one thought into every format. Creator playbooks, weekly breakdowns, and creative tools.</textarea>
-                </label>
-                <label>Theme Style
+                </div>
+
+                <div class="sp-field">
+                  <label>Theme Style</label>
                   <div class="sp-theme-picker" id="sp-theme-picker">
                     <button type="button" class="sp-theme-btn active" data-theme="clean-ink">
                       <span class="theme-swatch swatch-ink"></span>
@@ -849,13 +867,16 @@
                       <span>Midnight Dark</span>
                     </button>
                   </div>
-                </label>
+                </div>
               </div>
 
               <div class="sp-section">
                 <div class="sp-section-head">
-                  <h3>Your Links</h3>
-                  <button type="button" class="button secondary small" id="btn-add-sp-link" style="font-size:11px; padding:4px 10px;">＋ Add Link</button>
+                  <div>
+                    <h3 style="margin:0;">Your Bio Links</h3>
+                    <p style="font-size:11px; color:var(--muted); margin:2px 0 0;">Add links to your podcasts, products, or downloads.</p>
+                  </div>
+                  <button type="button" class="button secondary small" id="btn-add-sp-link">＋ Add Link</button>
                 </div>
                 <div class="sp-links-list" id="sp-links-list"></div>
               </div>
@@ -863,39 +884,47 @@
               <div class="sp-section">
                 <h3>Connected Social Handles</h3>
                 <div class="sp-social-grid">
-                  <label><input type="checkbox" id="sp-social-ig" checked> <span>Instagram (@acmestudio)</span></label>
-                  <label><input type="checkbox" id="sp-social-tk" checked> <span>TikTok (@acme.studio)</span></label>
-                  <label><input type="checkbox" id="sp-social-li" checked> <span>LinkedIn (ACME Studio)</span></label>
-                  <label><input type="checkbox" id="sp-social-yt" checked> <span>YouTube (@acmestudio)</span></label>
+                  <label class="sp-social-checkbox"><input type="checkbox" id="sp-social-ig" checked> <span>Instagram (@acmestudio)</span></label>
+                  <label class="sp-social-checkbox"><input type="checkbox" id="sp-social-tk" checked> <span>TikTok (@acme.studio)</span></label>
+                  <label class="sp-social-checkbox"><input type="checkbox" id="sp-social-li" checked> <span>LinkedIn (ACME Studio)</span></label>
+                  <label class="sp-social-checkbox"><input type="checkbox" id="sp-social-yt" checked> <span>YouTube (@acmestudio)</span></label>
                 </div>
+              </div>
+
+              <div class="sp-editor-footer-actions">
+                <button type="button" class="button primary full" id="btn-switch-to-preview">Preview Live Smartphone Page 📱 →</button>
               </div>
             </div>
 
-            <!-- Right / Bottom: Live Phone Mockup Preview -->
-            <div class="startpage-preview-wrap panel">
+            <!-- Live Phone Mockup Preview Pane -->
+            <div class="startpage-preview-wrap panel" id="startpage-preview-pane" hidden>
               <div class="sp-preview-header">
                 <span>📱 LIVE BIO PREVIEW</span>
                 <span class="sp-url-pill" id="sp-url-pill">tide.page/@acmestudio</span>
+                <button type="button" class="button secondary small" id="btn-back-to-editor" style="padding:3px 10px; font-size:11px;">← Edit Bio</button>
               </div>
-              <div class="phone-frame" id="phone-frame">
-                <div class="phone-screen theme-clean-ink" id="phone-screen">
-                  <div class="bio-avatar-ring">
-                    <div class="bio-avatar" id="bio-avatar-preview">AK</div>
-                  </div>
-                  <h2 class="bio-title" id="bio-title-preview">Acme Studio</h2>
-                  <p class="bio-tagline" id="bio-tagline-preview">Turn one thought into every format. Creator playbooks, weekly breakdowns, and creative tools.</p>
-                  
-                  <div class="bio-social-icons" id="bio-social-icons">
-                    <span class="bio-soc-btn" title="Instagram">📸</span>
-                    <span class="bio-soc-btn" title="TikTok">♪</span>
-                    <span class="bio-soc-btn" title="LinkedIn">in</span>
-                    <span class="bio-soc-btn" title="YouTube">▶</span>
-                  </div>
+              <div class="phone-frame-wrapper">
+                <div class="phone-frame" id="phone-frame">
+                  <div class="phone-notch"></div>
+                  <div class="phone-screen theme-clean-ink" id="phone-screen">
+                    <div class="bio-avatar-ring">
+                      <div class="bio-avatar" id="bio-avatar-preview">AK</div>
+                    </div>
+                    <h2 class="bio-title" id="bio-title-preview">Acme Studio</h2>
+                    <p class="bio-tagline" id="bio-tagline-preview">Turn one thought into every format. Creator playbooks, weekly breakdowns, and creative tools.</p>
+                    
+                    <div class="bio-social-icons" id="bio-social-icons">
+                      <span class="bio-soc-btn" title="Instagram">📸</span>
+                      <span class="bio-soc-btn" title="TikTok">♪</span>
+                      <span class="bio-soc-btn" title="LinkedIn">in</span>
+                      <span class="bio-soc-btn" title="YouTube">▶</span>
+                    </div>
 
-                  <div class="bio-links-stack" id="bio-links-stack"></div>
+                    <div class="bio-links-stack" id="bio-links-stack"></div>
 
-                  <div class="bio-brand-footer">
-                    <span>⚡ Powered by Tide Start Page</span>
+                    <div class="bio-brand-footer">
+                      <span>⚡ Powered by Tide Start Page</span>
+                    </div>
                   </div>
                 </div>
               </div>
