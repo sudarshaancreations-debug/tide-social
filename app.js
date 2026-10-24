@@ -240,15 +240,28 @@ function renderWeek() {
   const weekGrid = document.getElementById("week-grid");
   if (!weekGrid) return;
   
-  const weekDates = [
-    { day: "MON", dateNum: 19, dateStr: "2026-10-19" },
-    { day: "TUE", dateNum: 20, dateStr: "2026-10-20" },
-    { day: "WED", dateNum: 21, dateStr: "2026-10-21" },
-    { day: "THU", dateNum: 22, dateStr: "2026-10-22" },
-    { day: "FRI", dateNum: 23, dateStr: "2026-10-23" },
-    { day: "SAT", dateNum: 24, dateStr: "2026-10-24" },
-    { day: "SUN", dateNum: 25, dateStr: "2026-10-25" }
-  ];
+  const daysArr = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const weekDates = [];
+
+  // Generate continuous sliding days (Oct 12 to Nov 2, 2026)
+  for (let d = 12; d <= 31; d++) {
+    const dateStr = `2026-10-${String(d).padStart(2, "0")}`;
+    const dateObj = new Date(2026, 9, d);
+    weekDates.push({
+      day: daysArr[dateObj.getDay()],
+      dateNum: d,
+      dateStr: dateStr
+    });
+  }
+  for (let d = 1; d <= 3; d++) {
+    const dateStr = `2026-11-${String(d).padStart(2, "0")}`;
+    const dateObj = new Date(2026, 10, d);
+    weekDates.push({
+      day: daysArr[dateObj.getDay()],
+      dateNum: d,
+      dateStr: dateStr
+    });
+  }
 
   weekGrid.innerHTML = weekDates.map(item => {
     const isToday = item.dateStr === "2026-10-23";
@@ -256,7 +269,8 @@ function renderWeek() {
     const count = scheduled.filter(p => p.date === item.dateStr).length;
     return `
       <div class="day ${isActive ? "active" : ""} ${isToday ? "today" : ""}" data-date="${item.dateStr}">
-        ${item.day}<strong>${item.dateNum}</strong>
+        <span class="day-label">${item.day}</span>
+        <strong>${item.dateNum}</strong>
         ${count > 0 ? `<b class="day-count-dot">${count}</b>` : ""}
       </div>
     `;
@@ -266,9 +280,64 @@ function renderWeek() {
     d.addEventListener("click", () => {
       overviewSelectedDate = d.dataset.date;
       renderWeek();
-  renderCalendar();
+      renderCalendar();
+      d.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     });
   });
+
+  // Smooth scroll active day into view on initial load or date change
+  setTimeout(() => {
+    const activeEl = weekGrid.querySelector(".day.active") || weekGrid.querySelector(".day.today");
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, 40);
+
+  // Chevron arrow scrolling buttons
+  const btnPrev = document.getElementById("btn-week-prev");
+  if (btnPrev) {
+    btnPrev.onclick = (e) => {
+      e.preventDefault();
+      weekGrid.scrollBy({ left: -160, behavior: "smooth" });
+    };
+  }
+  const btnNext = document.getElementById("btn-week-next");
+  if (btnNext) {
+    btnNext.onclick = (e) => {
+      e.preventDefault();
+      weekGrid.scrollBy({ left: 160, behavior: "smooth" });
+    };
+  }
+
+  // Mouse drag-to-scroll support
+  if (!weekGrid.dataset.dragBound) {
+    weekGrid.dataset.dragBound = "true";
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    weekGrid.addEventListener("mousedown", (e) => {
+      isDown = true;
+      weekGrid.style.cursor = "grabbing";
+      startX = e.pageX - weekGrid.offsetLeft;
+      scrollLeft = weekGrid.scrollLeft;
+    });
+    weekGrid.addEventListener("mouseleave", () => {
+      isDown = false;
+      weekGrid.style.cursor = "pointer";
+    });
+    weekGrid.addEventListener("mouseup", () => {
+      isDown = false;
+      weekGrid.style.cursor = "pointer";
+    });
+    weekGrid.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - weekGrid.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      weekGrid.scrollLeft = scrollLeft - walk;
+    });
+  }
 
   const postList = document.getElementById("post-list");
   if (!postList) return;

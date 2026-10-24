@@ -79,8 +79,18 @@
 
           <div class="dashboard-grid">
             <article class="panel calendar-panel">
-              <div class="panel-head"><div><p class="eyebrow">THIS WEEK</p><h2>Publishing calendar</h2></div><button class="text-button" data-view-link="calendar">Full calendar →</button></div>
-              <div class="week" id="week-grid"></div>
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">THIS WEEK</p>
+                  <h2>Publishing calendar</h2>
+                </div>
+                <div class="cal-head-actions">
+                  <button class="cal-nav-arrow" id="btn-week-prev" type="button" aria-label="Scroll days backward">‹</button>
+                  <button class="cal-nav-arrow" id="btn-week-next" type="button" aria-label="Scroll days forward">›</button>
+                  <button class="text-button" data-view-link="calendar">Full calendar →</button>
+                </div>
+              </div>
+              <div class="week week-scrollable" id="week-grid"></div>
               <div class="post-list" id="post-list"></div>
             </article>
 
