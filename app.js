@@ -152,10 +152,24 @@ function updateBadges() {
 }
 
 function showView(name) {
+  const homeSubviews = ['home', 'approvals', 'brand', 'accounts', 'analytics', 'startpage'];
+  const activeTabName = homeSubviews.includes(name) ? 'home' : name;
+
   document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === `view-${name}`));
   document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === name));
-  document.querySelectorAll('.tab-btn').forEach(item => item.classList.toggle('active', item.dataset.view === name));
+  
+  // Keep the bottom tab bar properly highlighted
+  document.querySelectorAll('.tab-btn').forEach(item => item.classList.toggle('active', item.dataset.view === activeTabName));
+  
+  // Highlight the quick chip if on a home subview
   document.querySelectorAll('.quick-chip').forEach(item => item.classList.toggle('active', item.dataset.view === name));
+
+  // Sync quick nav visibility: only show feed-level filter chips when inside Home subviews
+  const quickNav = document.querySelector('.mobile-quick-nav');
+  if (quickNav) {
+    quickNav.style.display = (name === 'calendar' || name === 'inbox' || name === 'profile') ? 'none' : 'flex';
+  }
+
   const view = document.querySelector(`#view-${name}`);
   const titleEl = document.querySelector('#page-title');
   if (titleEl && view) titleEl.textContent = view.dataset.title || 'Tide Social';

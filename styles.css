@@ -129,78 +129,91 @@ button { cursor: pointer; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 11px;
-  border-radius: 20px;
+  padding: 8px 14px;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  border-radius: 22px;
   border: 1px solid var(--line);
   background: #ffffff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--ink);
+  cursor: pointer;
 }
 
 .ws-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--green);
   display: inline-block;
 }
 
 .ws-arrow {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 
 .mobile-notif-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 50%;
   border: 1px solid var(--line);
   background: #ffffff;
   display: grid;
   place-items: center;
   position: relative;
-  font-size: 14px;
+  font-size: 17px;
   padding: 0;
+  cursor: pointer;
 }
 
 .mobile-notif-btn i {
   position: absolute;
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   background: var(--coral);
   border-radius: 50%;
-  top: 7px;
-  right: 7px;
+  top: 9px;
+  right: 9px;
   border: 2px solid #ffffff;
 }
 
-/* Quick Nav Category Chips */
+/* Quick Nav Category Chips with Right Fade Hint */
 .mobile-quick-nav {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   padding: 10px 14px;
   background: #fffdf8;
   border-bottom: 1px solid var(--line);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 .mobile-quick-nav::-webkit-scrollbar { display: none; }
 
 .quick-chip {
   border: 1px solid var(--line);
   background: #ffffff;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 12px;
+  padding: 10px 16px;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  border-radius: 22px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--muted);
   white-space: nowrap;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  cursor: pointer;
   transition: all 0.15s ease;
 }
 
@@ -4429,15 +4442,15 @@ button, .button {
 }
 
 .cal-step-btn {
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  min-height: 34px !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
   border: 1px solid var(--line) !important;
-  border-radius: 8px !important;
+  border-radius: 10px !important;
   background: #ffffff !important;
   color: var(--ink) !important;
-  font-size: 14px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -4462,14 +4475,14 @@ button, .button {
 }
 
 .cal-today-btn {
-  height: 34px !important;
-  min-height: 34px !important;
-  padding: 0 14px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 16px !important;
   border: 1px solid var(--line) !important;
-  border-radius: 8px !important;
+  border-radius: 10px !important;
   background: #ffffff !important;
   color: var(--ink) !important;
-  font-size: 12px !important;
+  font-size: 13px !important;
   font-weight: 700 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -4501,20 +4514,20 @@ button, .button {
   gap: 6px !important;
 }
 .cal-platform-filter-wrap label {
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   color: var(--muted) !important;
   margin: 0 !important;
   line-height: 1 !important;
 }
 .cal-platform-filter-wrap select {
-  height: 34px !important;
-  min-height: 34px !important;
-  padding: 0 10px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 12px !important;
   border: 1px solid var(--line) !important;
-  border-radius: 8px !important;
+  border-radius: 10px !important;
   background: #ffffff !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   color: var(--ink) !important;
   margin: 0 !important;
@@ -4527,16 +4540,16 @@ button, .button {
   align-items: center !important;
   background: #f4f2e9 !important;
   padding: 3px !important;
-  border-radius: 9px !important;
+  border-radius: 10px !important;
   border: 1px solid var(--line) !important;
-  height: 34px !important;
+  height: 40px !important;
   box-sizing: border-box !important;
   gap: 2px !important;
 }
 .cal-view-segmented button {
-  height: 26px !important;
-  min-height: 26px !important;
-  padding: 0 12px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 14px !important;
   border: none !important;
   border-radius: 6px !important;
   background: transparent !important;
