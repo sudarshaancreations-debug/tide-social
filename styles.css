@@ -5248,7 +5248,7 @@ button.danger:hover {
 #analytics-table td.col-leads { color: #2563eb !important; }
 
 /* =====================================================================
-   Native Payment Gateway & Google Play Billing System Styling
+   Native Google Play Purchase System & Google Pay Success Animation
    ===================================================================== */
 .iap-stage-view {
   animation: iapStageFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -5301,127 +5301,8 @@ button.danger:hover {
   transform: translateX(3px) !important;
 }
 
-/* Gateway Top Bar */
-.gateway-top-bar {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  margin-bottom: 12px !important;
-  width: 100% !important;
-  gap: 8px !important;
-}
-
-.btn-gateway-back {
-  background: transparent !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 8px !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  color: var(--ink) !important;
-  padding: 6px 12px !important;
-  height: 38px !important;
-  min-height: 38px !important;
-  cursor: pointer !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  transition: background 0.12s ease, border-color 0.12s ease !important;
-}
-
-.btn-gateway-back:hover {
-  background: #f4f2e9 !important;
-  border-color: #b0af9f !important;
-}
-
-.gateway-plan-chip {
-  background: #f4f2e9 !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 999px !important;
-  padding: 5px 12px !important;
-  font-size: 12px !important;
-  color: var(--ink) !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-}
-
-.gateway-plan-chip strong {
-  color: #1e8e3e !important;
-  font-weight: 800 !important;
-}
-
-/* Gateway Method Switcher Tabs */
-.gateway-method-tabs {
-  display: flex !important;
-  gap: 8px !important;
-  margin: 16px 0 14px !important;
-  width: 100% !important;
-}
-
-.gateway-tab-btn {
-  flex: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  padding: 10px 12px !important;
-  height: 52px !important;
-  min-height: 52px !important;
-  border-radius: 12px !important;
-  border: 1.5px solid var(--line) !important;
-  background: #faf9f5 !important;
-  cursor: pointer !important;
-  text-align: left !important;
-  transition: all 0.15s ease !important;
-  box-sizing: border-box !important;
-}
-
-.gateway-tab-btn.active {
-  border-color: var(--ink) !important;
-  background: #ffffff !important;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07) !important;
-}
-
-.gplay-tab-svg {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-shrink: 0 !important;
-}
-
-.card-tab-icon {
-  font-size: 20px !important;
-  line-height: 1 !important;
-  flex-shrink: 0 !important;
-}
-
-.tab-label-wrap {
-  display: flex !important;
-  flex-direction: column !important;
-  line-height: 1.25 !important;
-}
-
-.tab-label-wrap strong {
-  font-size: 12px !important;
-  font-weight: 800 !important;
-  color: var(--ink) !important;
-}
-
-.tab-platform-tag {
-  font-size: 9.5px !important;
-  color: var(--muted) !important;
-  font-weight: 600 !important;
-}
-
-.gateway-tab-btn.active .tab-platform-tag {
-  color: #1a73e8 !important;
-}
-
-/* Google Play Purchase System View */
-.gateway-method-view {
-  width: 100% !important;
-}
-
-.google-play-sheet-card {
+/* Google Play In-App Purchase Pop-up Dialog */
+.google-play-popup-dialog {
   background: #ffffff !important;
   border: 1.5px solid #dadce0 !important;
   border-radius: 16px !important;
@@ -5437,6 +5318,7 @@ button.danger:hover {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
+  margin-bottom: 2px !important;
 }
 
 .gplay-logo-brand {
@@ -5448,13 +5330,19 @@ button.danger:hover {
   color: #3c4043 !important;
 }
 
-.gplay-badge-official {
-  font-size: 10px !important;
+.btn-gplay-back-link {
+  background: transparent !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
-  color: #1e8e3e !important;
-  background: #e6f4ea !important;
-  padding: 2px 8px !important;
-  border-radius: 999px !important;
+  color: var(--ink) !important;
+  padding: 5px 10px !important;
+  cursor: pointer !important;
+}
+
+.btn-gplay-back-link:hover {
+  background: #f4f2e9 !important;
 }
 
 .gplay-app-item {
@@ -5495,7 +5383,7 @@ button.danger:hover {
 .gplay-item-price-tag {
   font-size: 13.5px !important;
   font-weight: 800 !important;
-  color: #1e8e3e !important;
+  color: #0f9d58 !important;
   margin-top: 2px !important;
 }
 
@@ -5539,65 +5427,16 @@ button.danger:hover {
 .gplay-account-meta span {
   font-size: 10.5px !important;
   color: #5f6368 !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
 }
 
 .gplay-verified-check {
   font-size: 10px !important;
   font-weight: 800 !important;
-  color: #1e8e3e !important;
+  color: #0f9d58 !important;
   background: #e6f4ea !important;
   padding: 2px 6px !important;
   border-radius: 4px !important;
   flex-shrink: 0 !important;
-}
-
-.gplay-payment-selector {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-}
-
-.gplay-selector-label {
-  font-size: 10px !important;
-  font-weight: 800 !important;
-  color: #5f6368 !important;
-  letter-spacing: 0.05em !important;
-}
-
-.gplay-pay-option {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  padding: 10px 12px !important;
-  border: 1.5px solid #dadce0 !important;
-  border-radius: 8px !important;
-  cursor: pointer !important;
-  background: #ffffff !important;
-  transition: all 0.15s ease !important;
-}
-
-.gplay-pay-option.active {
-  border-color: #1a73e8 !important;
-  background: #f8fafd !important;
-}
-
-.gplay-opt-icon {
-  font-size: 16px !important;
-}
-
-.gplay-opt-text strong {
-  display: block !important;
-  font-size: 12px !important;
-  color: #202124 !important;
-}
-
-.gplay-opt-text span {
-  display: block !important;
-  font-size: 10.5px !important;
-  color: #5f6368 !important;
 }
 
 .gplay-terms-notice {
@@ -5606,7 +5445,15 @@ button.danger:hover {
   line-height: 1.35 !important;
 }
 
-.btn-gplay-subscribe {
+.gplay-action-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* Primary Google Play credits action */
+.btn-gplay-credits {
   width: 100% !important;
   height: 50px !important;
   min-height: 50px !important;
@@ -5614,42 +5461,56 @@ button.danger:hover {
   background: #01875f !important;
   color: #ffffff !important;
   border: none !important;
-  font-size: 14px !important;
+  font-size: 14.5px !important;
   font-weight: 800 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
   cursor: pointer !important;
-  box-shadow: 0 3px 8px rgba(1, 135, 95, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(1, 135, 95, 0.35) !important;
   transition: transform 0.12s ease, background 0.12s ease !important;
 }
 
-.btn-gplay-subscribe:active {
+.btn-gplay-credits:active {
   transform: scale(0.985) !important;
   background: #017250 !important;
 }
 
-.btn-gplay-bolt {
-  font-size: 16px !important;
+.gplay-credits-icon {
+  font-size: 13px !important;
+  line-height: 1 !important;
 }
 
-.gplay-security-footer {
-  text-align: center !important;
-  font-size: 10px !important;
-  color: #70757a !important;
+.btn-toggle-card-option {
+  width: 100% !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: background 0.12s ease !important;
 }
 
-/* Card Payment Gateway View */
+.btn-toggle-card-option:hover {
+  background: #f4f2e9 !important;
+}
+
+/* Collapsible Card Box */
 .card-gateway-box {
-  background: #ffffff !important;
-  border: 1.5px solid var(--line) !important;
-  border-radius: 16px !important;
-  padding: 16px !important;
+  background: #faf9f5 !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  padding: 14px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  gap: 10px !important;
   box-sizing: border-box !important;
+  margin-top: 4px !important;
 }
 
 .card-accepted-strip {
@@ -5671,30 +5532,29 @@ button.danger:hover {
   padding: 2px 6px !important;
   border-radius: 4px !important;
   border: 1px solid var(--line) !important;
-  background: #faf9f5 !important;
+  background: #ffffff !important;
   color: var(--ink) !important;
 }
 
-.card-tag.visa { color: #1a1f71 !important; border-color: #1a1f71 !important; }
-.card-tag.mc { color: #eb001b !important; border-color: #eb001b !important; }
-.card-tag.amex { color: #006fcf !important; border-color: #006fcf !important; }
-.card-tag.disc { color: #f96302 !important; border-color: #f96302 !important; }
+.card-tag.visa { color: #1a1f71 !important; }
+.card-tag.mc { color: #eb001b !important; }
+.card-tag.amex { color: #006fcf !important; }
 
 .card-payment-form {
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
+  gap: 8px !important;
 }
 
 .card-field-group {
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 3px !important;
   width: 100% !important;
 }
 
 .card-field-group label {
-  font-size: 11px !important;
+  font-size: 10.5px !important;
   font-weight: 700 !important;
   color: var(--ink) !important;
 }
@@ -5702,7 +5562,7 @@ button.danger:hover {
 .gateway-input {
   border: 1.5px solid var(--line) !important;
   border-radius: 8px !important;
-  padding: 10px 12px !important;
+  padding: 8px 10px !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   color: var(--ink) !important;
@@ -5710,14 +5570,7 @@ button.danger:hover {
   width: 100% !important;
   box-sizing: border-box !important;
   outline: none !important;
-  height: 42px !important;
-  min-height: 42px !important;
-  transition: border-color 0.15s ease !important;
-}
-
-.gateway-input:focus {
-  border-color: var(--ink) !important;
-  box-shadow: 0 0 0 2px rgba(23, 24, 20, 0.08) !important;
+  height: 38px !important;
 }
 
 .card-input-with-icon {
@@ -5727,243 +5580,212 @@ button.danger:hover {
 
 .card-brand-icon {
   position: absolute !important;
-  right: 12px !important;
+  right: 10px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
-  font-size: 16px !important;
+  font-size: 15px !important;
   pointer-events: none !important;
 }
 
 .card-field-row {
   display: flex !important;
-  gap: 10px !important;
+  gap: 8px !important;
   width: 100% !important;
-}
-
-.card-due-summary {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  padding: 10px 12px !important;
-  background: #f4f2e9 !important;
-  border-radius: 8px !important;
-  font-size: 12px !important;
-  color: var(--ink) !important;
-}
-
-.card-due-summary strong {
-  font-size: 14px !important;
-  color: var(--ink) !important;
 }
 
 .btn-card-pay {
   width: 100% !important;
-  height: 48px !important;
-  min-height: 48px !important;
-  border-radius: 10px !important;
-  font-size: 14px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  border-radius: 8px !important;
+  font-size: 13.5px !important;
   font-weight: 800 !important;
-  margin-top: 4px !important;
   cursor: pointer !important;
 }
 
-.card-security-footer {
+.gplay-security-footer {
   text-align: center !important;
   font-size: 10px !important;
-  color: var(--muted) !important;
+  color: #70757a !important;
 }
 
-/* Processing Spinner Box */
-.gateway-processing-box {
+/* =====================================================================
+   Iconic Google Pay Animated Green Tick Mark & Payment Successful View
+   ===================================================================== */
+.gpay-success-container {
   text-align: center !important;
-  padding: 24px 16px !important;
+  padding: 14px 6px 6px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: 12px !important;
+  box-sizing: border-box !important;
 }
 
-.processing-spinner-ring {
+.gpay-success-anim-wrap {
   position: relative !important;
-  width: 60px !important;
-  height: 60px !important;
-  margin: 0 auto !important;
-}
-
-.spinner-circle {
-  width: 60px !important;
-  height: 60px !important;
-  border: 4px solid #e8eaed !important;
-  border-top-color: #01875f !important;
-  border-radius: 50% !important;
-  animation: gplaySpinnerAnim 0.9s linear infinite !important;
-}
-
-@keyframes gplaySpinnerAnim {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.spinner-center-icon {
-  position: absolute !important;
-  inset: 0 !important;
+  width: 96px !important;
+  height: 96px !important;
+  margin: 8px auto 14px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 20px !important;
 }
 
-.processing-status-sub {
-  font-size: 12px !important;
-  color: var(--muted) !important;
-  margin: 0 !important;
-  max-width: 320px !important;
+.gpay-pulse-ring {
+  position: absolute !important;
+  inset: -8px !important;
+  border-radius: 50% !important;
+  background: rgba(15, 157, 88, 0.2) !important;
+  animation: gpayPulseWave 1.8s cubic-bezier(0.25, 1, 0.5, 1) infinite !important;
 }
 
-.processing-check-flow {
+.gpay-pulse-ring-2 {
+  position: absolute !important;
+  inset: -18px !important;
+  border-radius: 50% !important;
+  background: rgba(15, 157, 88, 0.08) !important;
+  animation: gpayPulseWave 1.8s cubic-bezier(0.25, 1, 0.5, 1) 0.35s infinite !important;
+}
+
+@keyframes gpayPulseWave {
+  0% { transform: scale(0.65); opacity: 0.9; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+.gpay-tick-circle {
+  width: 80px !important;
+  height: 80px !important;
+  border-radius: 50% !important;
+  background: #0f9d58 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 8px 24px rgba(15, 157, 88, 0.35) !important;
+  position: relative !important;
+  z-index: 2 !important;
+  animation: gpayCirclePop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+}
+
+@keyframes gpayCirclePop {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.gpay-checkmark-svg {
+  width: 44px !important;
+  height: 44px !important;
+  stroke: #ffffff !important;
+  stroke-width: 4.5 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  fill: none !important;
+}
+
+.gpay-check-path {
+  stroke-dasharray: 60 !important;
+  stroke-dashoffset: 60 !important;
+  animation: gpayDrawCheck 0.4s ease-out 0.25s forwards !important;
+}
+
+@keyframes gpayDrawCheck {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.gpay-payment-successful-text {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #202124 !important;
+  letter-spacing: -0.02em !important;
+  margin: 4px 0 2px !important;
+  animation: gpayTextSlideUp 0.35s ease 0.35s both !important;
+}
+
+.gpay-amount-text {
+  font-size: 28px !important;
+  font-weight: 900 !important;
+  color: #0f9d58 !important;
+  margin: 2px 0 4px !important;
+  letter-spacing: -0.02em !important;
+  animation: gpayTextSlideUp 0.35s ease 0.4s both !important;
+}
+
+.gpay-recipient-text {
+  font-size: 13px !important;
+  color: #5f6368 !important;
+  margin: 0 0 14px !important;
+  animation: gpayTextSlideUp 0.35s ease 0.45s both !important;
+}
+
+@keyframes gpayTextSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.gpay-tx-card {
+  width: 100% !important;
+  background: #f8f9fa !important;
+  border: 1px solid #e8eaed !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
-  width: 100% !important;
-  max-width: 320px !important;
-  margin-top: 8px !important;
-  text-align: left !important;
+  margin-bottom: 14px !important;
+  animation: gpayTextSlideUp 0.35s ease 0.5s both !important;
 }
 
-.flow-step-item {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  font-size: 12px !important;
-  color: #9aa0a6 !important;
-  transition: color 0.2s ease !important;
-}
-
-.flow-step-item.active {
-  color: var(--ink) !important;
-  font-weight: 700 !important;
-}
-
-.flow-step-item.completed {
-  color: #1e8e3e !important;
-  font-weight: 700 !important;
-}
-
-.flow-dot {
-  width: 8px !important;
-  height: 8px !important;
-  border-radius: 50% !important;
-  background: #dadce0 !important;
-  flex-shrink: 0 !important;
-}
-
-.flow-step-item.active .flow-dot {
-  background: #01875f !important;
-  box-shadow: 0 0 0 3px rgba(1, 135, 95, 0.2) !important;
-}
-
-.flow-step-item.completed .flow-dot {
-  background: #1e8e3e !important;
-}
-
-/* Success View Box */
-.gateway-success-box {
-  text-align: center !important;
-  padding: 10px 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 10px !important;
-}
-
-.success-checkmark-circle {
-  width: 52px !important;
-  height: 52px !important;
-  border-radius: 50% !important;
-  background: #e6f4ea !important;
-  color: #1e8e3e !important;
-  font-size: 26px !important;
-  font-weight: 900 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 4px 12px rgba(30, 142, 62, 0.18) !important;
-}
-
-.success-approved-badge {
-  background: #e6f4ea !important;
-  color: #137333 !important;
-  font-size: 10px !important;
-  font-weight: 800 !important;
-}
-
-.gateway-receipt-card {
-  width: 100% !important;
-  background: #fdfdfd !important;
-  border: 1.5px solid var(--line) !important;
-  border-radius: 12px !important;
-  padding: 14px !important;
-  box-sizing: border-box !important;
-  text-align: left !important;
-}
-
-.receipt-card-header {
+.gpay-tx-row {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
-  border-bottom: 1px solid var(--line) !important;
-  padding-bottom: 8px !important;
-  margin-bottom: 10px !important;
+  font-size: 12px !important;
+  color: #202124 !important;
 }
 
-.receipt-card-title {
-  font-size: 13px !important;
-  font-weight: 800 !important;
-  color: var(--ink) !important;
+.gpay-tx-row span {
+  color: #5f6368 !important;
 }
 
-.receipt-status-chip {
+.gpay-paid-pill {
   font-size: 10.5px !important;
   font-weight: 800 !important;
-  color: #1e8e3e !important;
+  color: #0f9d58 !important;
   background: #e6f4ea !important;
   padding: 2px 8px !important;
   border-radius: 999px !important;
 }
 
-.receipt-items-list {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  font-size: 12px !important;
-}
-
-.receipt-item-row {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  color: var(--ink) !important;
-}
-
-.receipt-item-row span {
-  color: var(--muted) !important;
-}
-
-.success-modal-actions {
+.gpay-success-actions {
   width: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
-  margin-top: 6px !important;
+  animation: gpayTextSlideUp 0.35s ease 0.55s both !important;
 }
 
-.btn-finish-upgrade {
+.btn-gpay-done {
   width: 100% !important;
-  height: 46px !important;
-  min-height: 46px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  border-radius: 24px !important;
+  background: #01875f !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 14.5px !important;
   font-weight: 800 !important;
-  font-size: 14px !important;
   cursor: pointer !important;
+  box-shadow: 0 3px 8px rgba(1, 135, 95, 0.25) !important;
+  transition: transform 0.12s ease, background 0.12s ease !important;
+}
+
+.btn-gpay-done:active {
+  transform: scale(0.985) !important;
+  background: #017250 !important;
 }
 
 .btn-download-receipt-pdf {
