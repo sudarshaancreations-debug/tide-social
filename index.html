@@ -1522,91 +1522,333 @@
     </div>
   </div>
 
-  <!-- Native Mobile In-App Purchase Modal (Apple Pay / StoreKit & Google Play Billing) -->
+  <!-- Native Mobile In-App Purchase Modal & Payment Gateway -->
   <div class="modal" id="iap-checkout-modal" role="dialog" aria-modal="true" aria-labelledby="iap-modal-title" hidden>
     <div class="modal-card iap-modal-card">
       <button class="modal-close" data-close aria-label="Close">×</button>
-      <div class="modal-header-badge">📱 MOBILE IN-APP PURCHASE (IAP)</div>
-      <h2 id="iap-modal-title">Select Plan &amp; Native Pay</h2>
-      <p class="modal-subcopy">Direct StoreKit &amp; Google Play sandbox checkout. Test subscription renewal and tier switching with one tap.</p>
 
-      <!-- Plan Options Grid -->
-      <div class="iap-plans-grid">
-        <label class="iap-plan-option" data-tier="creator">
-          <input type="radio" class="iap-plan-radio" name="iap_plan_select" value="creator" data-price="29" data-name="Creator">
-          <div class="iap-plan-body">
-            <div class="iap-plan-header">
-              <strong>Creator</strong>
-              <span class="iap-plan-price">$29<small>/mo</small></span>
+      <!-- STAGE 1: PLAN SELECTION -->
+      <div id="iap-stage-plan-selection" class="iap-stage-view">
+        <div class="modal-header-badge">📱 PLAN SELECTION</div>
+        <h2 id="iap-modal-title">Select Your Plan</h2>
+        <p class="modal-subcopy">Choose the subscription tier for your brand or agency. Continue to the payment gateway to activate.</p>
+
+        <!-- Plan Options Grid -->
+        <div class="iap-plans-grid">
+          <label class="iap-plan-option" data-tier="creator">
+            <input type="radio" class="iap-plan-radio" name="iap_plan_select" value="creator" data-price="29" data-name="Creator">
+            <div class="iap-plan-body">
+              <div class="iap-plan-header">
+                <strong>Creator</strong>
+                <span class="iap-plan-price">$29<small>/mo</small></span>
+              </div>
+              <p>5 channels • 10 queued posts • Basic AI pipeline</p>
             </div>
-            <p>5 channels • 10 queued posts • Basic AI pipeline</p>
-          </div>
-        </label>
+          </label>
 
-        <label class="iap-plan-option active" data-tier="pro">
-          <input type="radio" class="iap-plan-radio" name="iap_plan_select" value="pro" data-price="99" data-name="Studio Pro" checked>
-          <div class="iap-plan-body">
-            <div class="iap-plan-badge">CURRENT PLAN</div>
-            <div class="iap-plan-header">
-              <strong>Studio Pro</strong>
-              <span class="iap-plan-price">$99<small>/mo</small></span>
+          <label class="iap-plan-option active" data-tier="pro">
+            <input type="radio" class="iap-plan-radio" name="iap_plan_select" value="pro" data-price="99" data-name="Studio Pro" checked>
+            <div class="iap-plan-body">
+              <div class="iap-plan-badge">CURRENT PLAN</div>
+              <div class="iap-plan-header">
+                <strong>Studio Pro</strong>
+                <span class="iap-plan-price">$99<small>/mo</small></span>
+              </div>
+              <p>Unlimited channels • 25 queued posts • Multi-Agent MCP</p>
             </div>
-            <p>Unlimited channels • 25 queued posts • Multi-Agent MCP</p>
-          </div>
-        </label>
+          </label>
 
-        <label class="iap-plan-option" data-tier="agency">
-          <input type="radio" class="iap-plan-radio" name="iap_plan_select" value="agency" data-price="249" data-name="Agency Enterprise">
-          <div class="iap-plan-body">
-            <div class="iap-plan-header">
-              <strong>Agency Enterprise</strong>
-              <span class="iap-plan-price">$249<small>/mo</small></span>
+          <label class="iap-plan-option" data-tier="executive">
+            <input type="radio" class="iap-plan-radio" name="iap_plan_select" value="executive" data-price="199" data-name="Executive Plan">
+            <div class="iap-plan-body">
+              <div class="iap-plan-badge executive-badge">★ EXECUTIVE VIP</div>
+              <div class="iap-plan-header">
+                <strong>Executive Plan</strong>
+                <span class="iap-plan-price">$199<small>/mo</small></span>
+              </div>
+              <p>Unlimited everything • Dedicated AI clone • 24/7 priority SLA • Dedicated IP</p>
             </div>
-            <p>Unlimited everything • Custom AI clone • Dedicated IP</p>
-          </div>
-        </label>
-      </div>
-
-      <!-- Checkout Summary Card -->
-      <div class="iap-summary-card">
-        <div class="iap-summary-row">
-          <span id="iap-summary-tier-name">Studio Pro (Monthly Subscription)</span>
-          <strong id="iap-summary-tier-price">$99.00 / mo</strong>
+          </label>
         </div>
-        <div class="iap-summary-row subtext">
-          <span>In-App Mobile Store Taxes</span>
-          <span>$0.00 (Store handled)</span>
-        </div>
-        <div class="iap-summary-divider"></div>
-        <div class="iap-summary-row total">
-          <span>Total Due Today</span>
-          <strong id="iap-summary-total">$99.00 USD</strong>
-        </div>
-      </div>
 
-      <!-- Native Direct Mobile Payment Buttons -->
-      <div class="iap-direct-pay-actions">
-        <button type="button" class="btn-native-checkout btn-apple-checkout" id="btn-modal-apple-pay" title="Complete purchase with Apple Pay">
-          <div class="btn-native-left">
-            <span class="apple-icon"></span>
-            <span class="apple-text">Pay with <strong>Apple Pay</strong></span>
+        <!-- Checkout Summary Card -->
+        <div class="iap-summary-card">
+          <div class="iap-summary-row">
+            <span id="iap-summary-tier-name">Studio Pro (Monthly Subscription)</span>
+            <strong id="iap-summary-tier-price">$99.00 / mo</strong>
           </div>
-          <span class="storekit-badge">iOS StoreKit 2</span>
-        </button>
-
-        <button type="button" class="btn-native-checkout btn-google-checkout" id="btn-modal-google-pay" title="Complete purchase with Google Pay">
-          <div class="btn-native-left">
-            <span class="google-g">G</span>
-            <span class="google-text">Pay with <strong>GPay</strong></span>
+          <div class="iap-summary-row subtext">
+            <span>In-App Mobile Store Taxes</span>
+            <span>$0.00 (Store handled)</span>
           </div>
-          <span class="play-badge">Android Play Billing</span>
-        </button>
+          <div class="iap-summary-divider"></div>
+          <div class="iap-summary-row total">
+            <span>Total Due Today</span>
+            <strong id="iap-summary-total">$99.00 USD</strong>
+          </div>
+        </div>
+
+        <!-- Continue to Payment Gateway Button -->
+        <div class="iap-actions-container">
+          <button type="button" class="button primary btn-continue-gateway" id="btn-iap-continue-gateway">
+            <span>Continue to Payment Gateway</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+
+        <!-- Security Note -->
+        <div class="iap-security-footnote">
+          <span>🔒 Choose between Android Google Play Billing or Credit/Debit Card at the next step.</span>
+        </div>
       </div>
 
-      <!-- Biometric & In-App Security Note -->
-      <div class="iap-security-footnote">
-        <span>🔒 Verified with Apple StoreKit &amp; Google Play Billing v7.0. Zero third-party web redirects.</span>
+      <!-- STAGE 2: PAYMENT GATEWAY SCREEN -->
+      <div id="iap-stage-gateway" class="iap-stage-view" hidden>
+        <div class="gateway-top-bar">
+          <button type="button" class="btn-gateway-back" id="btn-gateway-back">
+            <span>←</span> Back to Plans
+          </button>
+          <div class="gateway-plan-chip">
+            <span id="gateway-chip-name">Studio Pro</span>
+            <strong id="gateway-chip-price">$99.00/mo</strong>
+          </div>
+        </div>
+
+        <div class="modal-header-badge gateway-badge">💳 SECURE PAYMENT GATEWAY</div>
+        <h2 class="gateway-title">Complete Your Purchase</h2>
+        <p class="modal-subcopy">Authorize payment via Google Play Purchase System or direct Credit/Debit Card.</p>
+
+        <!-- Gateway Method Switcher Tabs -->
+        <div class="gateway-method-tabs" role="tablist">
+          <button type="button" class="gateway-tab-btn active" id="tab-btn-gplay" role="tab" aria-selected="true" data-method="gplay">
+            <span class="gplay-tab-svg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M4 3.5C4 2.8 4.6 2.3 5.3 2.7L20.2 11.2C20.8 11.6 20.8 12.4 20.2 12.8L5.3 21.3C4.6 21.7 4 21.2 4 20.5V3.5Z" fill="#34A853"/>
+                <path d="M16 12L4 3.5V20.5L16 12Z" fill="#4285F4"/>
+                <path d="M4 3.5L14 13.5L17.5 10L5.3 2.7C4.6 2.3 4 2.8 4 3.5Z" fill="#EA4335"/>
+                <path d="M4 20.5L14 10.5L17.5 14L5.3 21.3C4.6 21.7 4 21.2 4 20.5Z" fill="#FBBC04"/>
+              </svg>
+            </span>
+            <span class="tab-label-wrap">
+              <strong>Google Play Billing</strong>
+              <small class="tab-platform-tag">Android System</small>
+            </span>
+          </button>
+
+          <button type="button" class="gateway-tab-btn" id="tab-btn-card" role="tab" aria-selected="false" data-method="card">
+            <span class="card-tab-icon">💳</span>
+            <span class="tab-label-wrap">
+              <strong>Credit / Debit Card</strong>
+              <small class="tab-platform-tag">Card Gateway</small>
+            </span>
+          </button>
+        </div>
+
+        <!-- Method View 1: Google Play Purchase System -->
+        <div class="gateway-method-view" id="method-view-gplay">
+          <div class="google-play-sheet-card">
+            <div class="gplay-sheet-header">
+              <div class="gplay-logo-brand">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 3.5C4 2.8 4.6 2.3 5.3 2.7L20.2 11.2C20.8 11.6 20.8 12.4 20.2 12.8L5.3 21.3C4.6 21.7 4 21.2 4 20.5V3.5Z" fill="#34A853"/>
+                  <path d="M16 12L4 3.5V20.5L16 12Z" fill="#4285F4"/>
+                  <path d="M4 3.5L14 13.5L17.5 10L5.3 2.7C4.6 2.3 4 2.8 4 3.5Z" fill="#EA4335"/>
+                  <path d="M4 20.5L14 10.5L17.5 14L5.3 21.3C4.6 21.7 4 21.2 4 20.5Z" fill="#FBBC04"/>
+                </svg>
+                <span>Google Play</span>
+              </div>
+              <span class="gplay-badge-official">Official In-App Billing</span>
+            </div>
+
+            <div class="gplay-app-item">
+              <div class="gplay-app-icon">🌊</div>
+              <div class="gplay-app-info">
+                <strong>Tide Social</strong>
+                <p id="gplay-item-name">Executive Plan Subscription</p>
+                <div class="gplay-item-price-tag" id="gplay-item-price">$199.00 / month</div>
+              </div>
+            </div>
+
+            <div class="gplay-account-strip">
+              <div class="gplay-account-avatar">A</div>
+              <div class="gplay-account-meta">
+                <strong>Arjun Kapoor</strong>
+                <span>arjun.kapoor@gmail.com</span>
+              </div>
+              <span class="gplay-verified-check">✓ Linked</span>
+            </div>
+
+            <div class="gplay-payment-selector">
+              <div class="gplay-selector-label">PAYMENT METHOD</div>
+              <label class="gplay-pay-option active">
+                <input type="radio" name="gplay_source" value="card" checked>
+                <div class="gplay-opt-icon">💳</div>
+                <div class="gplay-opt-text">
+                  <strong>Google Pay: Visa •••• 4242</strong>
+                  <span>Primary payment method</span>
+                </div>
+              </label>
+
+              <label class="gplay-pay-option">
+                <input type="radio" name="gplay_source" value="balance">
+                <div class="gplay-opt-icon">💰</div>
+                <div class="gplay-opt-text">
+                  <strong>Google Play Balance</strong>
+                  <span>Available: $250.00 USD</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="gplay-terms-notice">
+              Recurring billing starting today. Subscription renews automatically every month. Cancel anytime in Google Play Subscriptions.
+            </div>
+
+            <button type="button" class="btn-gplay-subscribe" id="btn-gplay-subscribe">
+              <span class="btn-gplay-bolt">⚡</span>
+              <span>1-Tap Subscribe with Google Play</span>
+            </button>
+
+            <div class="gplay-security-footer">
+              <span>🔒 Google Play Protect • Secured with Android Keystore</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Method View 2: Credit / Debit Card Gateway -->
+        <div class="gateway-method-view" id="method-view-card" hidden>
+          <div class="card-gateway-box">
+            <div class="card-accepted-strip">
+              <span>Accepted Cards:</span>
+              <div class="card-brand-tags">
+                <span class="card-tag visa">VISA</span>
+                <span class="card-tag mc">MC</span>
+                <span class="card-tag amex">AMEX</span>
+                <span class="card-tag disc">DISC</span>
+              </div>
+            </div>
+
+            <form id="card-gateway-form" onsubmit="return false;" class="card-payment-form">
+              <div class="card-field-group">
+                <label for="card-holder-name">Cardholder Full Name</label>
+                <input type="text" id="card-holder-name" class="gateway-input" placeholder="e.g. Arjun Kapoor" value="Arjun Kapoor" required>
+              </div>
+
+              <div class="card-field-group">
+                <label for="card-number-input">Card Number</label>
+                <div class="card-input-with-icon">
+                  <input type="text" id="card-number-input" class="gateway-input" placeholder="4242 8888 9999 4242" value="4242 8888 9999 4242" maxlength="19" required>
+                  <span class="card-brand-icon" id="card-brand-icon">💳</span>
+                </div>
+              </div>
+
+              <div class="card-field-row">
+                <div class="card-field-group">
+                  <label for="card-expiry-input">Expiration</label>
+                  <input type="text" id="card-expiry-input" class="gateway-input" placeholder="MM/YY" value="08/28" maxlength="5" required>
+                </div>
+                <div class="card-field-group">
+                  <label for="card-cvc-input">CVC / CVV</label>
+                  <input type="password" id="card-cvc-input" class="gateway-input" placeholder="3 digits" value="789" maxlength="4" required>
+                </div>
+              </div>
+
+              <div class="card-field-group">
+                <label for="card-postal-input">Billing Postal / ZIP Code</label>
+                <input type="text" id="card-postal-input" class="gateway-input" placeholder="e.g. 94107" value="94107" required>
+              </div>
+
+              <div class="card-due-summary">
+                <span>Charge Amount:</span>
+                <strong id="card-charge-amount">$99.00 USD / mo</strong>
+              </div>
+
+              <button type="button" class="button primary btn-card-pay" id="btn-card-pay">
+                <span id="btn-card-pay-label">Pay $99.00 with Card</span>
+              </button>
+            </form>
+
+            <div class="card-security-footer">
+              <span>🔒 256-Bit SSL Encrypted • PCI-DSS Level 1 Gateway Certified</span>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- STAGE 3: GATEWAY PROCESSING ANIMATION -->
+      <div id="iap-stage-processing" class="iap-stage-view" hidden>
+        <div class="gateway-processing-box">
+          <div class="processing-spinner-ring">
+            <div class="spinner-circle"></div>
+            <div class="spinner-center-icon" id="processing-center-icon">⚡</div>
+          </div>
+          <h3 id="processing-status-title">Connecting to Payment Gateway...</h3>
+          <p id="processing-status-sub" class="processing-status-sub">Authorizing transaction with Google Play Billing v7.0...</p>
+
+          <div class="processing-check-flow">
+            <div class="flow-step-item active" id="flow-step-1">
+              <span class="flow-dot"></span>
+              <span>1. Validating credentials &amp; account</span>
+            </div>
+            <div class="flow-step-item" id="flow-step-2">
+              <span class="flow-dot"></span>
+              <span>2. Authorizing recurring subscription</span>
+            </div>
+            <div class="flow-step-item" id="flow-step-3">
+              <span class="flow-dot"></span>
+              <span>3. Capturing payment &amp; upgrading tier</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 4: PAYMENT CONFIRMATION & RECEIPT -->
+      <div id="iap-stage-success" class="iap-stage-view" hidden>
+        <div class="gateway-success-box">
+          <div class="success-checkmark-circle">✓</div>
+          <div class="modal-header-badge success-approved-badge">PAYMENT APPROVED</div>
+          <h2 id="success-tier-headline">Welcome to Executive Plan!</h2>
+          <p class="modal-subcopy">Your subscription has been successfully authorized and your account upgraded.</p>
+
+          <div class="gateway-receipt-card">
+            <div class="receipt-card-header">
+              <span class="receipt-card-title">Official Billing Receipt</span>
+              <span class="receipt-status-chip">✓ Paid</span>
+            </div>
+            <div class="receipt-items-list">
+              <div class="receipt-item-row">
+                <span>Transaction ID:</span>
+                <strong id="receipt-tx-number">#TIDE-GP-2026-9812</strong>
+              </div>
+              <div class="receipt-item-row">
+                <span>Subscription Plan:</span>
+                <strong id="receipt-plan-display">Executive Plan</strong>
+              </div>
+              <div class="receipt-item-row">
+                <span>Amount Paid:</span>
+                <strong id="receipt-amount-display">$199.00 USD</strong>
+              </div>
+              <div class="receipt-item-row">
+                <span>Payment Gateway:</span>
+                <strong id="receipt-gateway-display">Google Play Billing</strong>
+              </div>
+              <div class="receipt-item-row">
+                <span>Billing Period:</span>
+                <span id="receipt-period-display">Monthly (Renews Nov 25, 2026)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="success-modal-actions">
+            <button type="button" class="button primary btn-finish-upgrade" id="btn-iap-finish">
+              Done &amp; Return to Dashboard
+            </button>
+            <button type="button" class="button secondary btn-download-receipt-pdf" id="btn-iap-receipt-pdf">
+              📄 Download PDF Receipt
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 

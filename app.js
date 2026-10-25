@@ -2978,6 +2978,8 @@ document.getElementById("btn-download-all-invoices")?.addEventListener("click", 
 // =====================================================================
 // Native Mobile In-App Purchases (Apple Pay StoreKit & Google Play)
 // =====================================================================
+// Native Payment Gateway & Google Play Billing System
+// =====================================================================
 let activeIAPTier = {
   tier: "pro",
   name: "Studio Pro",
@@ -2987,83 +2989,357 @@ let activeIAPTier = {
   provider: "Apple App Store & Google Play"
 };
 
-function simulateMobilePurchase(provider) {
-  const selectedRadio = document.querySelector('input[name="iap_plan_select"]:checked');
-  const planName = selectedRadio ? selectedRadio.dataset.name : activeIAPTier.name;
-  const planPriceNum = selectedRadio ? selectedRadio.dataset.price : "99";
-  const planPrice = `$${planPriceNum}.00`;
+let pendingIAPPlan = {
+  tier: "pro",
+  name: "Studio Pro",
+  price: "99"
+};
 
-  if (provider === "apple") {
-    toast(` Apple Pay: Face ID authenticated! Subscribed to ${planName} (${planPrice}/mo) via Apple App Store.`);
-  } else if (provider === "google") {
-    toast(`GPay: 1-Tap Google Play Billing approved! Subscribed to ${planName} (${planPrice}/mo) via Google Play.`);
-  }
+let currentGatewayMethod = "gplay"; // 'gplay' (Android Google Purchase System) or 'card' (Card Gateway)
 
-  activeIAPTier.name = planName;
-  activeIAPTier.price = planPrice;
-  activeIAPTier.provider = provider === "apple" ? "Apple App Store (StoreKit)" : "Google Play Billing";
+function setIAPStage(stageName) {
+  const stageSelection = document.getElementById("iap-stage-plan-selection");
+  const stageGateway = document.getElementById("iap-stage-gateway");
+  const stageProcessing = document.getElementById("iap-stage-processing");
+  const stageSuccess = document.getElementById("iap-stage-success");
 
-  const renewalText = document.getElementById("billing-plan-renewal-text");
-  if (renewalText) {
-    renewalText.textContent = `Billed via ${activeIAPTier.provider} • Renews Nov 23, 2026`;
-  }
+  if (stageSelection) stageSelection.hidden = stageName !== "selection";
+  if (stageGateway) stageGateway.hidden = stageName !== "gateway";
+  if (stageProcessing) stageProcessing.hidden = stageName !== "processing";
+  if (stageSuccess) stageSuccess.hidden = stageName !== "success";
 
-  const planBannerH3 = document.querySelector(".plan-banner-card h3");
-  if (planBannerH3) {
-    planBannerH3.textContent = `${planName} Subscription`;
-  }
+  const modalCard = document.querySelector(".iap-modal-card");
+  if (modalCard) modalCard.scrollTop = 0;
+}
 
-  const planPriceTag = document.querySelector(".plan-price-tag");
-  if (planPriceTag) {
-    planPriceTag.innerHTML = `$${planPriceNum}<small>/month</small>`;
-  }
+function updatePlanDetails(tier, name, price) {
+  pendingIAPPlan = { tier, name, price };
 
-  const iapModal = document.getElementById("iap-checkout-modal");
-  if (iapModal && !iapModal.hidden) {
-    closeModal(iapModal);
+  // Update Plan Stage Summary
+  const tierNameEl = document.getElementById("iap-summary-tier-name");
+  const tierPriceEl = document.getElementById("iap-summary-tier-price");
+  const totalEl = document.getElementById("iap-summary-total");
+
+  if (tierNameEl) tierNameEl.textContent = `${name} (Monthly Subscription)`;
+  if (tierPriceEl) tierPriceEl.textContent = `$${price}.00 / mo`;
+  if (totalEl) totalEl.textContent = `$${price}.00 USD`;
+
+  // Update Gateway Stage
+  const chipName = document.getElementById("gateway-chip-name");
+  const chipPrice = document.getElementById("gateway-chip-price");
+  const gplayName = document.getElementById("gplay-item-name");
+  const gplayPrice = document.getElementById("gplay-item-price");
+  const cardAmount = document.getElementById("card-charge-amount");
+  const cardBtnText = document.getElementById("btn-card-pay-label");
+
+  if (chipName) chipName.textContent = name;
+  if (chipPrice) chipPrice.textContent = `$${price}.00/mo`;
+  if (gplayName) gplayName.textContent = `${name} Subscription`;
+  if (gplayPrice) gplayPrice.textContent = `$${price}.00 / month`;
+  if (cardAmount) cardAmount.textContent = `$${price}.00 USD / mo`;
+  if (cardBtnText) cardBtnText.textContent = `Pay $${price}.00 with Card`;
+}
+
+function switchGatewayMethod(method) {
+  currentGatewayMethod = method;
+
+  const tabGplay = document.getElementById("tab-btn-gplay");
+  const tabCard = document.getElementById("tab-btn-card");
+  const viewGplay = document.getElementById("method-view-gplay");
+  const viewCard = document.getElementById("method-view-card");
+
+  if (method === "gplay") {
+    tabGplay?.classList.add("active");
+    tabGplay?.setAttribute("aria-selected", "true");
+    tabCard?.classList.remove("active");
+    tabCard?.setAttribute("aria-selected", "false");
+    if (viewGplay) viewGplay.hidden = false;
+    if (viewCard) viewCard.hidden = true;
+  } else {
+    tabCard?.classList.add("active");
+    tabCard?.setAttribute("aria-selected", "true");
+    tabGplay?.classList.remove("active");
+    tabGplay?.setAttribute("aria-selected", "false");
+    if (viewCard) viewCard.hidden = false;
+    if (viewGplay) viewGplay.hidden = true;
   }
 }
 
-// Plan option change handler in IAP Modal
+function executePaymentGatewayFlow(method) {
+  setIAPStage("processing");
+
+  const titleEl = document.getElementById("processing-status-title");
+  const subEl = document.getElementById("processing-status-sub");
+  const iconEl = document.getElementById("processing-center-icon");
+
+  const step1 = document.getElementById("flow-step-1");
+  const step2 = document.getElementById("flow-step-2");
+  const step3 = document.getElementById("flow-step-3");
+
+  // Step 1: Initializing Connection
+  if (method === "gplay") {
+    if (titleEl) titleEl.textContent = "Connecting to Google Play Billing...";
+    if (subEl) subEl.textContent = "Authenticating with Google Play Store v7.0 & Android Keystore...";
+    if (iconEl) iconEl.textContent = "⚡";
+  } else {
+    if (titleEl) titleEl.textContent = "Connecting to Payment Gateway...";
+    if (subEl) subEl.textContent = "Contacting card issuing bank & 3D Secure authentication...";
+    if (iconEl) iconEl.textContent = "💳";
+  }
+
+  step1?.classList.add("active");
+  step1?.classList.remove("completed");
+  step2?.classList.remove("active", "completed");
+  step3?.classList.remove("active", "completed");
+
+  // Step 2: Authorizing
+  setTimeout(() => {
+    step1?.classList.remove("active");
+    step1?.classList.add("completed");
+    step2?.classList.add("active");
+    if (subEl) {
+      subEl.textContent = method === "gplay"
+        ? "Authorizing recurring subscription for arjun.kapoor@gmail.com..."
+        : "Verifying credit card authorization code and anti-fraud token...";
+    }
+  }, 650);
+
+  // Step 3: Capturing
+  setTimeout(() => {
+    step2?.classList.remove("active");
+    step2?.classList.add("completed");
+    step3?.classList.add("active");
+    if (subEl) {
+      subEl.textContent = "Payment captured! Generating official cryptographic receipt...";
+    }
+  }, 1350);
+
+  // Completion: Success Screen
+  setTimeout(() => {
+    step3?.classList.remove("active");
+    step3?.classList.add("completed");
+    finalizeSubscriptionActivation(method);
+    setIAPStage("success");
+  }, 2000);
+}
+
+function finalizeSubscriptionActivation(method) {
+  const isGplay = method === "gplay";
+  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  const txNumber = isGplay ? `#TIDE-GP-2026-${randomSuffix}` : `#TIDE-CC-2026-${randomSuffix}`;
+  const providerName = isGplay ? "Google Play Billing" : "Card Payment Gateway";
+  const planName = pendingIAPPlan.name;
+  const planPrice = `$${pendingIAPPlan.price}.00`;
+
+  activeIAPTier = {
+    tier: pendingIAPPlan.tier,
+    name: planName,
+    price: planPrice,
+    cycle: "Monthly",
+    renews: "Nov 25, 2026",
+    provider: providerName
+  };
+
+  // Update Success Stage UI
+  const successHeadline = document.getElementById("success-tier-headline");
+  const receiptTx = document.getElementById("receipt-tx-number");
+  const receiptPlan = document.getElementById("receipt-plan-display");
+  const receiptAmount = document.getElementById("receipt-amount-display");
+  const receiptGateway = document.getElementById("receipt-gateway-display");
+  const receiptPeriod = document.getElementById("receipt-period-display");
+
+  if (successHeadline) successHeadline.textContent = `Welcome to ${planName}!`;
+  if (receiptTx) receiptTx.textContent = txNumber;
+  if (receiptPlan) receiptPlan.textContent = planName;
+  if (receiptAmount) receiptAmount.textContent = `${planPrice} USD`;
+  if (receiptGateway) receiptGateway.textContent = isGplay ? "Google Play Billing (arjun.kapoor@gmail.com)" : "Credit Card (Visa •••• 4242)";
+  if (receiptPeriod) receiptPeriod.textContent = "Monthly (Renews Nov 25, 2026)";
+
+  // Update Profile View Banner & Details
+  const coverTag = document.getElementById("profile-cover-tag");
+  if (coverTag) coverTag.textContent = `⚡ Acme Studio • ${planName} Tier`;
+
+  const planBannerH3 = document.querySelector(".plan-banner-card h3");
+  if (planBannerH3) planBannerH3.textContent = `${planName} Subscription`;
+
+  const planPriceTag = document.querySelector(".plan-price-tag");
+  if (planPriceTag) planPriceTag.innerHTML = `$${pendingIAPPlan.price}<small>/month</small>`;
+
+  const renewalText = document.getElementById("billing-plan-renewal-text");
+  if (renewalText) {
+    renewalText.textContent = `Billed via ${providerName} • Renews Nov 25, 2026`;
+  }
+
+  // Upgrade quota meters if Executive Plan
+  if (pendingIAPPlan.tier === "executive") {
+    const channelMeter = document.getElementById("meter-text-channels");
+    if (channelMeter) channelMeter.textContent = "4 / Unlimited (Executive VIP)";
+
+    const queueBox = document.querySelectorAll(".quota-meter-box")[1];
+    if (queueBox) {
+      const queueVal = queueBox.querySelector(".quota-meter-head span");
+      if (queueVal) queueVal.textContent = "18 / Unlimited (100 slots)";
+    }
+
+    const aiBox = document.querySelectorAll(".quota-meter-box")[2];
+    if (aiBox) {
+      const aiVal = aiBox.querySelector(".quota-meter-head span");
+      if (aiVal) aiVal.textContent = "840 / 10,000 runs";
+      const aiFill = aiBox.querySelector(".meter-fill");
+      if (aiFill) aiFill.style.width = "8.4%";
+    }
+
+    const teamBox = document.querySelectorAll(".quota-meter-box")[3];
+    if (teamBox) {
+      const teamVal = teamBox.querySelector(".quota-meter-head span");
+      if (teamVal) teamVal.textContent = "3 / 15 seats";
+    }
+  }
+
+  // Prepend new official receipt to Invoices List in Billing Tab
+  const invoicesList = document.querySelector(".invoices-cards-list");
+  if (invoicesList) {
+    const newInvoiceCard = document.createElement("div");
+    newInvoiceCard.className = "invoice-mobile-card";
+    newInvoiceCard.innerHTML = `
+      <div class="invoice-mobile-top">
+        <div>
+          <strong>${txNumber}</strong>
+          <p>${planName} Monthly (${isGplay ? 'Android Google Play' : 'Card Gateway'})</p>
+        </div>
+        <div class="invoice-mobile-amount">
+          <strong>${planPrice} USD</strong>
+          <div><span class="invoice-badge-paid">✓ Paid</span></div>
+        </div>
+      </div>
+      <div class="invoice-mobile-foot">
+        <span>Oct 25, 2026</span>
+        <span style="color:var(--text-muted);">${providerName}</span>
+      </div>
+    `;
+    invoicesList.insertBefore(newInvoiceCard, invoicesList.firstChild);
+  }
+
+  toast(`🎉 Subscription active! You're now on ${planName} via ${providerName}.`);
+}
+
+// Plan Radio Selection in Modal
 document.querySelectorAll('input[name="iap_plan_select"]').forEach(radio => {
   radio.addEventListener("change", (e) => {
     document.querySelectorAll(".iap-plan-option").forEach(opt => opt.classList.remove("active"));
     const parentLabel = e.target.closest(".iap-plan-option");
     if (parentLabel) parentLabel.classList.add("active");
 
+    const tier = e.target.value || "pro";
     const name = e.target.dataset.name || "Studio Pro";
     const price = e.target.dataset.price || "99";
-
-    const tierNameEl = document.getElementById("iap-summary-tier-name");
-    const tierPriceEl = document.getElementById("iap-summary-tier-price");
-    const totalEl = document.getElementById("iap-summary-total");
-
-    if (tierNameEl) tierNameEl.textContent = `${name} (Monthly Subscription)`;
-    if (tierPriceEl) tierPriceEl.textContent = `$${price}.00 / mo`;
-    if (totalEl) totalEl.textContent = `$${price}.00 USD`;
+    updatePlanDetails(tier, name, price);
   });
 });
 
-// Direct Billing Card Buttons
-document.getElementById("btn-pay-apple")?.addEventListener("click", () => {
-  simulateMobilePurchase("apple");
+// Stage 1 -> Stage 2: Continue to Payment Gateway
+document.getElementById("btn-iap-continue-gateway")?.addEventListener("click", () => {
+  const selectedRadio = document.querySelector('input[name="iap_plan_select"]:checked');
+  if (selectedRadio) {
+    const tier = selectedRadio.value;
+    const name = selectedRadio.dataset.name;
+    const price = selectedRadio.dataset.price;
+    updatePlanDetails(tier, name, price);
+  }
+  setIAPStage("gateway");
+  // Default to Google Play Billing on Android or mobile
+  switchGatewayMethod("gplay");
 });
 
-document.getElementById("btn-pay-google")?.addEventListener("click", () => {
-  simulateMobilePurchase("google");
+// Stage 2 -> Stage 1: Back to Plans
+document.getElementById("btn-gateway-back")?.addEventListener("click", () => {
+  setIAPStage("selection");
 });
 
+// Gateway Method Switchers
+document.getElementById("tab-btn-gplay")?.addEventListener("click", () => {
+  switchGatewayMethod("gplay");
+});
+
+document.getElementById("tab-btn-card")?.addEventListener("click", () => {
+  switchGatewayMethod("card");
+});
+
+// Payment Execution Buttons in Gateway
+document.getElementById("btn-gplay-subscribe")?.addEventListener("click", () => {
+  executePaymentGatewayFlow("gplay");
+});
+
+document.getElementById("btn-card-pay")?.addEventListener("click", () => {
+  executePaymentGatewayFlow("card");
+});
+
+// Card Input Formatting & Live Card Brand Detection
+const cardNumInput = document.getElementById("card-number-input");
+const cardBrandIcon = document.getElementById("card-brand-icon");
+if (cardNumInput) {
+  cardNumInput.addEventListener("input", (e) => {
+    let val = e.target.value.replace(/\D/g, "").substring(0, 16);
+    let formatted = val.match(/.{1,4}/g)?.join(" ") || val;
+    e.target.value = formatted;
+
+    if (cardBrandIcon) {
+      if (val.startsWith("4")) {
+        cardBrandIcon.textContent = "💳 (Visa)";
+      } else if (val.startsWith("5")) {
+        cardBrandIcon.textContent = "💳 (Mastercard)";
+      } else if (val.startsWith("3")) {
+        cardBrandIcon.textContent = "💳 (Amex)";
+      } else {
+        cardBrandIcon.textContent = "💳";
+      }
+    }
+  });
+}
+
+const cardExpInput = document.getElementById("card-expiry-input");
+if (cardExpInput) {
+  cardExpInput.addEventListener("input", (e) => {
+    let val = e.target.value.replace(/\D/g, "").substring(0, 4);
+    if (val.length >= 2) {
+      e.target.value = val.substring(0, 2) + "/" + val.substring(2);
+    } else {
+      e.target.value = val;
+    }
+  });
+}
+
+// Success View Finish Button
+document.getElementById("btn-iap-finish")?.addEventListener("click", () => {
+  const iapModal = document.getElementById("iap-checkout-modal");
+  if (iapModal) closeModal(iapModal);
+  setIAPStage("selection");
+});
+
+document.getElementById("btn-iap-receipt-pdf")?.addEventListener("click", () => {
+  toast(`📄 Official receipt ${document.getElementById("receipt-tx-number")?.textContent || "#TIDE-GP-2026-9812"} downloaded.`);
+});
+
+// Profile Billing Actions
 document.getElementById("btn-open-iap-modal")?.addEventListener("click", () => {
+  setIAPStage("selection");
   openModal("iap-checkout-modal");
 });
 
-// Modal Checkout Buttons
-document.getElementById("btn-modal-apple-pay")?.addEventListener("click", () => {
-  simulateMobilePurchase("apple");
+document.getElementById("btn-pay-google")?.addEventListener("click", () => {
+  // Direct access to Google Play Billing in Payment Gateway
+  updatePlanDetails(activeIAPTier.tier, activeIAPTier.name, activeIAPTier.price.replace(/[^0-9]/g, ""));
+  setIAPStage("gateway");
+  switchGatewayMethod("gplay");
+  openModal("iap-checkout-modal");
 });
 
-document.getElementById("btn-modal-google-pay")?.addEventListener("click", () => {
-  simulateMobilePurchase("google");
+document.getElementById("btn-pay-apple")?.addEventListener("click", () => {
+  // Direct access to Card Payment Gateway
+  updatePlanDetails(activeIAPTier.tier, activeIAPTier.name, activeIAPTier.price.replace(/[^0-9]/g, ""));
+  setIAPStage("gateway");
+  switchGatewayMethod("card");
+  openModal("iap-checkout-modal");
 });
 
 // Team Invite Modal Trigger & Submit
