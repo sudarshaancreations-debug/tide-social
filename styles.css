@@ -60,7 +60,7 @@ button { cursor: pointer; }
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 40px rgba(0, 0, 0, 0.06);
-  padding-bottom: 76px;
+  padding-bottom: 68px;
   margin: 0 auto;
 }
 
@@ -221,19 +221,48 @@ button { cursor: pointer; }
 
 /* Main Content Area */
 main {
-  padding: 16px 14px 28px;
+  padding: 14px 14px 8px;
   min-width: 0;
-  flex: 1;
+  flex: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.view { display: none; }
+.view {
+  display: none;
+  margin: 0;
+  padding: 0;
+}
 .view.active {
   display: block;
   animation: mobileFade 0.2s ease;
+  margin: 0;
+  padding: 0;
 }
 @keyframes mobileFade {
   from { opacity: 0.3; transform: translateY(3px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.section-intro {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.section-intro h2 {
+  font: 800 18px var(--font-display);
+  margin: 2px 0 4px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.section-intro p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 0;
 }
 
 /* Common UI Elements */
@@ -835,20 +864,21 @@ main {
 }
 .tab-btn-create:active .create-fab { transform: scale(0.92); }
 
-/* Mobile Footer */
+/* Mobile Footer: Compact and tightly aligned directly below content */
 .mobile-footer {
-  padding: 18px 14px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--muted);
-  border-top: 1px solid var(--line);
-  margin-top: 20px;
+  padding: 10px 14px 6px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  border-top: 1px solid var(--line) !important;
+  margin: 10px 14px 0 !important;
+  box-sizing: border-box !important;
 }
 .mobile-footer nav { display: flex; gap: 12px; }
-.mobile-footer button { border: 0; background: none; color: var(--muted); font-size: 11px; }
+.mobile-footer button { border: 0; background: none; color: var(--muted); font-size: 11px; cursor: pointer; padding: 2px 4px; }
 
 /* IN-APP MODAL ARCHITECTURE: CENTERED OVER APP CONTAINER AT ALL TIMES, NEVER AT SIDE */
 .modal {
@@ -3057,17 +3087,18 @@ html, body {
   margin: 0 auto !important;
   overflow-x: hidden !important;
   box-sizing: border-box !important;
-  padding-bottom: 96px !important;
+  padding-bottom: 68px !important;
   min-height: 100vh;
   position: relative;
-  background: var(--bg);
+  background: var(--surface);
 }
 main {
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: hidden !important;
   box-sizing: border-box !important;
-  padding: 14px 14px 96px !important;
+  padding: 14px 14px 8px !important;
+  flex: none !important;
 }
 .profile-wrapper {
   width: 100% !important;
