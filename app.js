@@ -2506,22 +2506,16 @@ document.getElementById("btn-save-columns")?.addEventListener("click", () => {
   toast("Table columns updated.");
 });
 
-document.getElementById("btn-service-status")?.addEventListener("click", () => {
-  openModal("status-modal");
-});
-// Policy Dialogs
+// Legal Policy Dialogs (Privacy, Terms, Security)
 const policies = {
   privacy: [
     'Privacy policy',
     '<h3>Data we process</h3><p>We process account details, content you create, social account identifiers, publishing results, and support messages to provide the service. Connected-platform tokens are encrypted with AES-256 and passwords are never collected.</p><h3>Your control</h3><p>You can export or delete workspace data, revoke a social connection, restrict AI use, and request access or correction. Content is not used to train shared models without explicit opt-in.</p><h3>Retention & transfers</h3><p>Workspace data is retained while your account is active and removed after the documented deletion window. Vendors are contractually limited to providing infrastructure, analytics, support, and model processing.</p>'
   ],
-  cookies: [
-    'Cookie policy',
-    '<h3>Necessary storage</h3><p>Authentication, security, consent choices, autosaved drafts, and core product preferences. These are required for Tide to work.</p><h3>Optional analytics</h3><p>With consent, anonymous product events help us understand which flows are useful. Tide does not use advertising cookies or sell personal information.</p><h3>Change your choice</h3><p>Open Cookie settings from this footer at any time. Your latest preference replaces the previous one.</p>'
-  ],
   terms: [
     'Terms of service',
-    '<h3>Your content</h3><p>You keep ownership of content you provide. You grant Tide only the rights needed to create, transform, schedule, and publish it at your direction.</p><h3>Platform rules</h3><p>You are responsible for having permission to connect accounts and for complying with each social platform’s rules. Tide may pause risky automation to protect your accounts.</p><h3>Service limits</h3><p>Publishing depends on third-party APIs. Tide reports confirmed, failed, and unknown outcomes separately and never treats an unverified publish as successful.</p>'],
+    '<h3>Your content</h3><p>You keep ownership of content you provide. You grant Tide only the rights needed to create, transform, schedule, and publish it at your direction.</p><h3>Platform rules</h3><p>You are responsible for having permission to connect accounts and for complying with each social platform’s rules. Tide may pause risky automation to protect your accounts.</p><h3>Service limits</h3><p>Publishing depends on third-party APIs. Tide reports confirmed, failed, and unknown outcomes separately and never treats an unverified publish as successful.</p>'
+  ],
   security: [
     'Security overview',
     '<h3>Designed for least privilege</h3><p>OAuth tokens are encrypted, scoped per channel, and revocable. Sensitive operations are logged. Team access supports roles and approval boundaries.</p><h3>Operational safeguards</h3><p>Monitoring, dependency review, backups, incident response, and recovery testing protect service continuity. Responsible disclosures receive a tracked human response.</p>'
@@ -2530,47 +2524,16 @@ const policies = {
 
 document.querySelectorAll('[data-policy]').forEach(button => {
   button.addEventListener('click', () => {
-    const [title, content] = policies[button.dataset.policy];
-    const pTitle = document.getElementById('policy-title');
-    const pContent = document.getElementById('policy-content');
-    if (pTitle) pTitle.textContent = title;
-    if (pContent) pContent.innerHTML = content;
-    openModal('policy-modal');
+    const policy = policies[button.dataset.policy];
+    if (policy) {
+      const [title, content] = policy;
+      const pTitle = document.getElementById('policy-title');
+      const pContent = document.getElementById('policy-content');
+      if (pTitle) pTitle.textContent = title;
+      if (pContent) pContent.innerHTML = content;
+      openModal('policy-modal');
+    }
   });
-});
-
-// Cookie Consent Logic
-const cookieBanner = document.querySelector(".cookie-banner");
-if (cookieBanner && !localStorage.getItem("tide-cookie-consent")) {
-  cookieBanner.hidden = false;
-}
-
-function saveCookieConsent(value) {
-  localStorage.setItem("tide-cookie-consent", value);
-  if (cookieBanner) cookieBanner.hidden = true;
-  toast("Cookie preference saved.");
-}
-
-document.getElementById("cookie-accept")?.addEventListener("click", () => saveCookieConsent("analytics"));
-document.getElementById("cookie-reject")?.addEventListener("click", () => saveCookieConsent("necessary"));
-document.getElementById("cookie-settings")?.addEventListener("click", () => {
-  const cur = localStorage.getItem("tide-cookie-consent") || "necessary";
-  const analyticsInput = document.getElementById("analytics-cookie");
-  const marketingInput = document.getElementById("marketing-cookie");
-  if (analyticsInput) analyticsInput.checked = (cur === "analytics" || cur === "all");
-  if (marketingInput) marketingInput.checked = (cur === "all");
-  openModal("cookie-modal");
-});
-
-document.getElementById("cookie-save")?.addEventListener("click", () => {
-  const isAnalytics = document.getElementById("analytics-cookie")?.checked;
-  const isMarketing = document.getElementById("marketing-cookie")?.checked;
-  let val = "necessary";
-  if (isAnalytics && isMarketing) val = "all";
-  else if (isAnalytics) val = "analytics";
-  else if (isMarketing) val = "marketing";
-  saveCookieConsent(val);
-  closeModal(document.getElementById("cookie-modal"));
 });
 
 // --- REVERSE-ENGINEERED SKILL 1: Hormozi Hooks Engine ---

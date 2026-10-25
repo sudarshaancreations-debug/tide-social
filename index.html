@@ -1011,7 +1011,7 @@
         <span>© 2026 Tide Social</span>
         <nav aria-label="Legal">
           <button data-policy="privacy">Privacy</button>
-          <button data-policy="cookies">Cookies</button>
+          <button data-policy="security">Security</button>
           <button data-policy="terms">Terms</button>
         </nav>
         <button id="btn-service-status" style="border:0; background:none; color:var(--green); font-weight:700; cursor:pointer;" type="button">● Operational</button>
@@ -1040,7 +1040,6 @@
           <span class="tab-label">Profile</span>
         </button>
       </nav>
-    </div>
 
   <div class="toast" role="status" aria-live="polite"></div>
 
@@ -1125,22 +1124,6 @@
     </div>
   </div>
 
-  <!-- System Health Modal -->
-  <div class="modal" id="status-modal" role="dialog" aria-modal="true" aria-labelledby="status-title" hidden>
-    <div class="modal-card small-modal">
-      <button class="modal-close" data-close aria-label="Close">×</button>
-      <p class="eyebrow">SYSTEM HEALTH</p>
-      <h2 id="status-title">All Systems Operational</h2>
-      <div class="mini-rule" style="display: grid; gap: 10px; margin-top: 12px;">
-        <div style="display:flex; justify-content:space-between;"><span>Meta Graph API (IG &amp; Threads)</span> <b style="color: var(--green);">● 100% Operational (21ms)</b></div>
-        <div style="display:flex; justify-content:space-between;"><span>LinkedIn API</span> <b style="color: var(--green);">● 100% Operational (18ms)</b></div>
-        <div style="display:flex; justify-content:space-between;"><span>TikTok Business API</span> <b style="color: var(--green);">● 100% Operational (32ms)</b></div>
-        <div style="display:flex; justify-content:space-between;"><span>YouTube Data v3</span> <b style="color: var(--green);">● 100% Operational (15ms)</b></div>
-        <div style="display:flex; justify-content:space-between;"><span>AI Generation Engine</span> <b style="color: var(--green);">● Healthy (0.8s avg)</b></div>
-      </div>
-      <button class="button primary full" data-close style="margin-top: 14px;" type="button">Close</button>
-    </div>
-  </div>
 
   <!-- Audience Profile Modal -->
   <div class="modal" id="audience-profile-modal" role="dialog" aria-modal="true" aria-labelledby="audience-profile-title" hidden>
@@ -1341,8 +1324,6 @@
   <!-- Legal Policies Modal -->
   <div class="modal" id="policy-modal" role="dialog" aria-modal="true" aria-labelledby="policy-title" hidden><div class="modal-card policy-card"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">TIDE SOCIAL</p><h2 id="policy-title">Privacy policy</h2><div id="policy-content"></div></div></div>
 
-  <!-- Cookie Notice Banner -->
-  <aside class="cookie-banner" aria-label="Cookie notice" hidden><div><strong>Your choices, not ours.</strong><p>We use necessary cookies to keep Tide working. With your permission, analytics helps us improve the product. No ad tracking.</p></div><div><button class="button secondary" id="cookie-settings">Settings</button><button class="button secondary" id="cookie-reject">Necessary only</button><button class="button primary" id="cookie-accept">Accept analytics</button></div></aside>
 
   <!-- Scheduled Post Details & Management Modal -->
   <div class="modal" id="post-details-modal" role="dialog" aria-modal="true" aria-labelledby="post-details-title" hidden>
@@ -1445,8 +1426,6 @@
     </div>
   </div>
 
-  <!-- Cookie Settings Modal -->
-  <div class="modal" id="cookie-modal" role="dialog" aria-modal="true" aria-labelledby="cookie-title" hidden><div class="modal-card small-modal"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">COOKIE SETTINGS</p><h2 id="cookie-title">Choose what Tide may store</h2><div class="cookie-option"><div><strong>Necessary</strong><p>Authentication, security, consent and core product state.</p></div><input type="checkbox" id="cookie-necessary" checked disabled aria-label="Necessary cookies always enabled"></div><div class="cookie-option"><div><strong>Product analytics</strong><p>Anonymous usage patterns that help us improve flows.</p></div><input id="analytics-cookie" type="checkbox" aria-label="Allow product analytics"></div><div class="cookie-option"><div><strong>Marketing &amp; Embeds</strong><p>Social media embeds and preview rendering cookies.</p></div><input id="marketing-cookie" type="checkbox" aria-label="Allow marketing cookies"></div><button class="button primary full" id="cookie-save">Save choices</button></div></div>
 
   <!-- Comment-to-DM Automation Modal (Ootto.ai Feature) -->
   <div class="modal" id="comment-to-dm-modal" role="dialog" aria-modal="true" aria-labelledby="comment-to-dm-title" hidden>
@@ -1662,6 +1641,7 @@
       </div>
     </div>
   </div>
+  </div> <!-- /.mobile-app -->
 
   <script src="core.js"></script>
   <script src="app.js"></script>
