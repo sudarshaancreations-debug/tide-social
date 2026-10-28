@@ -1141,6 +1141,38 @@
     <div class="modal-card account-modal-card"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">NEW CONNECTION</p><h2 id="account-title">Add a social channel</h2><p><strong>Unlimited handles.</strong> Connect any number of Instagram, LinkedIn, Threads, or other supported accounts.</p><form id="account-form"><fieldset><legend>Choose platform</legend><div class="platform-grid" id="platform-grid"></div></fieldset><label>Account handle<input name="handle" autocomplete="off" placeholder="@yourbrand" required></label><label>Workspace<select name="workspace"><option>ACME Studio</option><option>Client accounts</option><option>Personal brand</option></select></label><div class="trust-note"><span>⌾</span><p><strong>Secure connection</strong><br>You’ll authorize each handle through the platform’s own login. Tide never sees or stores your password.</p></div><button class="button primary full" type="submit">Continue to connect →</button></form></div>
   </div>
 
+  <!-- OAuth 2.0 Consent & Handshake Modal -->
+  <div class="modal" id="oauth-consent-modal" role="dialog" aria-modal="true" aria-labelledby="oauth-consent-title" hidden>
+    <div class="modal-card small-modal">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <div style="text-align: center; margin-bottom: 12px;">
+        <div id="oauth-platform-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 16px; font-size: 26px; background: #f4f3ef; color: var(--ink); margin-bottom: 8px;">🔗</div>
+        <p class="eyebrow" id="oauth-eyebrow">OFFICIAL OAUTH 2.0 HANDSHAKE</p>
+        <h2 id="oauth-consent-title" style="font-size: 20px;">Authorize Tide Social</h2>
+        <p style="font-size: 13px; color: var(--muted); margin-top: 4px;">Connect <strong id="oauth-handle-display">@handle</strong> on <span id="oauth-platform-display">Instagram</span></p>
+      </div>
+
+      <div class="mini-rule" style="margin-bottom: 14px; background: #faf9f5; padding: 12px; border-radius: 8px; border: 1px solid var(--line);">
+        <p style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 6px;">Requested Permissions:</p>
+        <ul id="oauth-permissions-list" style="font-size: 13px; padding-left: 18px; line-height: 1.5; color: #333;">
+          <li>Publish posts and reels at scheduled times</li>
+          <li>Read basic profile info and public follower count</li>
+          <li>Retrieve comments and direct messages for triage</li>
+        </ul>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 16px; background: #f0f7f1; padding: 10px; border-radius: 6px; border: 1px solid #d3ebd7;">
+        <span style="color: var(--green); font-size: 16px;">🔒</span>
+        <span><strong>AES-256 Vault:</strong> Tokens are encrypted. Passwords are never seen or stored.</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="button primary full" id="btn-confirm-oauth" type="button">Authorize & Connect Channel →</button>
+        <button class="button secondary full" data-close type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Channel Options & Health Diagnostics Modal -->
   <div class="modal" id="channel-options-modal" role="dialog" aria-modal="true" aria-labelledby="channel-options-title" hidden>
     <div class="modal-card small-modal">

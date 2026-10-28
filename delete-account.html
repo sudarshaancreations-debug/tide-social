@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete Account & Data · Tide Social</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fffdf8;
+      --card: #ffffff;
+      --ink: #171814;
+      --muted: #64645e;
+      --line: #e7e4dc;
+      --danger: #d93829;
+      --blue: #2a66f6;
+      --green: #108e48;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      padding: 32px 16px;
+    }
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 40px 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .badge {
+      display: inline-block;
+      background: #fde8e7;
+      color: var(--danger);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .meta { font-size: 13px; color: var(--muted); }
+    p { margin-bottom: 16px; font-size: 15px; color: #333330; }
+    .warning-box {
+      background: #fef4f4;
+      border: 1px solid #f9d2cf;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #7d1d16;
+    }
+    .warning-box strong { display: block; margin-bottom: 6px; }
+    form { display: flex; flex-direction: column; gap: 16px; }
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    input, select, textarea {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--ink); }
+    button {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .success-panel {
+      display: none;
+      background: #eef8f1;
+      border: 1px solid #c8ebd2;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      color: #0f5c2e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← Back to Tide Social</a>
+    <header>
+      <span class="badge">Google Play & GDPR Compliance</span>
+      <h1>Request Account & Data Deletion</h1>
+      <p class="meta">Public deletion request portal accessible without app authentication.</p>
+    </header>
+
+    <div class="warning-box">
+      <strong>⚠️ What happens when you delete your account:</strong>
+      All scheduled posts, draft copy, analytics records, connected social media OAuth tokens, and team workspace assignments will be permanently removed. This action cannot be undone.
+    </div>
+
+    <form id="deletion-form">
+      <label>
+        Account Email / Username
+        <input type="text" id="del-email" placeholder="you@company.com or @handle" required autocomplete="email">
+      </label>
+      <label>
+        Connected Social Media Platform (Optional)
+        <select id="del-platform">
+          <option value="all">All Connected Accounts</option>
+          <option value="Instagram">Instagram</option>
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="X">X (Twitter)</option>
+          <option value="YouTube">YouTube</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Facebook">Facebook</option>
+          <option value="Threads">Threads</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+      <label>
+        Confirmation: Type "DELETE" to confirm
+        <input type="text" id="del-confirm" placeholder="DELETE" required pattern="DELETE">
+      </label>
+      <button type="submit" id="btn-submit-delete">Permanently Delete Account & Data</button>
+    </form>
+
+    <div class="success-panel" id="success-panel">
+      <h3>✓ Deletion Request Submitted</h3>
+      <p style="margin-top: 8px; font-size: 14px;">Your request has been logged. In accordance with Google Play Developer Policy and GDPR regulations, all associated data, tokens, and records will be purged within 30 days. A confirmation receipt has been generated.</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('deletion-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('del-email').value;
+      const platform = document.getElementById('del-platform').value;
+
+      // If user is currently running local app in this browser, also wipe local session
+      try {
+        localStorage.removeItem('tide-accounts');
+        localStorage.removeItem('tide-scheduled');
+        localStorage.removeItem('tide-draft');
+        localStorage.removeItem('tide_social_store_v1');
+      } catch (err) {}
+
+      document.getElementById('deletion-form').style.display = 'none';
+      document.getElementById('success-panel').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

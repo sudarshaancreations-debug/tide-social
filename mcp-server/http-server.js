@@ -59,6 +59,12 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { status: 'healthy', version: '1.0.0', service: 'Tide Social API & MCP' });
     }
 
+    // OAuth 2.0 Engine for 12 Platforms
+    if (pathname.startsWith('/api/oauth')) {
+      const oauthHandler = require('../api/oauth.js');
+      return oauthHandler(req, res);
+    }
+
     // Accounts
     if (pathname === '/api/accounts' && method === 'GET') {
       return sendJson(res, 200, { total: state.accounts.length, accounts: state.accounts });

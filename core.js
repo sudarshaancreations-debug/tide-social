@@ -207,8 +207,24 @@
     };
   }
 
+  const platformOAuthSpecs = {
+    Instagram: { scopes: ['instagram_basic', 'instagram_content_publish', 'pages_show_list'], refreshDays: 60, tokenType: 'User Access Token' },
+    Facebook: { scopes: ['pages_show_list', 'pages_read_engagement', 'pages_manage_posts'], refreshDays: 60, tokenType: 'Page Access Token' },
+    Threads: { scopes: ['threads_basic', 'threads_content_publish'], refreshDays: 60, tokenType: 'User Access Token' },
+    LinkedIn: { scopes: ['openid', 'profile', 'email', 'w_member_social'], refreshDays: 60, tokenType: 'Member OAuth 2.0' },
+    X: { scopes: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'], refreshDays: 90, tokenType: 'OAuth 2.0 with PKCE' },
+    YouTube: { scopes: ['youtube.upload', 'youtube.readonly', 'userinfo.profile'], refreshDays: 180, tokenType: 'Google Refresh Token' },
+    TikTok: { scopes: ['user.info.basic', 'video.upload', 'video.publish'], refreshDays: 30, tokenType: 'TikTok OAuth v2' },
+    Pinterest: { scopes: ['boards:read', 'pins:read', 'pins:write'], refreshDays: 30, tokenType: 'Pinterest Token' },
+    Bluesky: { scopes: ['atproto'], refreshDays: 365, tokenType: 'App Password Session' },
+    Mastodon: { scopes: ['read', 'write', 'follow'], refreshDays: 365, tokenType: 'OAuth Bearer Token' },
+    'Google Business': { scopes: ['business.manage'], refreshDays: 180, tokenType: 'Google API Token' },
+    Substack: { scopes: ['publications.read', 'posts.write'], refreshDays: 90, tokenType: 'Publication Key' }
+  };
+
   return {
     supportedPlatforms,
+    platformOAuthSpecs,
     normalizeHandle,
     validateAccount,
     createPost,

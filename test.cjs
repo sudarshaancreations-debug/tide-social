@@ -46,4 +46,12 @@ const story = generateVideoStoryboard('Organic Growth');
 assert.equal(story.scenes.length, 3);
 assert.equal(story.scenes[0].timestamp, '00:00 - 00:03');
 
-console.log('All core skills tests passed (Hormozi Hooks, 1-to-5 Repurposer, Video Storyboarder)!');
+// OAuth 12-Platform Specification Test
+const { platformOAuthSpecs } = require('./core.js');
+assert.equal(Object.keys(platformOAuthSpecs).length, 12);
+assert.ok(platformOAuthSpecs.Instagram.scopes.includes('instagram_content_publish'));
+assert.ok(platformOAuthSpecs.LinkedIn.scopes.includes('w_member_social'));
+assert.ok(platformOAuthSpecs.X.scopes.includes('tweet.write'));
+assert.ok(platformOAuthSpecs.YouTube.scopes.includes('youtube.upload'));
+
+console.log('All core skills tests passed (Hormozi Hooks, 1-to-5 Repurposer, Video Storyboarder, 12-Platform OAuth Specs)!');
