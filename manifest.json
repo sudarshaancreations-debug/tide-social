@@ -1,7 +1,7 @@
 {
   "name": "Tide Social",
   "short_name": "Tide",
-  "description": "Your social team, in one current. Create, approve, schedule and reply across every channel.",
+  "description": "Connect and manage unlimited Instagram accounts, Threads, X, TikTok, and LinkedIn in one unified app. Create, approve, schedule and reply across every channel without per-account fees.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

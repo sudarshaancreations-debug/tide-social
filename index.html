@@ -75,6 +75,17 @@
             </div>
           </div>
 
+          <div class="unlimited-badge-banner" style="display:flex; align-items:center; justify-content:space-between; background: linear-gradient(135deg, #171814, #2c2d28); color:#fff; border-radius:12px; padding:12px 16px; margin: 16px 0 20px; font-size:13px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:20px; background:rgba(212,232,64,0.2); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px;">⚡</span>
+              <div>
+                <strong style="display:block; font-size:14px; font-family:'Manrope',sans-serif; color:#d4e840;">Unlimited Multi-Account Hub</strong>
+                <span style="color:#c5c5be; font-size:12px;">Connect unlimited Instagram accounts, Threads, X, &amp; TikTok in one app.</span>
+              </div>
+            </div>
+            <button type="button" class="button primary small" data-open="account-modal" style="background:#d4e840; color:#171814; font-weight:700; border:none; padding:6px 12px; white-space:nowrap; margin-left:8px;">+ Add account</button>
+          </div>
+
           <div class="metric-grid" aria-label="Performance summary">
             <article class="metric-card coral"><div class="metric-icon">↗</div><p>30-day reach</p><strong id="metric-reach">284.7K</strong><small><b>↑ 18.4%</b> vs last period</small></article>
             <article class="metric-card lime"><div class="metric-icon">♡</div><p>Engagement</p><strong id="metric-engagement">8.6%</strong><small><b>↑ 2.1%</b> vs last period</small></article>
@@ -1138,7 +1149,7 @@
 
   <!-- Add Channel Modal -->
   <div class="modal" id="account-modal" role="dialog" aria-modal="true" aria-labelledby="account-title" hidden>
-    <div class="modal-card account-modal-card"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">NEW CONNECTION</p><h2 id="account-title">Add a social channel</h2><p><strong>Unlimited handles.</strong> Connect any number of Instagram, LinkedIn, Threads, or other supported accounts.</p><form id="account-form"><fieldset><legend>Choose platform</legend><div class="platform-grid" id="platform-grid"></div></fieldset><label>Account handle<input name="handle" autocomplete="off" placeholder="@yourbrand" required></label><label>Workspace<select name="workspace"><option>ACME Studio</option><option>Client accounts</option><option>Personal brand</option></select></label><div class="trust-note"><span>⌾</span><p><strong>Secure connection</strong><br>You’ll authorize each handle through the platform’s own login. Tide never sees or stores your password.</p></div><button class="button primary full" type="submit">Continue to connect →</button></form></div>
+    <div class="modal-card account-modal-card"><button class="modal-close" data-close aria-label="Close">×</button><p class="eyebrow">NEW CONNECTION</p><h2 id="account-title">Add a social channel</h2><div style="background: #f8faf4; border: 1px solid #d4e840; border-radius: 8px; padding: 10px 14px; margin: 8px 0 14px; font-size: 13px; color: #222;"><strong>⚡ Connect Any Number of Accounts:</strong> You can connect multiple Instagram accounts (e.g. <code>@brand_main</code>, <code>@brand_shop</code>, <code>@founder</code>), unlimited Threads, X, TikTok, and LinkedIn profiles in this single app without per-channel fees.</div><form id="account-form"><fieldset><legend>Choose platform</legend><div class="platform-grid" id="platform-grid"></div></fieldset><label>Account handle<input name="handle" autocomplete="off" placeholder="@yourbrand" required></label><label>Workspace<select name="workspace"><option>ACME Studio</option><option>Client accounts</option><option>Personal brand</option></select></label><div class="trust-note"><span>⌾</span><p><strong>Secure connection</strong><br>You’ll authorize each handle through the platform’s own login. Tide never sees or stores your password.</p></div><button class="button primary full" type="submit">Continue to connect →</button></form></div>
   </div>
 
   <!-- OAuth 2.0 Consent & Handshake Modal -->
