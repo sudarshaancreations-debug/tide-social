@@ -156,6 +156,18 @@
         Confirmation: Type "DELETE" to confirm
         <input type="text" id="del-confirm" placeholder="DELETE" required pattern="DELETE">
       </label>
+
+      <!-- 11. CAPTCHA on public forms (Anti-Bot Protection) -->
+      <div style="background: #f1f5f9; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 18px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <span style="font-size: 13px; font-weight: 700; color: var(--ink);">🤖 Bot Verification</span>
+          <span style="font-size: 11px; color: var(--muted);">Human Check</span>
+        </div>
+        <p style="font-size: 13px; margin: 0 0 8px 0; color: var(--ink);">Solve security challenge: <strong id="captcha-question" style="font-size: 14px; background: #ffffff; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--line);"></strong></p>
+        <input type="number" id="del-captcha" placeholder="Enter answer" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; font-size: 14px; background: #ffffff;">
+        <span id="captcha-error" style="color: var(--danger); font-size: 12px; display: none; margin-top: 4px;">Incorrect answer. Please solve the updated challenge.</span>
+      </div>
+
       <button type="submit" id="btn-submit-delete">Permanently Delete Account & Data</button>
     </form>
 
@@ -166,8 +178,29 @@
   </div>
 
   <script>
+    let expectedCaptcha = 0;
+    function refreshCaptcha() {
+      const a = Math.floor(Math.random() * 8) + 2;
+      const b = Math.floor(Math.random() * 8) + 2;
+      expectedCaptcha = a + b;
+      const qEl = document.getElementById('captcha-question');
+      if (qEl) qEl.textContent = `${a} + ${b} = ?`;
+      const inputEl = document.getElementById('del-captcha');
+      if (inputEl) inputEl.value = '';
+    }
+    refreshCaptcha();
+
     document.getElementById('deletion-form').addEventListener('submit', function(e) {
       e.preventDefault();
+      const userCaptcha = parseInt(document.getElementById('del-captcha').value, 10);
+      const errEl = document.getElementById('captcha-error');
+      if (userCaptcha !== expectedCaptcha) {
+        if (errEl) errEl.style.display = 'block';
+        refreshCaptcha();
+        return;
+      }
+      if (errEl) errEl.style.display = 'none';
+
       try {
         localStorage.removeItem('tide-accounts');
         localStorage.removeItem('tide-scheduled');
