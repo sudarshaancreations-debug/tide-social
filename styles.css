@@ -1,11 +1,11 @@
 /* Mobile App Core Styles */
 :root {
-  --paper: #f6f4ee;
-  --surface: #fffdf8;
-  --ink: #171814;
-  --muted: #6f7068;
-  --line: #deddd5;
-  --coral: #ff745b;
+  --paper: #f8fafc;
+  --surface: #ffffff;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --coral: #c83214;
   --lime: #c8f35c;
   --blue: #9ed8ff;
   --lemon: #ffe57a;
@@ -22,7 +22,7 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   padding: 0;
-  background: #ebe8df;
+  background: #f1f5f9;
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 14px;
@@ -125,7 +125,8 @@ button { cursor: pointer; }
   gap: 8px;
 }
 
-.mobile-ws-btn {
+.mobile-ws-btn,
+.mobile-profile-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -375,10 +376,10 @@ main {
   background: #ffffff;
 }
 
-.metric-card.coral { border-left: 4px solid var(--coral); }
-.metric-card.lime { border-left: 4px solid #7cb518; }
-.metric-card.blue { border-left: 4px solid var(--blue); }
-.metric-card.ink { border-left: 4px solid var(--ink); }
+.metric-card.coral { border-color: rgba(200, 50, 20, 0.35); }
+.metric-card.lime { border-color: rgba(124, 181, 24, 0.35); }
+.metric-card.blue { border-color: rgba(43, 89, 255, 0.35); }
+.metric-card.ink { border-color: rgba(30, 41, 59, 0.35); }
 
 .metric-icon {
   position: absolute;
@@ -872,7 +873,7 @@ main {
   font-size: 24px;
   font-weight: 700;
   margin-top: -18px;
-  box-shadow: 0 4px 14px rgba(255, 116, 91, 0.45);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
   transition: transform 0.15s ease;
 }
 .tab-btn-create:active .create-fab { transform: scale(0.92); }
@@ -2777,7 +2778,7 @@ main {
   height: 165px;
   overflow: visible;
   border-bottom: 1px solid var(--line);
-  background: repeating-linear-gradient(to bottom, transparent 0, transparent 40px, #f2f0e8 41px);
+  background: #ffffff;
 }
 .chart-wrap .area {
   fill: url(#fill) !important;
@@ -3051,9 +3052,9 @@ main {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
-.hourly-slot-post.coral { border-left: 3px solid var(--coral); }
-.hourly-slot-post.blue { border-left: 3px solid var(--blue); }
-.hourly-slot-post.lime { border-left: 3px solid #7cb518; }
+.hourly-slot-post.coral { border-color: rgba(200, 50, 20, 0.4); }
+.hourly-slot-post.blue { border-color: rgba(43, 89, 255, 0.4); }
+.hourly-slot-post.lime { border-color: rgba(124, 181, 24, 0.4); }
 .hourly-post-info {
   display: flex;
   align-items: center;
@@ -3407,14 +3408,14 @@ button, .button {
   background: rgba(30, 158, 93, 0.95);
   color: #ffffff;
   border: 2px solid #ffffff;
-  box-shadow: 0 4px 14px rgba(30, 158, 93, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 .swipe-change-badge {
   left: 20px;
   background: rgba(234, 138, 0, 0.95);
   color: #ffffff;
   border: 2px solid #ffffff;
-  box-shadow: 0 4px 14px rgba(234, 138, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 .swipe-hint-bar {
   display: flex;
@@ -3598,9 +3599,9 @@ button, .button {
 .sim-result-box {
   margin-top: 8px;
   padding: 8px 10px;
-  background: #fff;
+  background: #f0fdf4;
   border-radius: 6px;
-  border-left: 3px solid #1e9e5d;
+  border: 1px solid rgba(30, 158, 93, 0.3);
   font-size: 11px;
   line-height: 1.4;
 }
@@ -4146,7 +4147,8 @@ button, .button {
 .pdf-kpi-card small { font-size: 10px; color: #1e9e5d; font-weight: 700; }
 .pdf-notes-callout {
   background: #fbfaf5;
-  border-left: 3px solid #ff765d;
+  border: 1px solid var(--line);
+  border-radius: 8px;
   padding: 10px 14px;
   margin: 14px 0;
   font-size: 11px;
@@ -5093,7 +5095,7 @@ button.danger:hover {
 
 .danger-modal-card {
   max-width: 440px !important;
-  border-top: 4px solid var(--danger) !important;
+  border: 1px solid rgba(191, 61, 53, 0.4) !important;
 }
 
 .danger-icon-badge {
@@ -5144,6 +5146,7 @@ button.danger:hover {
   border-radius: 10px !important;
   background: #ffffff !important;
   margin-top: 12px !important;
+  padding: 12px 14px !important;
   box-sizing: border-box !important;
 }
 
@@ -5468,7 +5471,7 @@ button.danger:hover {
   justify-content: center !important;
   gap: 8px !important;
   cursor: pointer !important;
-  box-shadow: 0 4px 12px rgba(1, 135, 95, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   transition: transform 0.12s ease, background 0.12s ease !important;
 }
 
@@ -5660,10 +5663,10 @@ button.danger:hover {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 8px 24px rgba(15, 157, 88, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
   position: relative !important;
   z-index: 2 !important;
-  animation: gpayCirclePop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+  animation: gpayCirclePop 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 @keyframes gpayCirclePop {
@@ -5779,7 +5782,7 @@ button.danger:hover {
   font-size: 14.5px !important;
   font-weight: 800 !important;
   cursor: pointer !important;
-  box-shadow: 0 3px 8px rgba(1, 135, 95, 0.25) !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
   transition: transform 0.12s ease, background 0.12s ease !important;
 }
 

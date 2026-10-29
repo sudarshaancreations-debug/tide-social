@@ -10,14 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #fffdf8;
+      --bg: #f8fafc;
       --card: #ffffff;
-      --ink: #171814;
-      --muted: #64645e;
-      --line: #e7e4dc;
-      --primary: #171814;
-      --accent: #d4e840;
-      --blue: #2a66f6;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #e2e8f0;
+      --primary: #0f172a;
+      --accent: #0284c7;
+      --blue: #2563eb;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -34,24 +34,12 @@
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 40px 32px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
     }
     header {
       border-bottom: 1px solid var(--line);
       padding-bottom: 24px;
       margin-bottom: 32px;
-    }
-    .badge {
-      display: inline-block;
-      background: var(--ink);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-bottom: 12px;
     }
     h1 {
       font-family: 'Manrope', sans-serif;
@@ -73,14 +61,14 @@
     }
     p, ul {
       margin-bottom: 16px;
-      color: #333330;
+      color: #334155;
       font-size: 15px;
     }
     ul { padding-left: 20px; }
     li { margin-bottom: 6px; }
     .callout {
-      background: #f8faf4;
-      border-left: 4px solid var(--accent);
+      background: #f1f5f9;
+      border: 1px solid var(--line);
       padding: 16px;
       border-radius: 8px;
       margin: 20px 0;
@@ -103,7 +91,6 @@
   <div class="container">
     <a href="/" class="back-link">← Back to Tide Social</a>
     <header>
-      <span class="badge">Official Legal Policy</span>
       <h1>Privacy Policy</h1>
       <p class="meta">Effective Date: October 26, 2026 • Version 1.0 • Applicable Worldwide</p>
     </header>
@@ -113,15 +100,15 @@
       <p>Tide Social ("we", "us", or "our") provides an interactive social media management, content planning, and AI creative studio workspace ("Service"). This Privacy Policy explains how personal data is collected, processed, and protected when you access our web application, mobile applications, or APIs.</p>
       
       <div class="callout">
-        <strong>Google Play & OAuth Compliance Guarantee:</strong> We do not sell your personal data. We do not use third-party advertising or cross-site tracking cookies. We only collect the minimal information necessary to deliver scheduling, analytics, and social publishing services at your direction.
+        <strong>Data Protection Guarantee:</strong> We do not sell your personal data. We do not use third-party advertising or cross-site tracking cookies. We only collect the minimal information necessary to deliver scheduling, analytics, and social publishing services at your direction.
       </div>
 
       <h2>2. Information We Collect</h2>
       <ul>
-        <li><strong>Account Identifiers:</strong> Name, professional email address, workspace name, and profile handles when you register.</li>
+        <li><strong>Account Identifiers:</strong> Name, professional email address, and profile handles when you register.</li>
         <li><strong>Connected Social Media Accounts:</strong> Public profile handles, account IDs, follower counts, and OAuth access tokens for platforms you explicitly connect (such as Instagram, LinkedIn, X, YouTube, TikTok, Facebook, Threads, Pinterest, Bluesky, Mastodon, Google Business, and Substack).</li>
         <li><strong>User-Generated Content:</strong> Post copy, drafts, scheduled dates, uploaded images, video assets, and idea bank concepts.</li>
-        <li><strong>Operational Storage:</strong> We use browser <code>localStorage</code> to maintain offline drafts, responsive workspace state, and user preferences locally on your device.</li>
+        <li><strong>Operational Storage:</strong> We use browser <code>localStorage</code> to maintain offline drafts, responsive application state, and user preferences locally on your device.</li>
       </ul>
 
       <h2>3. How We Use Social Media OAuth Tokens</h2>
@@ -134,7 +121,7 @@
       </ul>
 
       <h2>4. Data Retention & Account Deletion</h2>
-      <p>Your workspace data is retained only as long as your account remains active. In compliance with Google Play Store Developer Policy and global data protection regulations:</p>
+      <p>Your account data is retained only as long as your account remains active. In compliance with Google Play Store Developer Policy and global data protection regulations:</p>
       <ul>
         <li>You may delete your data directly inside the app under Profile → Danger Zone.</li>
         <li>You can also submit a deletion request without opening the application at our public portal: <a href="/delete-account.html">Account & Data Deletion Portal</a>.</li>
@@ -142,10 +129,10 @@
       </ul>
 
       <h2>5. Children’s Privacy (COPPA)</h2>
-      <p>Our Service is intended strictly for professional creators, businesses, and digital agencies. We do not knowingly collect personal information from children under the age of 13 (or under 16 in certain European jurisdictions). If we learn that such data has been collected, it is immediately deleted.</p>
+      <p>Our Service is intended strictly for professional creators and digital publishers. We do not knowingly collect personal information from children under the age of 13 (or under 16 in certain European jurisdictions). If we learn that such data has been collected, it is immediately deleted.</p>
 
-      <h2>6. International Data Transfers & Security</h2>
-      <p>Data is processed on secure cloud infrastructure hosted with enterprise-grade physical and electronic safeguards. All communication is enforced through HTTPS with strict transport security (HSTS).</p>
+      <h2>6. Security Safeguards</h2>
+      <p>Data is stored in ISO 27001 certified data centers with end-to-end encrypted storage. All application communication is enforced through HTTPS with strict transport security (HSTS).</p>
 
       <h2>7. Contact Information</h2>
       <p>If you have any questions about this Privacy Policy, your rights under GDPR/CCPA, or wish to exercise data access requests, please contact our Data Protection Team at:</p>

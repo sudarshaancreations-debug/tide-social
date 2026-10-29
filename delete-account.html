@@ -10,14 +10,16 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #fffdf8;
+      --bg: #f8fafc;
       --card: #ffffff;
-      --ink: #171814;
-      --muted: #64645e;
-      --line: #e7e4dc;
-      --danger: #d93829;
-      --blue: #2a66f6;
-      --green: #108e48;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #e2e8f0;
+      --danger: #b91c1c;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+      --blue: #2563eb;
+      --green: #15803d;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -34,24 +36,12 @@
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 40px 32px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
     }
     header {
       border-bottom: 1px solid var(--line);
       padding-bottom: 24px;
       margin-bottom: 28px;
-    }
-    .badge {
-      display: inline-block;
-      background: #fde8e7;
-      color: var(--danger);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-bottom: 12px;
     }
     h1 {
       font-family: 'Manrope', sans-serif;
@@ -61,15 +51,15 @@
       margin-bottom: 8px;
     }
     .meta { font-size: 13px; color: var(--muted); }
-    p { margin-bottom: 16px; font-size: 15px; color: #333330; }
+    p { margin-bottom: 16px; font-size: 15px; color: #1e293b; }
     .warning-box {
-      background: #fef4f4;
-      border: 1px solid #f9d2cf;
+      background: var(--danger-bg);
+      border: 1px solid #fca5a5;
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 24px;
       font-size: 14px;
-      color: #7d1d16;
+      color: var(--danger-text);
     }
     .warning-box strong { display: block; margin-bottom: 6px; }
     form { display: flex; flex-direction: column; gap: 16px; }
@@ -114,12 +104,19 @@
     }
     .success-panel {
       display: none;
-      background: #eef8f1;
-      border: 1px solid #c8ebd2;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
       border-radius: 8px;
       padding: 20px;
       text-align: center;
-      color: #0f5c2e;
+      color: var(--green);
+    }
+    h2.success-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--green);
     }
   </style>
 </head>
@@ -127,14 +124,13 @@
   <div class="container">
     <a href="/" class="back-link">← Back to Tide Social</a>
     <header>
-      <span class="badge">Google Play & GDPR Compliance</span>
       <h1>Request Account & Data Deletion</h1>
       <p class="meta">Public deletion request portal accessible without app authentication.</p>
     </header>
 
     <div class="warning-box">
       <strong>⚠️ What happens when you delete your account:</strong>
-      All scheduled posts, draft copy, analytics records, connected social media OAuth tokens, and team workspace assignments will be permanently removed. This action cannot be undone.
+      All scheduled posts, draft copy, analytics records, and connected social media OAuth tokens will be permanently removed. This action cannot be undone.
     </div>
 
     <form id="deletion-form">
@@ -164,7 +160,7 @@
     </form>
 
     <div class="success-panel" id="success-panel">
-      <h3>✓ Deletion Request Submitted</h3>
+      <h2 class="success-title">✓ Deletion Request Submitted</h2>
       <p style="margin-top: 8px; font-size: 14px;">Your request has been logged. In accordance with Google Play Developer Policy and GDPR regulations, all associated data, tokens, and records will be purged within 30 days. A confirmation receipt has been generated.</p>
     </div>
   </div>
@@ -172,10 +168,6 @@
   <script>
     document.getElementById('deletion-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      const email = document.getElementById('del-email').value;
-      const platform = document.getElementById('del-platform').value;
-
-      // If user is currently running local app in this browser, also wipe local session
       try {
         localStorage.removeItem('tide-accounts');
         localStorage.removeItem('tide-scheduled');
