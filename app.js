@@ -108,13 +108,22 @@ let currentInboxFilter = 'All';
 let unreadOnlyFilter = false;
 let uploadedMediaFile = null;
 
-function toast(message) {
+function toast(message, undoAction = null) {
   const el = document.querySelector('.toast');
   if (!el) return;
-  el.textContent = message;
+  if (undoAction && typeof undoAction === 'function') {
+    el.innerHTML = `<span>${message}</span> <button type="button" class="toast-undo-btn" id="btn-toast-undo">Undo</button>`;
+    document.getElementById('btn-toast-undo')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      undoAction();
+      el.classList.remove('show');
+    });
+  } else {
+    el.textContent = message;
+  }
   el.classList.add('show');
   clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.classList.remove('show'), 2600);
+  toast.timer = setTimeout(() => el.classList.remove('show'), undoAction ? 4500 : 2600);
 }
 
 function updateBadges() {
@@ -1443,7 +1452,20 @@ function renderThreads(filter = 'All', search = '') {
   });
 
   if (filtered.length === 0) {
-    threadList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--muted); font-size: 11px;">No conversations found</div>`;
+    threadList.innerHTML = `
+      <div class="empty-state-card">
+        <div class="empty-state-icon">💬</div>
+        <strong class="empty-state-title">No conversations found</strong>
+        <p class="empty-state-desc">No messages match your selected filters. Reset filters to see all incoming comments and DMs.</p>
+        <button type="button" class="button secondary small" id="btn-empty-reset-inbox" style="margin-top:4px;">Reset filters</button>
+      </div>
+    `;
+    document.getElementById("btn-empty-reset-inbox")?.addEventListener("click", () => {
+      currentInboxFilter = "All";
+      unreadOnlyFilter = false;
+      document.querySelectorAll(".inbox-chip").forEach(c => c.classList.toggle("active", c.dataset.filter === "All"));
+      renderThreads("All");
+    });
     return;
   }
 
@@ -1585,7 +1607,7 @@ function renderAccounts() {
         </div>
         <span class="${account.status === 'Healthy' ? 'status-ok' : 'status-warn'}">● ${account.status || 'Healthy'}</span>
         <small>Token valid: ${account.tokenExpires || '60 days'}</small>
-        <button type="button" class="btn-account-options" aria-label="Options for ${account.handle}" data-index="${index}">•••</button>
+        <button type="button" class="btn-account-options" aria-label="Options for ${account.handle}" title="Account options" data-index="${index}">⋯</button>
       </div>
     `).join('');
   }
@@ -1957,24 +1979,50 @@ function handleMediaFile(file) {
   uploadedMediaFile = file;
   if (mediaPreview) {
     mediaPreview.hidden = false;
-    const url = URL.createObjectURL(file);
     mediaPreview.innerHTML = `
-      <img src="${url}" alt="Media preview">
-      <div class="media-meta">
-        <strong>${file.name} (${result.sizeMB} MB)</strong>
-        <small>✓ Preflight passed: ${result.ratioCheck}</small>
+      <div style="padding: 10px 0; width: 100%;">
+        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600; margin-bottom:4px;">
+          <span>Uploading ${file.name}…</span>
+          <span id="upload-percent">0%</span>
+        </div>
+        <div class="determinate-progress-wrap">
+          <div class="determinate-progress-bar" id="upload-prog-fill" style="width: 0%;"></div>
+        </div>
       </div>
-      <button type="button" id="btn-remove-media">✕ Remove</button>
     `;
-    document.getElementById('btn-remove-media')?.addEventListener('click', () => {
-      uploadedMediaFile = null;
-      mediaPreview.hidden = true;
-      mediaPreview.innerHTML = '';
-      if (fileInput) fileInput.value = '';
-      toast('Media removed.');
-    });
+
+    let pct = 0;
+    const interval = setInterval(() => {
+      pct += 25;
+      const fillEl = document.getElementById("upload-prog-fill");
+      const pctEl = document.getElementById("upload-percent");
+      if (fillEl) fillEl.style.width = `${pct}%`;
+      if (pctEl) pctEl.textContent = `${pct}%`;
+      if (pct >= 100) {
+        clearInterval(interval);
+        const url = URL.createObjectURL(file);
+        mediaPreview.innerHTML = `
+          <img src="${url}" alt="Media preview">
+          <div class="media-meta">
+            <strong>${file.name} (${result.sizeMB} MB)</strong>
+            <small>✓ Preflight passed: ${result.ratioCheck}</small>
+          </div>
+          <button type="button" id="btn-remove-media">✕ Remove</button>
+        `;
+        document.getElementById("btn-remove-media")?.addEventListener("click", () => {
+          const removedFile = uploadedMediaFile;
+          uploadedMediaFile = null;
+          mediaPreview.hidden = true;
+          mediaPreview.innerHTML = "";
+          if (fileInput) fileInput.value = "";
+          toast("Media removed.", () => {
+            if (removedFile) handleMediaFile(removedFile);
+          });
+        });
+        toast(result.status);
+      }
+    }, 50);
   }
-  toast(result.status);
 }
 
 // Composer Form Submit
@@ -2552,17 +2600,21 @@ document.getElementById('btn-export-report')?.addEventListener('click', () => {
   toast('Report exported to tide_social_analytics_report.csv');
 });
 
-// Analytics Refresh & Column toggle
+// Analytics Refresh & Column toggle with Skeleton Screen loading
 document.getElementById('btn-refresh-analytics')?.addEventListener('click', function () {
   this.textContent = 'Syncing APIs…';
+  const metricValues = document.querySelectorAll('.analytics-grid .metric-card strong, .analytics-grid .metric-card small');
+  metricValues.forEach(el => el.classList.add('skeleton-loading'));
+  
   setTimeout(() => {
     this.textContent = 'Refresh data';
+    metricValues.forEach(el => el.classList.remove('skeleton-loading'));
     const audGrowth = document.getElementById('metric-aud-growth');
     const leads = document.getElementById('metric-leads-count');
     if (audGrowth) audGrowth.textContent = '+13,290';
     if (leads) leads.textContent = '342';
     toast('Analytics synced live with Meta & LinkedIn APIs.');
-  }, 900);
+  }, 600);
 });
 
 document.getElementById("btn-customize-columns")?.addEventListener("click", () => {
